@@ -76,7 +76,7 @@ def create_clustered_spectra(base_spectrum: np.ndarray,
     
     clustered_spectra = []
     
-    for _ in range(n_samlpes):
+    for _ in range(n_samples):
         # Add multiplicative and additive noise
         multiplicative_noise = 1 + noise_level * np.random.normal(0, 0.3, base_spectrum.shape)
         additive_noise = noise_level * np.random.normal(0, np.max(base_spectrum) * 0.1, base_spectrum.shape)
@@ -201,6 +201,57 @@ def generate_fourier_time_traces(n_samples: int,
         
         time_traces.append(time_trace)
     
-    return selected_freqs, clustered_spectra, time_axis, time_traces
+    return clustered_spectra, time_traces, selected_freqs, time_axis 
 
-def generate_random_rm_trace(n_clusters: int = 4,
+def generate_random_rm_traces(n_samples: int,
+                              n_clusters: int = 4,
+                              outlier_fraction: float = 0.01,
+                              n_time_points: int = 1024,
+                              sampling_rate: float = 1.0,
+                              max_gaussians: int = 15,
+                              noise_level: float = 0.1,
+                              time_domain_noise: float = 0.05,
+                              freq_range: Optional[Tuple[float, float]] = None,
+                              seed: int = None):
+    n_samples_per_cluster = int((n_samples*(1-outlier_fraction)) // n_clusters)
+    n_outliers = int(n_samples - n_samples_per_cluster * n_clusters)
+    all_clustered_spectra, all_time_traces, all_cluster_idx = [], [], []
+    for i in range(n_clusters):
+        clustered_spectra, time_traces, selected_freqs, time_axis = generate_fourier_time_traces(
+            n_samples=n_samples_per_cluster,
+            n_time_points=n_time_points,
+            sampling_rate=sampling_rate,
+            max_gaussians=max_gaussians,
+            noise_level=noise_level,
+            time_domain_noise=time_domain_noise,
+            freq_range=freq_range,
+            seed=seed
+        )
+        all_clustered_spectra.extend(clustered_spectra)
+        all_time_traces.extend(time_traces)
+        all_cluster_idx.extend([i] * n_samples_per_cluster)
+    
+    # Generate outliers
+    for i in range(n_outliers):
+        clustered_spectra, time_traces, selected_freqs, time_axis  = generate_fourier_time_traces(
+            n_samples=1,
+            n_time_points=n_time_points,
+            sampling_rate=sampling_rate,
+            max_gaussians=max_gaussians,
+            noise_level=noise_level,
+            time_domain_noise=time_domain_noise,
+            freq_range=freq_range,
+            seed=seed + i if seed is not None else None
+        )
+        all_clustered_spectra.extend(clustered_spectra)
+        all_time_traces.extend(time_traces)
+        all_cluster_idx.extend([-1])  # Mark as outlier
+    
+    # Convert to numpy arrays
+    all_clustered_spectra = np.array(all_clustered_spectra)
+    all_time_traces = np.array(all_time_traces)
+    all_cluster_idx = np.array(all_cluster_idx)
+    
+    return all_clustered_spectra, all_time_traces, all_cluster_idx, selected_freqs, time_axis
+    
+    
