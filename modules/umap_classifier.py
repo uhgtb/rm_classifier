@@ -5,6 +5,7 @@ script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 import prepare_data
 import umap.umap_ as umap
+from sklearn.cluster import DBSCAN
 import joblib
 
 
@@ -26,7 +27,8 @@ class UMAPClassifier:
                  metric: str = "braycurtis",
                  input_data_type: str = "time",
                  data_preparation: dict = {},
-
+                 db_eps: float = 0.45,
+                 db_min_samples: int = 50,
                  ):
         """
         Initialize the UMAP classifier with parameters.
@@ -75,6 +77,8 @@ class UMAPClassifier:
         self.metric = metric
         self.input_data_type = input_data_type
         self.data_preparation = data_preparation
+        self.db_eps = db_eps
+        self.db_min_samples = db_min_samples
         if yaml_path:
             self._load_yaml(yaml_path)
         default_data_preparation_dict = {
@@ -161,7 +165,7 @@ class UMAPClassifier:
         self.data_preparation["custom_prepare_fcn"] = custom_prepare_fcn
         return custom_prepare_fcn(data, verbose=verbose, **kwargs)
     
-    def embed(self, data, keep_model=True, save_model = False, verbose=True, **kwargs):
+    def embed(self, data, keep_model=True, save_model = None, verbose=True, **kwargs):
         for key, value in kwargs.items():
             if verbose:
                 print(f"Overriding {key} with value {value} from kwargs.")
@@ -186,3 +190,25 @@ class UMAPClassifier:
             self.umap_model = umap_model
         return embedding
     
+    def _dbscan(self, data, keep_model=True, save_model = None, verbose=True, **kwargs):
+        db_model = DBSCAN(eps=self.db_eps, min_samples=self.db_min_samples).fit(data)
+        if save_model:
+            if verbose:
+                print(f"Saving DBSCAN model to {save_model}")
+            with open(save_model, 'wb') as f:
+                joblib.dump(db_model, f)
+        if keep_model:
+            self.db_model = db_model
+        return db_model.labels_
+    
+    def classify(self, data, keep_model=True, save_model = None, automatic_parameters = False, verbose=True, **kwargs):
+        for key, value in kwargs.items():
+            if verbose:
+                print(f"Overriding {key} with value {value} from kwargs.")
+            self.__setattr__(key, value)
+        if automatic_parameters:
+            pass #TODO: implement automatic parameter selection
+        else:
+            return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
+        
+        
