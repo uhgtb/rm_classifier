@@ -7,6 +7,7 @@ import prepare_data
 import umap.umap_ as umap
 from sklearn.cluster import DBSCAN
 import joblib
+import warnings
 
 
 #import standard libraries
@@ -199,6 +200,7 @@ class UMAPClassifier:
                 joblib.dump(db_model, f)
         if keep_model:
             self.db_model = db_model
+        self.cluster_indices = np.unique(db_model.labels_)
         return db_model.labels_
     
     def classify(self, data, keep_model=True, save_model = None, automatic_parameters = False, verbose=True, **kwargs):
@@ -210,5 +212,38 @@ class UMAPClassifier:
             pass #TODO: implement automatic parameter selection
         else:
             return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
-        
-        
+    
+    def save_cluster_trace(self, data, clusters, trace_statistic="mean", verbose=True, modifier_function_name=None):
+        if np.all(np.unique(clusters) != self.cluster_indices):
+            warnings.warn("Provided clusters do not match the model's cluster indices. Setting them to the model's cluster indices.")
+            self.cluster_indices = np.unique(clusters)
+        if len(clusters) != len(data):
+            raise ValueError("Length of cluster indices must match length of data.")
+        cluster_traces = []
+        for cluster_idx in self.cluster_indices:
+            if trace_statistic == "mean":
+                cluster_trace = np.mean(data[clusters == cluster_idx], axis=0)
+            elif trace_statistic == "median":
+                cluster_trace = np.median(data[clusters == cluster_idx], axis=0)
+            elif trace_statistic == "std":
+                cluster_trace = np.std(data[clusters == cluster_idx], axis=0)
+            elif trace_statistic == "max":
+                cluster_trace = np.max(data[clusters == cluster_idx], axis=0)
+            elif trace_statistic == "min":
+                cluster_trace = np.min(data[clusters == cluster_idx], axis=0)
+            else:
+                raise ValueError("Invalid cluster_statistic. Choose from 'mean', 'median', 'min', 'max' or 'std'.")
+            cluster_traces.append(cluster_trace)
+        if modifier_function_name:
+            self.__setattr__(f'cluster_{modifier_function_name}_{trace_statistic}_traces', np.array(cluster_traces))
+        else:
+            self.__setattr__(f'cluster_{trace_statistic}_traces', np.array(cluster_traces))
+        if verbose:
+            print(f"Saved {len(cluster_traces)} cluster traces with {trace_statistic} statistic.")
+        del cluster_traces
+    
+    def save_modified_cluster_trace(self, data, clusters, modifier_function, modifier_function_name=None, trace_statistic="mean", verbose=True):
+        if modifier_function_name is None:
+            modifier_function_name = modifier_function.__name__
+        data = modifier_function(data)
+        self.save_cluster_trace(data, clusters, trace_statistic=trace_statistic, verbose=verbose, modifier_function_name=modifier_function_name)
