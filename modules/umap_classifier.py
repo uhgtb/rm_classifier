@@ -264,7 +264,7 @@ class UMAPClassifier:
         return predicted_cluster, minimum_distances
     
     def ml_uncorrelated_normal_prediction(self, data, min_logl=-1, modifier_function_name="",
-                                          noise_limit=0.1, data_batch_size=1000, cluster_batch_size=100, verbose=True):
+                                            data_batch_size=1000, cluster_batch_size=100, verbose=True):
         for trace_statistic in ["mean", "std"]:
             if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
                 raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_modified_cluster_trace' first.")
