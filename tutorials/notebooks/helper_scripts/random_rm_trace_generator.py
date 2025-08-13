@@ -41,7 +41,7 @@ def generate_gaussian_spectrum(freq_bins: np.ndarray,
         # Random Gaussian parameters
         mean = np.random.uniform(freq_range[0], freq_range[1])
         std = np.random.uniform(0.01, 0.3) * (freq_range[1] - freq_range[0])
-        intensity = np.random.uniform(0.1, 2.0)
+        intensity = np.random.uniform(0.1, 2.0)*1e4
         
         # Add Gaussian to spectrum
         gaussian = intensity * np.exp(-0.5 * ((freq_bins - mean) / std) ** 2)
@@ -133,8 +133,8 @@ def generate_fourier_time_traces(n_samples: int,
         np.random.seed(seed)
     
     # Create frequency axis
-    freqs = np.fft.fftfreq(n_time_points, 1/sampling_rate)
-    positive_freqs = freqs[:n_time_points//2]
+    freqs = (-1)*np.fft.fftfreq(n_time_points, 1/sampling_rate)
+    positive_freqs = freqs[freqs >= 0]
     
     if freq_range is None:
         freq_range = (0, sampling_rate/2)  # DC to Nyquist
@@ -153,7 +153,7 @@ def generate_fourier_time_traces(n_samples: int,
         selected_freqs = available_freqs
     
     # Generate base spectrum using sum of Gaussians
-    n_gaussians = np.random.randint(1, max_gaussians + 1)
+    n_gaussians = np.random.randint(4, max_gaussians + 1)
     base_spectrum = generate_gaussian_spectrum(
         selected_freqs, 
         n_gaussians=n_gaussians,
@@ -170,29 +170,16 @@ def generate_fourier_time_traces(n_samples: int,
     )
     
     # Generate time traces
-    time_traces = []
+    time_traces, phases = [], []
     time_axis = np.arange(n_time_points) / sampling_rate
     
     for i, spectrum in enumerate(clustered_spectra):
-        # Create full frequency domain representation
-        full_spectrum = np.zeros(n_time_points, dtype=complex)
         
-        # Map selected frequencies to full spectrum indices
-        for j, freq in enumerate(selected_freqs):
-            freq_idx = np.argmin(np.abs(freqs - freq))
-            if freq_idx < len(full_spectrum):
-                # Random phase
-                phase = np.random.uniform(0, 2*np.pi)
-                amplitude = spectrum[j]
-                full_spectrum[freq_idx] = amplitude * np.exp(1j * phase)
-                
-                # Mirror for negative frequencies (for real time series)
-                if freq_idx != 0 and freq_idx != n_time_points//2:
-                    mirror_idx = n_time_points - freq_idx
-                    full_spectrum[mirror_idx] = np.conj(full_spectrum[freq_idx])
+        # generate random phase for each frequency bin
+        phase = np.random.uniform(-np.pi, np.pi, len(selected_freqs))
         
         # Inverse FFT to get time domain signal
-        time_trace = np.fft.ifft(full_spectrum).real
+        time_trace = np.fft.irfft(spectrum * np.exp(1j * phase), n=n_time_points)
         
         # Add time domain noise
         if time_domain_noise > 0:
@@ -200,8 +187,9 @@ def generate_fourier_time_traces(n_samples: int,
             time_trace += noise
         
         time_traces.append(time_trace)
+        phases.append(phase)
     
-    return clustered_spectra, time_traces, selected_freqs, time_axis 
+    return time_traces, clustered_spectra, phases, time_axis, selected_freqs 
 
 def generate_random_rm_traces(n_samples: int,
                               n_clusters: int = 4,
@@ -212,12 +200,13 @@ def generate_random_rm_traces(n_samples: int,
                               noise_level: float = 0.1,
                               time_domain_noise: float = 0.05,
                               freq_range: Optional[Tuple[float, float]] = None,
-                              seed: int = None):
+                              seed: int = None,
+                              type: str = "all"):
     n_samples_per_cluster = int((n_samples*(1-outlier_fraction)) // n_clusters)
     n_outliers = int(n_samples - n_samples_per_cluster * n_clusters)
-    all_clustered_spectra, all_time_traces, all_cluster_idx = [], [], []
+    all_clustered_spectra, all_time_traces, all_phases, all_cluster_idx = [], [], [], []
     for i in range(n_clusters):
-        clustered_spectra, time_traces, selected_freqs, time_axis = generate_fourier_time_traces(
+        time_traces, clustered_spectra, phase, time_axis, selected_freqs = generate_fourier_time_traces(
             n_samples=n_samples_per_cluster,
             n_time_points=n_time_points,
             sampling_rate=sampling_rate,
@@ -230,10 +219,11 @@ def generate_random_rm_traces(n_samples: int,
         all_clustered_spectra.extend(clustered_spectra)
         all_time_traces.extend(time_traces)
         all_cluster_idx.extend([i] * n_samples_per_cluster)
+        all_phases.extend(phase)
     
     # Generate outliers
     for i in range(n_outliers):
-        clustered_spectra, time_traces, selected_freqs, time_axis  = generate_fourier_time_traces(
+        time_traces, clustered_spectra, phase, time_axis, selected_freqs  = generate_fourier_time_traces(
             n_samples=1,
             n_time_points=n_time_points,
             sampling_rate=sampling_rate,
@@ -246,12 +236,24 @@ def generate_random_rm_traces(n_samples: int,
         all_clustered_spectra.extend(clustered_spectra)
         all_time_traces.extend(time_traces)
         all_cluster_idx.extend([-1])  # Mark as outlier
+        all_phases.extend(phase)
     
     # Convert to numpy arrays
     all_clustered_spectra = np.array(all_clustered_spectra)
     all_time_traces = np.array(all_time_traces)
     all_cluster_idx = np.array(all_cluster_idx)
-    
-    return all_clustered_spectra, all_time_traces, all_cluster_idx, selected_freqs, time_axis
+    all_phases = np.array(all_phases)
+    if type == "all":
+        return all_time_traces, all_clustered_spectra, all_phases, all_cluster_idx, time_axis, selected_freqs
+    elif type == "fft":
+        return all_clustered_spectra, all_cluster_idx, selected_freqs
+    elif type == "time":
+        return all_time_traces, all_cluster_idx, time_axis
+    elif type == "fft_phase":
+        return all_clustered_spectra, all_phases, all_cluster_idx, selected_freqs
+    elif type == "fft_time":
+        return all_time_traces, all_clustered_spectra, all_phases, all_cluster_idx, time_axis, selected_freqs
+    else:
+        raise ValueError(f"Unknown type: {type}. Must be one of 'all', 'fft', 'time', 'fft_phase', or 'fft_time'.")
     
     
