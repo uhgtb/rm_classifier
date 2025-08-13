@@ -4,10 +4,13 @@ from pathlib import Path
 script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 import prepare_data
+import statistical_models
 import umap.umap_ as umap
 from sklearn.cluster import DBSCAN
+from scipy.spatial.distance import cdist
 import joblib
 import warnings
+
 
 
 #import standard libraries
@@ -191,6 +194,11 @@ class UMAPClassifier:
             self.umap_model = umap_model
         return embedding
     
+    def _set_cluster_indices(self, labels):
+        labels = labels[labels != -1]  # Exclude noise points
+        self.cluster_indices = np.unique(labels)
+        return self.cluster_indices
+    
     def _dbscan(self, data, keep_model=True, save_model = None, verbose=True, **kwargs):
         db_model = DBSCAN(eps=self.db_eps, min_samples=self.db_min_samples).fit(data)
         if save_model:
@@ -200,7 +208,7 @@ class UMAPClassifier:
                 joblib.dump(db_model, f)
         if keep_model:
             self.db_model = db_model
-        self.cluster_indices = np.unique(db_model.labels_)
+        self._set_cluster_indices(db_model.labels_)
         return db_model.labels_
     
     def classify(self, data, keep_model=True, save_model = None, automatic_parameters = False, verbose=True, **kwargs):
@@ -213,10 +221,10 @@ class UMAPClassifier:
         else:
             return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
     
-    def save_cluster_trace(self, data, clusters, trace_statistic="mean", verbose=True, modifier_function_name=None):
-        if np.all(np.unique(clusters) != self.cluster_indices):
+    def save_cluster_trace(self, data, clusters, trace_statistic="mean", verbose=True, modifier_function_name=""):
+        if np.all(self._set_cluster_indices(clusters) != self.cluster_indices):
             warnings.warn("Provided clusters do not match the model's cluster indices. Setting them to the model's cluster indices.")
-            self.cluster_indices = np.unique(clusters)
+            self._set_cluster_indices(clusters)
         if len(clusters) != len(data):
             raise ValueError("Length of cluster indices must match length of data.")
         cluster_traces = []
@@ -234,10 +242,7 @@ class UMAPClassifier:
             else:
                 raise ValueError("Invalid cluster_statistic. Choose from 'mean', 'median', 'min', 'max' or 'std'.")
             cluster_traces.append(cluster_trace)
-        if modifier_function_name:
-            self.__setattr__(f'cluster_{modifier_function_name}_{trace_statistic}_traces', np.array(cluster_traces))
-        else:
-            self.__setattr__(f'cluster_{trace_statistic}_traces', np.array(cluster_traces))
+        self.__setattr__(f'cluster_{modifier_function_name}{trace_statistic}_traces', np.array(cluster_traces))
         if verbose:
             print(f"Saved {len(cluster_traces)} cluster traces with {trace_statistic} statistic.")
         del cluster_traces
@@ -247,3 +252,38 @@ class UMAPClassifier:
             modifier_function_name = modifier_function.__name__
         data = modifier_function(data)
         self.save_cluster_trace(data, clusters, trace_statistic=trace_statistic, verbose=verbose, modifier_function_name=modifier_function_name)
+
+    def minimum_distance_prediction(self, data, metric="euclidean", max_distance=1.0, trace_statistic="mean", modifier_function_name="", verbose=True):
+        if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
+            raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_modified_cluster_trace' first.")
+        
+        distances = cdist(data,getattr(self,f'cluster_{modifier_function_name}{trace_statistic}_traces'), metric=metric)
+        predicted_cluster = self.cluster_indices[np.argmin(distances, axis=1)]
+        minimum_distances = np.min(distances, axis=1)
+        predicted_cluster[minimum_distances > max_distance] = -1  # Mark as noise if distance exceeds max_distance
+        return predicted_cluster, minimum_distances
+    
+    def ml_uncorrelated_normal_prediction(self, data, min_logl=-1, modifier_function_name="",
+                                          noise_limit=0.1, data_batch_size=1000, cluster_batch_size=100, verbose=True):
+        for trace_statistic in ["mean", "std"]:
+            if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
+                raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_modified_cluster_trace' first.")
+        bin_means = getattr(self, f'cluster_{modifier_function_name}mean_traces')
+        bin_stds = getattr(self, f'cluster_{modifier_function_name}std_traces')
+        max_logl, predicted_cluster = [], []
+        for j in range(0, len(data), data_batch_size):
+            logl = []
+            jmax = np.min((j+data_batch_size, len(data)))
+            data_batch = data[j:jmax]
+            for i in range(0, len(self.cluster_indices), cluster_batch_size):
+                imax = np.min((i+cluster_batch_size, len(self.cluster_indices)))
+                bin_means_batch, bin_stds_batch = bin_means[i:imax], bin_stds[i:imax]
+                logl.append(statistical_models.logl_uncorrelated_normal(data_batch, bin_means_batch, bin_stds_batch))
+            logl = np.array(np.concatenate(logl, axis=0))
+            predicted_cluster.append(self.cluster_indices[np.argmax(logl, axis=0)])
+            max_logl.append(np.max(logl, axis=0))
+
+        predicted_cluster = np.array(np.concatenate(predicted_cluster, axis=0))
+        max_logl = np.array(np.concatenate(max_logl, axis=0))
+        predicted_cluster[max_logl < min_logl] = -1  # Mark as noise if log-likelihood is below threshold
+        return predicted_cluster, max_logl
