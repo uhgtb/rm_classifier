@@ -4,6 +4,9 @@ from pathlib import Path
 script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 import prepare_data
+import umap.umap_ as umap
+import joblib
+
 
 #import standard libraries
 import numpy as np
@@ -130,13 +133,16 @@ class UMAPClassifier:
         """
         for key, value in kwargs.items():
             if key in self.data_preparation:
-                print(f"Overriding {key} in data_preparation dict with value {value} from kwargs.")
+                if verbose:
+                    print(f"Overriding {key} in data_preparation dict with value {value} from kwargs.")
                 self.data_preparation[key] = value
             elif key != "data_preparation":
-                print(f"Adding new key {key} with value {value} to the class instance.")
+                if verbose:
+                    print(f"Adding new key {key} with value {value} to the class instance.")
                 self.__setattr__(key, value)
         for key, value in data_preparation.items():
-            print(f"Overriding {key} with value {value} from data_preparation dict.")
+            if verbose:
+                print(f"Overriding {key} with value {value} from data_preparation dict.")
             self.data_preparation[key] = value
 
         if verbose:
@@ -146,4 +152,37 @@ class UMAPClassifier:
         prepared_data, self.data_preparation = prepare_data.normalize_data(self, prepared_data, verbose)
         prepared_data = prepare_data.pooling_data(self, prepared_data, verbose)
         return prepared_data
+    
+    def custom_prepare_data(self, data, custom_prepare_fcn = None, verbose=True, **kwargs):
+        if custom_prepare_fcn is None:
+            raise ValueError("custom_prepare_fcn must be provided.")
+        if verbose:
+            print(f"Preparing data with custom function: {custom_prepare_fcn.__name__}")
+        self.data_preparation["custom_prepare_fcn"] = custom_prepare_fcn
+        return custom_prepare_fcn(data, verbose=verbose, **kwargs)
+    
+    def embed(self, data, keep_model=True, save_model = False, verbose=True, **kwargs):
+        for key, value in kwargs.items():
+            if verbose:
+                print(f"Overriding {key} with value {value} from kwargs.")
+            self.__setattr__(key, value)
+        if verbose:
+            print(f"Embedding data with parameters: n_neighbors={self.n_neighbors}, min_dist={self.min_dist}, n_components={self.n_components}, metric={self.metric}")
+        
+        umap_model = umap.UMAP(n_neighbors=self.n_neighbors, 
+            min_dist=self.min_dist, 
+            n_components= self.n_components, 
+            metric = self.metric, 
+            verbose=0,
+            angular_rp_forest=True,
+            ).fit(data)
+        embedding = umap_model.transform(data)
+        if save_model:
+            if verbose:
+                print(f"Saving UMAP model to {save_model}")
+            with open(save_model, 'wb') as f:
+                joblib.dump(umap_model, f)
+        if keep_model:
+            self.umap_model = umap_model
+        return embedding
     
