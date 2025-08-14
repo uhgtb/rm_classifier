@@ -5,10 +5,13 @@ script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 import prepare_data
 import statistical_models
+import visualization
 import umap.umap_ as umap
 from sklearn.cluster import DBSCAN
+from sklearn.neighbors import NearestNeighbors
 from scipy.spatial.distance import cdist
 import joblib
+import copy
 import warnings
 
 
@@ -58,7 +61,6 @@ class UMAPClassifier:
         data_preparation : dict, optional
             Dictionary containing data preparation parameters, which are different from the default parameters.
             They include:
-            - suppress_zero: bool, whether to suppress zero values in the data.
             - spectrum_filter: str, optional, type of filter to apply to the spectrum.
             - denoiser_n: int, number of denoiser iterations.
             - denoiser_npeak: int, number of peaks for the denoiser.
@@ -221,7 +223,9 @@ class UMAPClassifier:
         else:
             return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
     
-    def save_cluster_trace(self, data, clusters, trace_statistic="mean", verbose=True, modifier_function_name=""):
+
+    ### Cluster trace methods
+    def save_cluster_trace(self, data, clusters, trace_statistic="mean", verbose=True, modifier_function_name="", q=0.1):
         if np.all(self._set_cluster_indices(clusters) != self.cluster_indices):
             warnings.warn("Provided clusters do not match the model's cluster indices. Setting them to the model's cluster indices.")
             self._set_cluster_indices(clusters)
@@ -239,20 +243,63 @@ class UMAPClassifier:
                 cluster_trace = np.max(data[clusters == cluster_idx], axis=0)
             elif trace_statistic == "min":
                 cluster_trace = np.min(data[clusters == cluster_idx], axis=0)
+            elif trace_statistic == "quantile":
+                try:
+                    cluster_trace = np.quantile(data[clusters == cluster_idx], q, axis=0)
+                except ValueError:
+                    raise ValueError("trace_statistic must start with 'quantile_' and followed by a float value.")
             else:
-                raise ValueError("Invalid cluster_statistic. Choose from 'mean', 'median', 'min', 'max' or 'std'.")
+                raise ValueError("Invalid cluster_statistic. Choose from 'mean', 'median', 'min', 'max', 'std' or 'quantile'.")
             cluster_traces.append(cluster_trace)
-        self.__setattr__(f'cluster_{modifier_function_name}{trace_statistic}_traces', np.array(cluster_traces))
+        if trace_statistic == "quantile":
+            if hasattr(self, f'cluster_{modifier_function_name}quantile_traces'):
+                getattr(self,f'cluster_{modifier_function_name}quantile_traces')[q] = np.array(cluster_traces)
+            else:
+                self.__setattr__(f'cluster_{modifier_function_name}quantile_traces', {q: np.array(cluster_traces)})
+        else:
+            self.__setattr__(f'cluster_{modifier_function_name}{trace_statistic}_traces', np.array(cluster_traces))
         if verbose:
             print(f"Saved {len(cluster_traces)} cluster traces with {trace_statistic} statistic.")
         del cluster_traces
+
+    def get_cluster_trace(self, cluster_idx, trace_statistic="mean", modifier_function_name="", q=0.5):
+        if trace_statistic == "quantile":
+            quantile_traces = getattr(self, f'cluster_{modifier_function_name}quantile_traces', {})
+            return quantile_traces.get(q, None)[self.cluster_indices == cluster_idx][0]
+        else:
+            return getattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces')[self.cluster_indices == cluster_idx][0]
     
     def save_modified_cluster_trace(self, data, clusters, modifier_function, modifier_function_name=None, trace_statistic="mean", verbose=True):
         if modifier_function_name is None:
             modifier_function_name = modifier_function.__name__
-        data = modifier_function(data)
+        data = modifier_function(data)       
         self.save_cluster_trace(data, clusters, trace_statistic=trace_statistic, verbose=verbose, modifier_function_name=modifier_function_name)
 
+    def save_cluster_cholesky_factors(self, data, clusters, eps=1e-8, verbose=True, modifier_function_name=""):
+        if np.all(self._set_cluster_indices(clusters) != self.cluster_indices):
+            warnings.warn("Provided clusters do not match the model's cluster indices. Setting them to the model's cluster indices.")
+            self._set_cluster_indices(clusters)
+        if len(clusters) != len(data):
+            raise ValueError("Length of cluster indices must match length of data.")
+        cluster_W_matrices, cluster_log_dets = [], []
+        for cluster_idx in self.cluster_indices:
+            cov_matrix = np.cov(data[clusters == cluster_idx], rowvar=False)
+            W, log_det = statistical_models.cholesky_factors(cov_matrix, eps=eps)
+            cluster_W_matrices.append(W)
+            cluster_log_dets.append(log_det)
+        self.__setattr__(f'cluster_{modifier_function_name}W_matrices_traces', np.array(cluster_W_matrices))
+        self.__setattr__(f'cluster_{modifier_function_name}log_dets_traces', np.array(cluster_log_dets))
+        if verbose:
+            print(f"Saved {len(cluster_W_matrices)} cluster Cholesky factors.")
+        del cluster_W_matrices, cluster_log_dets
+
+    def save_modified_cluster_cholesky_factors(self, data, clusters, modifier_function, modifier_function_name=None, eps=1e-8, verbose=True):
+        if modifier_function_name is None:
+            modifier_function_name = modifier_function.__name__
+        data = modifier_function(data)        
+        self.save_cluster_cholesky_factors(data, clusters, eps=eps, verbose=verbose, modifier_function_name=modifier_function_name)
+
+    ### Prediction methods
     def minimum_distance_prediction(self, data, metric="euclidean", max_distance=1.0, trace_statistic="mean", modifier_function_name="", verbose=True):
         if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
             raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_modified_cluster_trace' first.")
@@ -264,7 +311,7 @@ class UMAPClassifier:
         return predicted_cluster, minimum_distances
     
     def ml_uncorrelated_normal_prediction(self, data, min_logl=-1, modifier_function_name="",
-                                            data_batch_size=1000, cluster_batch_size=100, verbose=True):
+                                            data_batch_size=1000, cluster_batch_size=30, verbose=True):
         for trace_statistic in ["mean", "std"]:
             if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
                 raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_modified_cluster_trace' first.")
@@ -284,6 +331,106 @@ class UMAPClassifier:
             max_logl.append(np.max(logl, axis=0))
 
         predicted_cluster = np.array(np.concatenate(predicted_cluster, axis=0))
-        max_logl = np.array(np.concatenate(max_logl, axis=0))
+        max_logl = np.array(np.concatenate(max_logl, axis=0))/data.shape[1]  # Normalize log-likelihood by number of features
         predicted_cluster[max_logl < min_logl] = -1  # Mark as noise if log-likelihood is below threshold
         return predicted_cluster, max_logl
+    
+    def ml_correlated_normal_prediction(self, data, min_logl=-1, modifier_function_name="",
+                                            data_batch_size=1000, cluster_batch_size=30, verbose=True):
+        # make sure the cluster properties are available
+        for trace_statistic in ["mean", "W_matrices", "log_dets"]:
+            if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
+                raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
+
+        bin_means = getattr(self, f'cluster_{modifier_function_name}mean_traces')
+        W_matrices = getattr(self, f'cluster_{modifier_function_name}W_matrices_traces')
+        log_dets = getattr(self, f'cluster_{modifier_function_name}log_dets_traces')
+        max_logl, predicted_cluster = [], []
+
+        for j in range(0, len(data), data_batch_size):
+            logl = []
+            jmax = np.min((j+data_batch_size, len(data)))
+            data_batch = data[j:jmax]
+            for i in range(0, len(self.cluster_indices), cluster_batch_size):
+                imax = np.min((i+cluster_batch_size, len(self.cluster_indices)))
+                bin_means_batch, W_matrices_batch, log_dets_batch = bin_means[i:imax], W_matrices[i:imax], log_dets[i:imax]
+                logl.append(statistical_models.logl_normal(data_batch, bin_means_batch, W_matrices_batch, log_dets_batch))
+            logl = np.array(np.concatenate(logl, axis=0))
+            predicted_cluster.append(self.cluster_indices[np.argmax(logl, axis=0)])
+            max_logl.append(np.max(logl, axis=0))
+            
+        predicted_cluster = np.array(np.concatenate(predicted_cluster, axis=0))
+        max_logl = np.array(np.concatenate(max_logl, axis=0))/data.shape[1]  # Normalize log-likelihood by number of features
+        predicted_cluster[max_logl < min_logl] = -1  # Mark as noise if log-likelihood is below threshold
+        return predicted_cluster, max_logl
+    
+    def umap_transform_prediction(self, data, db_eps=None, modifier_function_name="", data_batch_size=20000, verbose=True):
+        if not hasattr(self, 'umap_model'):
+            raise ValueError("UMAP model not found. Please run 'embed' first.")
+        if not hasattr(self, 'db_model'):
+            raise ValueError("DBSCAN model not found. Please run 'classify' first.")
+        if verbose:
+            print(f"Transforming data with UMAP model and predicting clusters with DBSCAN (eps={db_eps})")
+
+        def _dbscan_predict(model, X):
+            """Predict clusters for new data points based on trained DBSCAN model.
+            """
+            
+            # For very large datasets, process in batches
+            nr_samples = X.shape[0]
+            y_new = np.ones(shape=nr_samples, dtype=int) * -1
+            
+            # Build nearest neighbors model on DBSCAN components for fast lookup
+            nbrs = NearestNeighbors(n_neighbors=1, algorithm='auto').fit(model.components_)
+            
+            # Process in batches to avoid memory issues
+            for start_idx in range(0, nr_samples, data_batch_size):
+                end_idx = min(start_idx + data_batch_size, nr_samples)
+                batch = np.array(X[start_idx:end_idx])
+                
+                # Find distance to closest component for each point in batch
+                distances, indices = nbrs.kneighbors(batch)
+                
+                # Get the corresponding cluster labels for points within eps
+                mask = distances.ravel() < model.eps
+                y_new[start_idx:end_idx][mask] = model.labels_[
+                    model.core_sample_indices_[indices.ravel()[mask]]]
+            return y_new
+        
+
+        n_samples = data.shape[0]
+        embedding = np.zeros(shape=n_samples, dtype=list)
+        n_batches = (len(data) + data_batch_size - 1) // data_batch_size
+        for batch_idx in range(n_batches):
+            start_idx = batch_idx * data_batch_size
+            end_idx = min((batch_idx + 1) * data_batch_size, len(data))
+            if verbose:
+                print(f"Processing batch {start_idx} to {start_idx + data_batch_size}")
+            batch = data[start_idx:end_idx]
+            embedding[start_idx:end_idx] = self.umap_model.transform(batch).tolist()
+        if verbose:
+            print("Creating DBSCAN model")
+        if db_eps:
+            dbscan_model = copy.deepcopy(self.db_model)
+            dbscan_model.eps = db_eps
+        else:
+            dbscan_model = self.db_model
+        predictions=_dbscan_predict(dbscan_model, np.vstack(embedding))
+
+        return predictions, np.vstack(embedding)
+    
+    def plot_spectra(self, k, plot_types="default", modifier_function_name="", sigma=2, q=None, save_fig=None):
+        if sigma:
+            for trace_statistic in ["mean", "std"]:
+                if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
+                    raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
+        if q:
+            for trace_statistic in ["quantile","median"]:
+                if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
+                    raise ValueError(f"Cluster traces with statistic '{trace_statistic}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
+                if not q in getattr(self, f'cluster_{modifier_function_name}quantile_traces'):
+                    raise ValueError(f"Cluster traces with quantile '{q}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
+                if not 1-q in getattr(self, f'cluster_{modifier_function_name}quantile_traces'):
+                    raise ValueError(f"Cluster traces with quantile '{1-q}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
+        visualization.plot_spectra(self, k, plot_types=plot_types, modifier_function_name=modifier_function_name, sigma=sigma, q=q, save_fig=save_fig)
+    

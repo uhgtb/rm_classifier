@@ -71,21 +71,21 @@ def cut_beacon_frequency_timeseries(signal, beacon_frequencies, freq_bins=None, 
         signal[start_idx:end_idx] = np.fft.irfft(signal_fft, axis=1)
     return signal
 
-def calculate_n_frequency_bins(input_data_type, len_input_data):
+def calculate_n_frequency_bins(input_data_type, len_input_data, suppress_dc=False): 
     if input_data_type == "fft":
-        n_fft, n_time = len_input_data, 2*(len_input_data - 1)
+        n_fft, n_time = len_input_data, 2*(len_input_data + int(suppress_dc) - 1)
     elif input_data_type == "time":
-        n_fft, n_time = len_input_data // 2 + 1, len_input_data
+        n_fft, n_time = len_input_data // 2 + 1 - int(suppress_dc), len_input_data
     elif input_data_type == "fft_phase":
         if len_input_data % 2 == 0:
             n_fft = len_input_data // 2
-            n_time = 2*(n_fft - 1)
+            n_time = 2*(n_fft - 1 + int(suppress_dc))
         else:
             raise ValueError("fft_phase data must have an even number of columns for conversion to FFT.")
     elif input_data_type == "fft_time":
-        if len_input_data % 3 == 1:
+        if (len_input_data + int(suppress_dc)) % 3 == 1:
             n_fft = (len_input_data + 2 ) // 3
-        elif len_input_data % 3 == 2:
+        elif (len_input_data + int(suppress_dc)) % 3 == 2:
             n_fft = (len_input_data + 1) // 3
         else:
             raise ValueError("fft_time data must have a shape, where n_fft_bins = n_time_bins // 2 +1")
