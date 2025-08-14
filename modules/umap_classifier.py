@@ -419,7 +419,7 @@ class UMAPClassifier:
 
         return predictions, np.vstack(embedding)
     
-    def plot_spectra(self, k, plot_types="default", modifier_function_name="", sigma=2, q=None, save_fig=None):
+    def plot_spectra(self, k, modifier_function_name="", sigma=2, q=None, **kwargs):
         if sigma:
             for trace_statistic in ["mean", "std"]:
                 if not hasattr(self, f'cluster_{modifier_function_name}{trace_statistic}_traces'):
@@ -432,5 +432,7 @@ class UMAPClassifier:
                     raise ValueError(f"Cluster traces with quantile '{q}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
                 if not 1-q in getattr(self, f'cluster_{modifier_function_name}quantile_traces'):
                     raise ValueError(f"Cluster traces with quantile '{1-q}' and modifier function '{modifier_function_name}' not found. Please run 'save_cluster_trace' or 'save_cluster_cholesky_factors' first.")
-        visualization.plot_spectra(self, k, plot_types=plot_types, modifier_function_name=modifier_function_name, sigma=sigma, q=q, save_fig=save_fig)
+        visualization.plot_spectra(self, k, modifier_function_name=modifier_function_name, sigma=sigma, q=q, **kwargs)
     
+    def plot_cluster_samples(self, prepared_data, clusters, k, **kwargs):
+        visualization.plot_cluster_samples(self, prepared_data, clusters, k, **kwargs)

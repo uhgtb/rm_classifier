@@ -128,3 +128,53 @@ def plot_spectra(umap_classifier, k,
     else:
         plt.show()
     return True
+
+def plot_cluster_samples(umap_classifier, data, clusters, k,         
+                 n=10, # number of samples
+                 alpha=0.05,
+                 plot_types="default",
+                 save_fig=None):
+
+    
+    data_type = umap_classifier.data_preparation.get("target_data_type", "time")
+    sampling_frequency = umap_classifier.data_preparation.get("sampling_frequency", 180)
+    suppress_dc = umap_classifier.data_preparation.get("suppress_dc", False)
+    n_fft, n_time = prepare_data.calculate_n_frequency_bins(data_type, data.shape[1], suppress_dc=suppress_dc)
+
+    plot_types=default_plot_types(data_type,plot_types)
+
+    # Get axes configurations
+    axes_configs = create_axes_configurations()
+    
+    # Prepare figure based on number of plot types
+    fig, axes = plt.subplots(1, len(plot_types), figsize=(6*len(plot_types), 4))
+    
+    # Ensure axes is always a list
+    if len(plot_types) == 1:
+        axes = [axes]
+    
+    mask = clusters == k
+    if sum(mask)<n:
+        n=sum(mask)
+
+    samples=np.random.choice(data[mask].shape[0], size=n, replace=False)
+    for i, plot_type in enumerate(plot_types):
+        config = axes_configs[plot_type]
+        start_idx, end_idx = plot_idx(plot_type, data_type, n_fft, n_time, suppress_dc)
+        # Get x-axis values based on the configuration
+        x = config['x_func'](n_time, n_fft, sampling_frequency, suppress_dc)
+        
+        # Plotting
+        ax = axes[i]
+        ax.set_xlabel(config['x_label'], fontsize=14)
+        ax.set_ylabel(config['y_label'], fontsize=14)
+        ax.set_yscale(config['y_scale'])
+
+        for j in samples:
+            ax.plot(x, data[mask][j][start_idx:end_idx],'k-',alpha=alpha)
+        plt.tight_layout()
+    if save_fig is not None:
+        plt.savefig(save_fig)
+        print(f"Saved figure to {save_fig}")
+    else:
+        plt.show()
