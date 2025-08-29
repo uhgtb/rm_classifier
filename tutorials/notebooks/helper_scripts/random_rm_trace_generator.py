@@ -151,7 +151,7 @@ def generate_fourier_time_traces(n_samples: int,
         selected_freqs = available_freqs[selected_indices]
     else:
         selected_freqs = available_freqs
-    
+    selected_freqs = np.sort(selected_freqs)
     # Generate base spectrum using sum of Gaussians
     n_gaussians = np.random.randint(4, max_gaussians + 1)
     base_spectrum = generate_gaussian_spectrum(

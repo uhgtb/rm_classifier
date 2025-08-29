@@ -17,7 +17,8 @@ def logl_uncorrelated_normal(X, means, variances):
     Returns: 
     - logl: (n_models, n_samples)    
     """
-    n_samples = X.shape[0]
+    n_samples = X.shape[1]
+    n_features = X.shape[1]
 
     
     X = X[None, :, :]               # shape (1, n_samples, n_features)
@@ -28,7 +29,7 @@ def logl_uncorrelated_normal(X, means, variances):
     quad_term = np.sum((X - means)**2 / variances, axis=2)  # (n_models, n_samples)
 
     logl = -0.5 * (quad_term + log_det + X.shape[2] * np.log(2 * np.pi))  # (n_models, n_samples)
-    return logl/n_samples
+    return logl/n_features
 
 def cholesky_factors(cov, eps=1e-8):
     """ Compute the Cholesky factors of covariance matrices, adding a small value to the diagonal if necessary.
@@ -72,6 +73,7 @@ def logl_normal(X, means, L_invs, log_dets):
 
     n_models, d = means.shape
     n_samples = X.shape[0]
+    n_features = X.shape[1]
     const = d * np.log(2 * np.pi)
     logl = np.empty((n_models, n_samples))
 
@@ -87,5 +89,5 @@ def logl_normal(X, means, L_invs, log_dets):
             mahal = np.sum(z ** 2)
             logl[i, j] = -0.5 * (mahal + log_det + const)
 
-    return logl/n_samples
+    return logl/n_features
 

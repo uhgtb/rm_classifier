@@ -6,23 +6,24 @@ from scipy import signal
 def find_bin(frequency, freq_bins):
     """
     Find the bin index of a given frequency in a list of frequency bins.
+    Args:
+        frequency (float): The frequency to find.
+        freq_bins (array-like): The array of frequency bins.
+    Returns:
+        int: The index of the bin closest to the given frequency.
     """
     return np.argmin(np.abs(freq_bins - frequency))
 
 def cut_beacon_frequency_spectra(spectra, beacon_frequencies, freq_bins=None, peak_width=3):
     """
     Cut the spectra around the beacon frequencies.
-    
-    Parameters:
-    -----------
-    spectra : numpy.ndarray
-        The spectra data
-    beacon_frequencies : list or array
-        Frequencies to cut out
-    freq_bins : numpy.ndarray, optional
-        Frequency bins used in the spectra
-    peak_width : int or list, optional
-        Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.
+    Args:           
+        spectra (numpy.ndarray): The spectral data
+        beacon_frequencies (list or array): Frequencies to cut out
+        freq_bins (numpy.ndarray, optional): Frequency bins used in the spectra
+        peak_width (int or list, optional): Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.
+    Returns:
+        numpy.ndarray: The spectra with the beacon frequencies cut out.
     """
     # Convert peak_width to a list if it's a single value
 
@@ -45,6 +46,13 @@ def cut_beacon_frequency_spectra(spectra, beacon_frequencies, freq_bins=None, pe
 def cut_beacon_frequency_timeseries(signal, beacon_frequencies, freq_bins=None, peak_width=3):
     """
     Cut the time series around the beacon frequencies using the hard cuts in the fft spectra.
+    Args:
+        signal (numpy.ndarray): The time series data
+        beacon_frequencies (list or array): Frequencies to cut out
+        freq_bins (numpy.ndarray, optional): Frequency bins used in the FFT of the time series
+        peak_width (int or list, optional): Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.
+    Returns:
+        numpy.ndarray: The time series with the beacon frequencies cut out.
     """	
     # process in chunks to avoid memory issues
     signal = signal.copy()  # Avoid modifying the original data
@@ -72,6 +80,15 @@ def cut_beacon_frequency_timeseries(signal, beacon_frequencies, freq_bins=None, 
     return signal
 
 def calculate_n_frequency_bins(input_data_type, len_input_data, suppress_dc=False): 
+    """
+    Calculate the number of frequency bins and time bins based on the input data type and length.
+    Args:
+        input_data_type (str): Type of the input data. Must be one of 'fft', 'time', 'fft_phase', or 'fft_time'.
+        len_input_data (int): Length of the input data (number of columns).
+        suppress_dc (bool): Whether the DC component is suppressed.
+    Returns:
+        tuple: (n_fft, n_time) where n_fft is the number of frequency bins and n_time is the number of time bins.
+    """
     if input_data_type == "fft":
         n_fft, n_time = len_input_data, 2*(len_input_data + int(suppress_dc) - 1)
     elif input_data_type == "time":
@@ -97,14 +114,15 @@ def calculate_n_frequency_bins(input_data_type, len_input_data, suppress_dc=Fals
 def denoiser(data,n_rolling_average=10, n_peak=3, n_fft=None):
     """
     Remove statistical noise from the data using a rolling average, without smoothing out peaks.
-    input:
-    - data: data to be denoised
-    - n_rolling_average: number of bins for the rolling average
-    - n_peak: number of bins for the peak, which are excluded from the rolling average calculation
-
-    return:
-    - denoised data
+    Args:
+        data (numpy.ndarray): The input data to be denoised.
+        n_rolling_average (int): Number of bins for the rolling average.
+        n_peak (int): Number of bins for the peak, which are excluded from the rolling average calculation.
+        n_fft (int, optional): Number of frequency bins. If None, it is set to the number of columns in data.
+    Returns:
+        numpy.ndarray: The denoised data.
     """
+
     if n_fft is None:
         n_fft = data.shape[1]
     def cut_function(x, cut1, cut2):
@@ -133,6 +151,20 @@ def denoiser(data,n_rolling_average=10, n_peak=3, n_fft=None):
     return data # return weighted denoised data
 
 def welch_abs_fft(input_time_trace, params):
+    """
+    Calculate the absolute FFT of the input time trace using either standard FFT or Welch's method.
+    Args:
+        input_time_trace (numpy.ndarray): The input time trace data.
+        params (dict): Dictionary containing parameters for the FFT calculation, including:
+            - "spectrum_filter": Method to use for FFT calculation. Must be either None or "welch".
+            - "sampling_frequency": Sampling frequency of the input time trace.
+            - "welch_nperseg": Length of each segment for Welch's method.
+            - "welch_window": Type of window to use for Welch's method.
+            - "welch_average": Method to use for averaging in Welch's method.
+            - "welch_noverlap": Number of overlapping points between segments for Welch's method.
+    Returns:
+        numpy.ndarray: The absolute FFT of the input time trace.
+    """
     if params["spectrum_filter"] != "welch":
         return np.abs(np.fft.rfft(input_time_trace, axis=1))
     else:
@@ -152,6 +184,17 @@ def welch_abs_fft(input_time_trace, params):
         return np.sqrt(psd)
     
 def prepare_data(umap_classifier, data, verbose = True):
+    """
+    Prepare the data according to the specifications in the umap_classifier object.
+    This includes cutting beacon frequencies, applying window functions, converting data types,
+    suppressing DC components, applying denoising and log filters.
+    Args:
+        umap_classifier (_umap_classifier_): An umap_classifier object containing data preparation specifications.
+        data (numpy.ndarray): The input data to be prepared.
+        verbose (bool): Whether to print progress messages.
+    Returns:
+        numpy.ndarray: The prepared data.
+    """
     input_data_type = umap_classifier.input_data_type
     target_data_type = umap_classifier.data_preparation.get("target_data_type", input_data_type)
     params = umap_classifier.data_preparation
@@ -198,7 +241,8 @@ def prepare_data(umap_classifier, data, verbose = True):
     # apply window functions to the time traces
     if params["windowing"]:
         if input_data_type == "time":
-            print(f"Applying {params['windowing']} windowing to the time traces.")
+            if verbose:
+                print(f"Applying {params['windowing']} windowing to the time traces.")
             data = data - np.mean(data, axis=1, keepdims=True)  # Remove DC component
             if params["windowing"] == "hamming":
                 window = np.hamming(data.shape[1])
@@ -294,6 +338,16 @@ def prepare_data(umap_classifier, data, verbose = True):
     return data
 
 def normalize_data(umap_classifier, data, verbose = True):
+    """
+    Normalize the data using the mean and standard deviation from the training data.
+    If the mean and std are not provided, they are calculated from the provided data.
+    Args:
+        umap_classifier (_umap_classifier_): An umap_classifier object containing normalization specifications.
+        data (numpy.ndarray): The input data to be normalized.
+        verbose (bool): Whether to print progress messages.
+    Returns:
+        tuple: (normalized_data, params) where normalized_data is the normalized data and params is the updated data preparation parameters.
+    """
     params = umap_classifier.data_preparation
     if params["normalization"]:
         if "rd_train_mean" not in params:
@@ -310,6 +364,14 @@ def normalize_data(umap_classifier, data, verbose = True):
     return data, params
 
 def pooling_data(umap_classifier, data, verbose = True):
+    """
+    Apply pooling to the data according to the specifications in the umap_classifier object.
+    Args:
+        umap_classifier (_umap_classifier_): An umap_classifier object containing pooling specifications.
+        data (numpy.ndarray): The input data to be pooled.
+        verbose (bool): Whether to print progress messages.
+    Returns:
+        numpy.ndarray: The pooled data."""  
     params = umap_classifier.data_preparation
     if not params["max_pooling"] and not params["avg_pooling"]:
         return data
