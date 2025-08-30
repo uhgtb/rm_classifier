@@ -11,7 +11,7 @@ from pathlib import Path
 script_dir = Path(__file__).parent
 sys.path.insert(0, str(script_dir))
 import prepare_data
-from src import statistical_models, visualization
+from src import statistical_models, visualization, umap_data_loader
 import umap.umap_ as umap
 from sklearn.cluster import DBSCAN, HDBSCAN
 from sklearn.neighbors import NearestNeighbors
@@ -799,3 +799,25 @@ class UMAPClassifier:
             **hover_kwargs: Additional keyword arguments to pass to the plotting function essentially arrays with the same length as embedding, which contain information about each point in the embedding, which is displayed when hovering over the points.
         """
         return visualization.plot_overview_bokeh(embedding, color_key=color_key, title=title, save_fig=save_fig, **hover_kwargs)
+    
+    def load_umap_data_batchwise_from_dir(self, dir_path, data_batch_loader_kwargs = {}, data_batch_loader = None,
+                            max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
+                            local_embedding = True,
+                            umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
+                            file_extension = ".pkl", verbose=True):
+        return umap_data_loader.load_umap_data_batchwise_from_dir(self, dir_path, data_batch_loader_kwargs = data_batch_loader_kwargs, data_batch_loader = data_batch_loader,
+                            max_umap_events = max_umap_events, batch_size = batch_size, n_selected_per_batch = n_selected_per_batch, summary_batch_size = summary_batch_size,
+                            local_embedding = local_embedding,
+                            umap_kwargs = umap_kwargs, clustering_kwargs = clustering_kwargs, clustering_mode = clustering_mode,
+                            file_extension = file_extension, verbose=verbose)
+
+    def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_loader_kwargs = {}, 
+                            max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
+                            local_embedding = True,
+                            umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
+                            file_extension = ".pkl", verbose=True):
+        return umap_data_loader.load_umap_data_from_dir(umap_classifier, dir_path, data_loader = data_loader, data_loader_kwargs = data_loader_kwargs,
+                            max_umap_events = max_umap_events, batch_size = batch_size, n_selected_per_batch = n_selected_per_batch, summary_batch_size = summary_batch_size,
+                            local_embedding = local_embedding,
+                            umap_kwargs = umap_kwargs, clustering_kwargs = clustering_kwargs, clustering_mode = clustering_mode,
+                            file_extension = file_extension, verbose=verbose)

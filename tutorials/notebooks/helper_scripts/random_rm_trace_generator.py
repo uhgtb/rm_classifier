@@ -239,10 +239,10 @@ def generate_random_rm_traces(n_samples: int,
         all_phases.extend(phase)
     
     # Convert to numpy arrays
-    all_clustered_spectra = np.array(all_clustered_spectra)
-    all_time_traces = np.array(all_time_traces)
+    all_clustered_spectra = np.array(all_clustered_spectra).astype(np.float32)
+    all_time_traces = np.array(all_time_traces).astype(np.float32)
     all_cluster_idx = np.array(all_cluster_idx)
-    all_phases = np.array(all_phases)
+    all_phases = np.array(all_phases).astype(np.float32)
     if type == "all":
         return all_time_traces, all_clustered_spectra, all_phases, all_cluster_idx, time_axis, selected_freqs
     elif type == "fft":
