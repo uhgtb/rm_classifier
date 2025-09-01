@@ -434,3 +434,24 @@ def plot_overview_bokeh(embedding, color_key=None, title="Bokeh PLot of Embedded
         save(plot_figure)
         #show(plot_figure)
         print(f"Saved bokeh plot at {save_fig}.")
+
+def plot_k_distance(sorted_data, cdf, k=50):
+    """Plots the k-distance graph for a given k value.
+
+    Args:
+        sorted_data (np.ndarray): Sorted distances to the k-th nearest neighbor.
+        cdf (np.ndarray): Cumulative distribution function values corresponding to sorted_data.
+        k (int): The k value used for nearest neighbors.
+
+    Returns:
+        fig, ax: Matplotlib figure and axes objects.
+    """
+    fig, ax = plt.subplots(figsize=(6, 4))
+    ax.plot(sorted_data, cdf, 'b', label=f'k={k}', linewidth=2)
+    ax.set_ylabel('CDF')
+    ax.set_xscale('log')
+    ax.set_xlabel('Distance to k-th Nearest Neighbor')
+    ax.tick_params(labelsize=12)
+    plt.legend()
+    plt.tight_layout()
+    return fig, ax
