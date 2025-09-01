@@ -1,1 +1,2 @@
 n_neighbors: 40
+dir: ../models/umap_classifier_1

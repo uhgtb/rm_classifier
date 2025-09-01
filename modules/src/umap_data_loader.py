@@ -26,17 +26,35 @@ from scipy.stats import entropy
 
 def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_loader_kwargs = {}, 
                             max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
-                            local_embedding = True,
+                            local_embedding = True, return_raw = False,
                             umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
                             file_extension = ".pkl", verbose=True):
-    
 
     if local_embedding:
         if "n_neighbors" not in umap_kwargs.keys():
-            umap_kwargs["n_neighbors"] = 10
-        if clustering_mode == "dbbscan":
+            umap_kwargs["n_neighbors"] = 5
+        if clustering_mode == "dbscan":
             if "eps" not in clustering_kwargs.keys():
-                clustering_kwargs["eps"] = 0.4
+                clustering_kwargs["eps"] = 0.1
+                clustering_kwargs["min_samples"] = 5
+        if clustering_mode == "hdbscan":
+            if "min_cluster_size" not in clustering_kwargs.keys():
+                clustering_kwargs["min_cluster_size"] = 5
+            if "min_samples" not in clustering_kwargs.keys():
+                clustering_kwargs["min_samples"] = 5
+    restore_original = {}
+    for key in umap_kwargs.keys():
+        if hasattr(umap_classifier, key):
+            restore_original[key] = getattr(umap_classifier, key)
+            setattr(umap_classifier, key, umap_kwargs[key])
+            if verbose:
+                print(f"Temporarily overriding {key} with value {umap_kwargs[key]} from umap_kwargs.")
+    for key in clustering_kwargs.keys():
+        if hasattr(umap_classifier, key):
+            restore_original[key] = getattr(umap_classifier, key)
+            setattr(umap_classifier, key, clustering_kwargs[key])
+            if verbose:
+                print(f"Temporarily overriding {key} with value {clustering_kwargs[key]} from clustering_kwargs.")
 
     memmap_flag = True
     def default_data_loader(file_path):
@@ -62,6 +80,7 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
             if verbose:
                 print(f"Loading data from {file_path}...")
             data, properties = data_loader(file_path, **data_loader_kwargs)
+            data_length = data.shape[1]
             n_batches = int(np.ceil(data.shape[0]/batch_size))
             for i in range(n_batches):
                 if verbose:
@@ -73,16 +92,18 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
                 prepared_data = umap_classifier.prepare_data(data_batch, verbose=verbose)
                 del data_batch
                 embeddings=umap_classifier.embed(prepared_data, **umap_kwargs, verbose=verbose)
+                if verbose:
+                    print("Embeddings shape:", embeddings.shape)
                 if clustering_mode == "dbscan":
                     db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
                 elif clustering_mode == "hdbscan":
                     db_clusters=umap_classifier.hdb_classify(embeddings, **clustering_kwargs, verbose=verbose)
                 else:
                     raise ValueError(f"Cluster mode {clustering_mode} not recognized. Use 'dbscan' or 'hdbscan'.")
-                batch_selected_mask = high_entropy_subset.high_entropy_subset_mask(db_clusters, min(n_selected_per_batch, i_max-i_min))
                 if verbose:
-                    print(f"Selected {sum(batch_selected_mask)} events, current total {current_length}/{summary_batch_size}.")
-
+                    print("DBSCAN clusters found:", set(db_clusters))
+                batch_selected_mask = high_entropy_subset.high_entropy_subset_mask(db_clusters, min(n_selected_per_batch, i_max-i_min))
+                
                 if memmap_flag:
                     os.makedirs(os.path.join(umap_classifier.dir, "umap_loaded_data"), exist_ok=True)
                     umap_classifier.umap_data_dir = os.path.join(umap_classifier.dir, "umap_loaded_data")
@@ -91,13 +112,21 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
                     if properties is not None:
                         current_properties = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_properties.dat"), dtype=object, mode='w+', shape=(summary_batch_size,properties.shape[1]))
                         selected_properties = np.memmap(os.path.join(umap_classifier.umap_data_dir, "selected_properties.dat"), dtype=object, mode='w+', shape=(max_umap_events,properties.shape[1]))
+                    if return_raw:
+                        current_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_raw_data.dat"), dtype=np.float32, mode='w+', shape=(summary_batch_size,data_length))
+                        selected_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "selected_raw_data.dat"), dtype=np.float32, mode='w+', shape=(max_umap_events,data_length))
                     memmap_flag = False
-
 
                 current_data[current_length:current_length + sum(batch_selected_mask)] = prepared_data[batch_selected_mask]
                 if properties is not None:
                     current_properties[current_length:current_length + sum(batch_selected_mask)] = properties_batch[batch_selected_mask]
+                if return_raw:
+                    current_raw_data[current_length:current_length + sum(batch_selected_mask)] = data[i_min:i_max][batch_selected_mask]
+                    print("saved raw data")
                 current_length += sum(batch_selected_mask)
+                if verbose:
+                    print(f"Selected {sum(batch_selected_mask)} events, current total {current_length}/{summary_batch_size}.")
+
                 del prepared_data
                 del embeddings
                 del db_clusters
@@ -149,12 +178,17 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
                     # Merge selections
                     if current_selected_length > 0:
                         selected_data[:n_selected] = selected_data[:current_selected_length][selected_mask]
+                        if return_raw:
+                            selected_raw_data[:n_selected] = selected_raw_data[:current_selected_length][selected_mask]
                         if properties is not None:
                             selected_properties[:n_selected] = selected_properties[:current_selected_length][selected_mask]
                     selected_data[n_selected:n_selected+n_batch] = current_data[:current_length][batch_mask]
+                    if return_raw:
+                        selected_raw_data[n_selected:n_selected+n_batch] = current_raw_data[:current_length][batch_mask]
                     if properties is not None:
                         selected_properties[n_selected:n_selected+n_batch] = current_properties[:current_length][batch_mask]
                     selected_data.flush()
+                    selected_raw_data.flush() if return_raw else None
                     current_selected_length = n_selected + n_batch
                     current_length = 0
                     current_data[:] = 0                        
@@ -207,15 +241,35 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
             selected_data[:n_selected] = selected_data[:current_selected_length][selected_mask]
             if properties is not None:
                 selected_properties[:n_selected] = selected_properties[:current_selected_length][selected_mask]
+            if return_raw:
+                selected_raw_data[:n_selected] = selected_raw_data[:current_selected_length][selected_mask]
         selected_data[n_selected:n_selected+n_batch] = current_data[:current_length][batch_mask]
         if properties is not None:
             selected_properties[n_selected:n_selected+n_batch] = current_properties[:current_length][batch_mask]
+        if return_raw:
+            selected_raw_data[n_selected:n_selected+n_batch] = current_raw_data[:current_length][batch_mask]
         selected_data.flush()
+        selected_raw_data.flush() if return_raw else None
         current_data_filepath = current_data.filename
         current_data._mmap.close()
-        os.unlink(current_data_filepath)                      
+        os.unlink(current_data_filepath)
+        if properties is not None:
+            current_properties_filepath = current_properties.filename
+            current_properties._mmap.close()
+            os.unlink(current_properties_filepath)
+        if return_raw:
+            current_raw_data_filepath = current_raw_data.filename
+            current_raw_data._mmap.close()
+            os.unlink(current_raw_data_filepath)
 
-    return selected_data[:current_selected_length], selected_properties[:current_selected_length] if properties is not None else None    
+    for key in restore_original.keys():
+        setattr(umap_classifier, key, restore_original[key])
+        if verbose:
+            print(f"Restored original {key} with value {restore_original[key]}.")                
+    if return_raw:
+        return selected_data[:current_selected_length], selected_raw_data[:current_selected_length], selected_properties[:current_selected_length] if properties is not None else None
+    else:
+        return selected_data[:current_selected_length], selected_properties[:current_selected_length] if properties is not None else None    
 
             
     
@@ -223,18 +277,35 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
 
 def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_loader_kwargs = {}, data_batch_loader = None,
                             max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
-                            local_embedding = True,
+                            local_embedding = True, return_raw = False,
                             umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
                             file_extension = ".pkl", verbose=True):
     
-
     if local_embedding:
         if "n_neighbors" not in umap_kwargs.keys():
-            umap_kwargs["n_neighbors"] = 10
-        if clustering_mode == "dbbscan":
+            umap_kwargs["n_neighbors"] = 5
+        if clustering_mode == "dbscan":
             if "eps" not in clustering_kwargs.keys():
-                clustering_kwargs["eps"] = 0.4
-
+                clustering_kwargs["eps"] = 0.1
+                clustering_kwargs["min_samples"] = 5
+        if clustering_mode == "hdbscan":
+            if "min_cluster_size" not in clustering_kwargs.keys():
+                clustering_kwargs["min_cluster_size"] = 5
+            if "min_samples" not in clustering_kwargs.keys():
+                clustering_kwargs["min_samples"] = 5
+    restore_original = {}
+    for key in umap_kwargs.keys():
+        if hasattr(umap_classifier, key):
+            restore_original[key] = getattr(umap_classifier, key)
+            setattr(umap_classifier, key, umap_kwargs[key])
+            if verbose:
+                print(f"Temporarily overriding {key} with value {umap_kwargs[key]} from umap_kwargs.")
+    for key in clustering_kwargs.keys():
+        if hasattr(umap_classifier, key):
+            restore_original[key] = getattr(umap_classifier, key)
+            setattr(umap_classifier, key, clustering_kwargs[key])
+            if verbose:
+                print(f"Temporarily overriding {key} with value {clustering_kwargs[key]} from clustering_kwargs.")
     memmap_flag = True
     max_umap_events = int(max_umap_events)
     if isinstance(batch_size, type(None)):
@@ -277,7 +348,8 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                     properties_batch = properties_batch[:batch_size]
                 
                 prepared_data = umap_classifier.prepare_data(data_batch, verbose=verbose)
-                del data_batch
+                if not return_raw:
+                    del data_batch
                 embeddings=umap_classifier.embed(prepared_data, **umap_kwargs, verbose=verbose)
                 if clustering_mode == "dbscan":
                     db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
@@ -286,9 +358,7 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                 else:
                     raise ValueError(f"Cluster mode {clustering_mode} not recognized. Use 'dbscan' or 'hdbscan'.")
                 batch_selected_mask = high_entropy_subset.high_entropy_subset_mask(db_clusters, min(n_selected_per_batch, len(db_clusters)))
-                if verbose:
-                    print(f"Selected {sum(batch_selected_mask)} events, current total {current_length}/{summary_batch_size}.")
-
+                
                 if memmap_flag:
                     os.makedirs(os.path.join(umap_classifier.dir, "umap_loaded_data"), exist_ok=True)
                     umap_classifier.umap_data_dir = os.path.join(umap_classifier.dir, "umap_loaded_data")
@@ -297,13 +367,21 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                     if properties_batch is not None:
                         selected_properties = np.memmap(os.path.join(umap_classifier.umap_data_dir, "selected_properties.dat"), dtype=object, mode='w+', shape=(max_umap_events,properties_batch.shape[1]))
                         current_properties = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_properties.dat"), dtype=object, mode='w+', shape=(summary_batch_size,properties_batch.shape[1]))
+                    if return_raw:
+                        current_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_raw_data.dat"), dtype=np.float32, mode='w+', shape=(summary_batch_size,data_batch.shape[1]))
+                        selected_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "selected_raw_data.dat"), dtype=np.float32, mode='w+', shape=(max_umap_events,data_batch.shape[1]))
                     memmap_flag = False
-
 
                 current_data[current_length:current_length + sum(batch_selected_mask)] = prepared_data[batch_selected_mask]
                 if properties_batch is not None:
                     current_properties[current_length:current_length + sum(batch_selected_mask)] = properties_batch[batch_selected_mask]
+                if return_raw:
+                    current_raw_data[current_length:current_length + sum(batch_selected_mask)] = data_batch[batch_selected_mask]
+                    del data_batch
                 current_length += sum(batch_selected_mask)
+                if verbose:
+                    print(f"Selected {sum(batch_selected_mask)} events, current total {current_length}/{summary_batch_size}.")
+
                 del prepared_data
                 del embeddings
                 del db_clusters
@@ -328,9 +406,9 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                     # Find clusters in current batch
                     embeddings=umap_classifier.embed(current_data[:current_length], **umap_kwargs, verbose=verbose)
                     if clustering_mode == "dbscan":
-                        db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
+                        batch_db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
                     elif clustering_mode == "hdbscan":
-                        db_clusters=umap_classifier.hdb_classify(embeddings, **clustering_kwargs, verbose=verbose)
+                        batch_db_clusters=umap_classifier.hdb_classify(embeddings, **clustering_kwargs, verbose=verbose)
                     else:
                         raise ValueError(f"Cluster mode {clustering_mode} not recognized. Use 'dbscan' or 'hdbscan'.")
                     del embeddings
@@ -357,7 +435,11 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                         selected_data[:n_selected] = selected_data[:current_selected_length][selected_mask]
                         if properties_batch is not None:
                             selected_properties[:n_selected] = selected_properties[:current_selected_length][selected_mask]
+                        if return_raw:
+                            selected_raw_data[:n_selected] = selected_raw_data[:current_selected_length][selected_mask]
                     selected_data[n_selected:n_selected+n_batch] = current_data[:current_length][batch_mask]
+                    if return_raw:
+                        selected_raw_data[n_selected:n_selected+n_batch] = current_raw_data[:current_length][batch_mask]
                     if properties_batch is not None:
                         selected_properties[n_selected:n_selected+n_batch] = current_properties[:current_length][batch_mask]
                     selected_data.flush()
@@ -384,9 +466,9 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
         # Find clusters in current batch
         embeddings=umap_classifier.embed(current_data[:current_length], **umap_kwargs, verbose=verbose)
         if clustering_mode == "dbscan":
-            db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
+            batch_db_clusters=umap_classifier.db_classify(embeddings, **clustering_kwargs, verbose=verbose)
         elif clustering_mode == "hdbscan":
-            db_clusters=umap_classifier.hdb_classify(embeddings, **clustering_kwargs, verbose=verbose)
+            batch_db_clusters=umap_classifier.hdb_classify(embeddings, **clustering_kwargs, verbose=verbose)
         else:
             raise ValueError(f"Cluster mode {clustering_mode} not recognized. Use 'dbscan' or 'hdbscan'.")
         del embeddings
@@ -413,12 +495,33 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
             selected_data[:n_selected] = selected_data[:current_selected_length][selected_mask]
             if properties_batch is not None:
                 selected_properties[:n_selected] = selected_properties[:current_selected_length][selected_mask]
+            if return_raw:
+                selected_raw_data[:n_selected] = selected_raw_data[:current_selected_length][selected_mask]
         selected_data[n_selected:n_selected+n_batch] = current_data[:current_length][batch_mask]
+        if return_raw:
+            selected_raw_data[n_selected:n_selected+n_batch] = current_raw_data[:current_length][batch_mask]
         if properties_batch is not None:
             selected_properties[n_selected:n_selected+n_batch] = current_properties[:current_length][batch_mask]
         selected_data.flush()
+        selected_raw_data.flush() if return_raw else None
         current_data_filepath = current_data.filename
         current_data._mmap.close()
-        os.unlink(current_data_filepath)  
+        os.unlink(current_data_filepath)
+        if return_raw:
+            current_raw_data_filepath = current_raw_data.filename
+            current_raw_data._mmap.close()
+            os.unlink(current_raw_data_filepath)
+        if properties_batch is not None:
+            current_properties_filepath = current_properties.filename
+            current_properties._mmap.close()
+            os.unlink(current_properties_filepath)
+
+    for key in restore_original.keys():
+        setattr(umap_classifier, key, restore_original[key])
+        if verbose:
+            print(f"Restored original {key} with value {restore_original[key]}.")  
     
-    return selected_data[:current_selected_length], selected_properties[:current_selected_length] if properties_batch is not None else None
+    if return_raw:
+        return selected_data[:current_selected_length], selected_raw_data[:current_selected_length], selected_properties[:current_selected_length] if properties_batch is not None else None
+    else:
+        return selected_data[:current_selected_length], selected_properties[:current_selected_length] if properties_batch is not None else None

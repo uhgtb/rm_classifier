@@ -245,7 +245,7 @@ class UMAPClassifier:
         return db_model.labels_
     
     def _hdbscan(self, data, keep_model=True, save_model = None, verbose=True, **hdb_kwargs):
-        hdb_model = HDBSCAN(min_samples=self.hdb_min_samples, **hdb_kwargs).fit(data)
+        hdb_model = HDBSCAN(**hdb_kwargs).fit(data)
         if save_model:
             if verbose:
                 print(f"Saving HDBSCAN model to {save_model}")
@@ -279,7 +279,7 @@ class UMAPClassifier:
         else:
             return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
         
-    def hdb_classify(self, data, keep_model=True, save_model = None, verbose=True, hdb_min_samples =5, **kwargs):
+    def hdb_classify(self, data, keep_model=True, save_model = None, verbose=True, hdb_kwargs={}, **kwargs):
         """
         Classify data using HDBSCAN clustering.
 
@@ -288,8 +288,7 @@ class UMAPClassifier:
             keep_model (bool, optional): Whether to save the trained HDBSCAN model as the class variable self.hdb_model. Defaults to True.
             save_model (str, optional): Path to save the trained HDBSCAN model using joblib. Defaults to None, which means the model is not saved to disk.
             verbose (bool, optional): Whether to print classification details. Defaults to True.
-            hdb_min_samples (int, optional): The number of samples in a neighborhood for a point to be considered as a core point in HDBSCAN. 
-                Defaults to 5.
+            hdb_kwargs (dict, optional): Additional keyword arguments to pass to the HDBSCAN constructor. Defaults to empty dict.
             **kwargs: Additional keyword arguments to override class attributes.
         Returns:
             np.ndarray: Cluster labels for each data point."""
@@ -297,7 +296,7 @@ class UMAPClassifier:
             if verbose:
                 print(f"Overriding {key} with value {value} from kwargs.")
             self.__setattr__(key, value)
-        self.hdb_min_samples = hdb_min_samples
+        self.hdb_kwargs = hdb_kwargs
         return self._hdbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
     
 
@@ -802,22 +801,22 @@ class UMAPClassifier:
     
     def load_umap_data_batchwise_from_dir(self, dir_path, data_batch_loader_kwargs = {}, data_batch_loader = None,
                             max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
-                            local_embedding = True,
+                            local_embedding = True, return_raw = False,
                             umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
                             file_extension = ".pkl", verbose=True):
         return umap_data_loader.load_umap_data_batchwise_from_dir(self, dir_path, data_batch_loader_kwargs = data_batch_loader_kwargs, data_batch_loader = data_batch_loader,
                             max_umap_events = max_umap_events, batch_size = batch_size, n_selected_per_batch = n_selected_per_batch, summary_batch_size = summary_batch_size,
-                            local_embedding = local_embedding,
+                            local_embedding = local_embedding, return_raw = return_raw,
                             umap_kwargs = umap_kwargs, clustering_kwargs = clustering_kwargs, clustering_mode = clustering_mode,
                             file_extension = file_extension, verbose=verbose)
 
     def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_loader_kwargs = {}, 
                             max_umap_events = 1e5, batch_size = None, n_selected_per_batch = None, summary_batch_size = None,
-                            local_embedding = True,
+                            local_embedding = True, return_raw = False,
                             umap_kwargs = {}, clustering_kwargs = {}, clustering_mode = "dbscan",
                             file_extension = ".pkl", verbose=True):
         return umap_data_loader.load_umap_data_from_dir(umap_classifier, dir_path, data_loader = data_loader, data_loader_kwargs = data_loader_kwargs,
                             max_umap_events = max_umap_events, batch_size = batch_size, n_selected_per_batch = n_selected_per_batch, summary_batch_size = summary_batch_size,
-                            local_embedding = local_embedding,
+                            local_embedding = local_embedding, return_raw = return_raw,
                             umap_kwargs = umap_kwargs, clustering_kwargs = clustering_kwargs, clustering_mode = clustering_mode,
                             file_extension = file_extension, verbose=verbose)
