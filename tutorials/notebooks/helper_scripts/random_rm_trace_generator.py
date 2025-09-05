@@ -1,8 +1,5 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy import signal
 from typing import Tuple, List, Optional
-import warnings
 
 def generate_gaussian_spectrum(freq_bins: np.ndarray, 
                              n_gaussians: int = None, 

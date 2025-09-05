@@ -1,0 +1,30 @@
+name: rm_classifier
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  # Core system and Python
+  - python>=3.10,<4.0
+  - pip
+  
+  # Only essential system-level packages via conda
+  - numpy>=1.24.0,<3.0.0      # Better BLAS/LAPACK integration
+  - scipy>=1.10.0,<2.0.0      # System-level optimization
+  - h5py>=3.8.0,<4.0.0        # Handles HDF5 C libraries
+  
+  # Everything else via pip (matches your requirements.txt exactly)
+  - pip:
+    - pandas>=2.0.0,<3.0.0
+    - scikit-learn>=1.3.0,<2.0.0
+    - tensorflow>=2.15.0,<3.0.0
+    - keras>=3.0.0,<4.0.0
+    - umap-learn>=0.5.0,<1.0.0
+    - numba>=0.61.0,<1.0.0
+    - matplotlib>=3.7.0,<4.0.0
+    - bokeh>=3.0.0,<4.0.0
+    - pyyaml>=6.0.0,<7.0.0
+    - joblib>=1.3.0,<2.0.0
+    - tqdm>=4.65.0,<5.0.0
+    - mkl-service>=2.4.1,<3.0.0
+    - Bottleneck>=1.3.7,<2.0.0
+    - memory_profiler>=0.58.0,<1.0.0
