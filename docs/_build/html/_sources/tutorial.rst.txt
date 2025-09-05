@@ -32,11 +32,9 @@ To run the tutorials locally:
    # Or for a stable version
    conda env create -f environment_stable.yml
    
-   # Install the package with tutorial dependencies
+   # Possibly install the package with tutorial dependencies
    pip install -e .[tutorials]
-   
-   # Start Jupyter
-   cd tutorials/notebooks
-   jupyter lab
+
+Then run the jupyter notebooks in the ``tutorials/notebooks`` directory.
 
 
