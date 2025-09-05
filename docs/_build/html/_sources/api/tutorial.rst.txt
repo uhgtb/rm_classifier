@@ -1,0 +1,35 @@
+Tutorials
+=========
+
+We provide comprehensive Jupyter notebook tutorials to help you get started.
+
+Available Tutorials
+-------------------
+
+All tutorials are available in the ``tutorials/notebooks`` directory of the GitHub repository.
+
+Getting Started
+~~~~~~~~~~~~~~~
+
+* **01_umap_classifier.ipynb** - Basic usage of the UMAP classifier
+* **02_parametric_umap_classifier.ipynb** - Usage of the Parametric UMAP classifier  
+* **03_yumap_classifier.ipynb** - Usage of the y-shaped UMAP classifier
+* **04_large_data_umap_classifier.ipynb** - Example of handling large datasets with UMAP classifier
+
+Running the Tutorials
+----------------------
+
+To run the tutorials locally:
+
+.. code-block:: bash
+
+   # Clone the repository
+   git clone https://github.com/uhgtb/rm_classifier.git
+   cd rm_classifier
+   
+   # Install the package with tutorial dependencies
+   pip install -e .[tutorials]
+   
+   # Start Jupyter
+   cd tutorials/notebooks
+   jupyter lab

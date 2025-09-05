@@ -1,0 +1,282 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.yumap_classifier module &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Tutorials" href="../tutorial.html" />
+    <link rel="prev" title="rm_classifier.umap_classifier module" href="rm_classifier.umap_classifier.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rm_classifier.html">rm_classifier package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="rm_classifier.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html">rm_classifier.parametric_umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.performance_metrics.html">rm_classifier.performance_metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.prepare_data.html">rm_classifier.prepare_data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html">rm_classifier.umap_classifier module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">rm_classifier.yumap_classifier module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#y-shaped-parametric-umap-classifier">Y-Shaped Parametric UMAP Classifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.yumap_classifier.yUMAPClassifier"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rm_classifier.html">rm_classifier package</a></li>
+      <li class="breadcrumb-item active">rm_classifier.yumap_classifier module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/rm_classifier.yumap_classifier.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rm_classifier.yumap_classifier">
+<span id="rm-classifier-yumap-classifier-module"></span><h1>rm_classifier.yumap_classifier module<a class="headerlink" href="#module-rm_classifier.yumap_classifier" title="Link to this heading"></a></h1>
+<section id="y-shaped-parametric-umap-classifier">
+<h2>Y-Shaped Parametric UMAP Classifier<a class="headerlink" href="#y-shaped-parametric-umap-classifier" title="Link to this heading"></a></h2>
+<p>Author: Johann Luca Kastner
+Date: 15/09/2025
+License: MIT</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rm_classifier.yumap_classifier.</span></span><span class="sig-name descname"><span class="pre">yUMAPClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.929</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7915</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification_loss_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricUMAPClassifier</span></code></p>
+<p>y-shaped Parametric UMAP Classifier with integrated clustering and outlier detection.
+This class extends the ParametricUMAPClassifier to include a classification head for semi-supervised learning.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">classifier_head</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.929</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.7915</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_sample_rate</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_classes</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classification_loss_weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the Parametric UMAP Classifier with the given parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>classifier_head</strong> (<em>keras.Model</em>) – The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.</p></li>
+<li><p><strong>umap_loss_a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The ‘a’ parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.</p></li>
+<li><p><strong>umap_loss_b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The ‘b’ parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.</p></li>
+<li><p><strong>negative_sample_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.</p></li>
+<li><p><strong>n_classes</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).</p></li>
+<li><p><strong>classification_loss_weight</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The weight of the classification loss in the total loss function. Defaults to 1.0.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to be passed to the ParametricUMAPClassifier.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.train_embed">
+<span class="sig-name descname"><span class="pre">train_embed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_labels</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val_train_split</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_training_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">yumap_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.train_embed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.train_embed" title="Link to this definition"></a></dt>
+<dd><p>Train the yUMAP model and embed the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be embedded.</p></li>
+<li><p><strong>class_labels</strong> (<em>np.ndarray</em>) – The class labels for semi-supervised learning. Use -1 for unlabeled data.</p></li>
+<li><p><strong>keep_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to keep the trained model in the instance. Defaults to True.</p></li>
+<li><p><strong>save_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>None</em>) – If provided, the path to save the trained model. Defauls to None.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Defaults to True.</p></li>
+<li><p><strong>val_train_split</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The fraction of data to use for validation during training. Defaults to 0.2.</p></li>
+<li><p><strong>n_training_epochs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><em>None</em>) – If provided, overrides the number of training epochs. Defaults to None.</p></li>
+<li><p><strong>yumap_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to be passed to the yUMAP model. Defaults to {}.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to override instance attributes.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.prepare_yumap_transform_prediction">
+<span class="sig-name descname"><span class="pre">prepare_yumap_transform_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.prepare_yumap_transform_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.prepare_yumap_transform_prediction" title="Link to this definition"></a></dt>
+<dd><p>Prepare for transforming new data and predicting clusters.
+This method computes the median reconstruction loss and classification likelihood for each cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be transformed and predicted.</p></li>
+<li><p><strong>cluster_labels</strong> (<em>np.ndarray</em><em> or </em><em>None</em>) – If provided, the cluster labels for the input data. If None, the method will predict clusters using the current classification model.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size to use for processing the data. Defaults to 20000.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.yumap_transform_prediction">
+<span class="sig-name descname"><span class="pre">yumap_transform_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rec_loss_noise_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rec_loss_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rec_loss_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_loss_noise_detection</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_loss_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class_loss_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.yumap_transform_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.yumap_transform_prediction" title="Link to this definition"></a></dt>
+<dd><p>Transform new data and predict clusters with outlier detection.
+This method transforms new data using the trained yUMAP model and predicts clusters with the included classifier head.
+It also includes options for outlier detection based on reconstruction loss and classification likelihood.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be transformed and predicted.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size to use for processing the data. Defaults to 20000.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Defaults to True.</p></li>
+<li><p><strong>rec_loss_noise_detection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use reconstruction loss for outlier detection. Defaults to False.</p></li>
+<li><p><strong>rec_loss_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The multiplier for the median reconstruction loss of the predicted cluster to determine outliers. Outliers are defined as having a reconstruction loss greater than rec_loss_alpha times the median reconstruction loss of the predicted cluster. Defaults to 100.</p></li>
+<li><p><strong>rec_loss_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The absolute reconstruction loss threshold to determine outliers. Outliers are defined as having a reconstruction loss greater than this threshold. Defaults to 1e6.</p></li>
+<li><p><strong>class_loss_noise_detection</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use classification likelihood for outlier detection. Defaults to False.</p></li>
+<li><p><strong>class_loss_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The multiplier for the median classification likelihood of the predicted cluster to determine outliers. Outliers are defined as having a classification likelihood less than class_loss_alpha times the median classification likelihood of the predicted cluster. Defaults to 0.</p></li>
+<li><p><strong>class_loss_threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The absolute classification likelihood threshold to determine outliers. Outliers are defined as having a classification likelihood less than this threshold. Defaults to 0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The predicted cluster labels for the input data. Outliers are labeled as -1.
+embedding (np.ndarray): The low-dimensional embedding of the input data.
+rec_loss (np.ndarray or None): The reconstruction loss for each input data point. Returns None if rec_loss_noise_detection is False.
+likelihoods (np.ndarray or None): The classification likelihood for each input data point. Returns None if class_loss_noise_detection is False.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>predicted_cluster (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.classify">
+<span class="sig-name descname"><span class="pre">classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.classify" title="Link to this definition"></a></dt>
+<dd><p>Classify new data using the trained yUMAP model.
+This method transforms new data using the trained yUMAP model and predicts clusters with the included classifier head.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size to use for processing the data. Defaults to 20000.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to be passed to the yUMAP model’s transform method.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The low-dimensional embedding of the input data.
+likelihoods (np.ndarray): The classification likelihood for each input data point.
+predicted_cluster (np.ndarray): The predicted cluster labels for the input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>embedding (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.yumap_classifier.yUMAPClassifier.reconstruct">
+<span class="sig-name descname"><span class="pre">reconstruct</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/yumap_classifier.html#yUMAPClassifier.reconstruct"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.yumap_classifier.yUMAPClassifier.reconstruct" title="Link to this definition"></a></dt>
+<dd><p>Reconstruct input data using the trained yUMAP model.
+This method reconstructs input data using the decoder of the trained yUMAP model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be reconstructed.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The batch size to use for processing the data. Defaults to 20000.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The reconstructed input data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>reconstructions (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rm_classifier.umap_classifier.html" class="btn btn-neutral float-left" title="rm_classifier.umap_classifier module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="../tutorial.html" class="btn btn-neutral float-right" title="Tutorials" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

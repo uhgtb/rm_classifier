@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.performance_metrics &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.performance_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.performance_metrics</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Collection of Performance Metrics for Classification and Clustering</span>
+<span class="sd">===================================================================</span>
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir</span><span class="p">))</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">adjusted_mutual_info_score</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.metrics</span><span class="w"> </span><span class="kn">import</span> <span class="n">normalized_mutual_info_score</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rm_classifier.helpers.cluster_performance_metrics</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">cpm</span>
+
+
+<div class="viewcode-block" id="confusion_matrix">
+<a class="viewcode-back" href="../../api/rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.confusion_matrix">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">confusion_matrix</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">,</span> <span class="n">colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;predicted&quot;</span><span class="p">],</span> <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a confusion matrix from true and predicted values.</span>
+<span class="sd">    If categories is None, it will be inferred from the unique values in true_val and pred_val.</span>
+<span class="sd">    The confusion matrix will be a pandas DataFrame with the specified row and column names.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        true_val (array-like): True labels.</span>
+<span class="sd">        pred_val (array-like): Predicted labels.</span>
+<span class="sd">        colnames (list): Column names for the confusion matrix.</span>
+<span class="sd">        rownames (list): Row names for the confusion matrix.</span>
+<span class="sd">        categories (list): List of categories to include in the confusion matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: Confusion matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">true_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">true_val</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="n">pred_val</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_val</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">categories</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">categories</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">)))</span>
+    <span class="n">true_val</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span> <span class="c1"># to make the matrix quadratic</span>
+    <span class="n">pred_val</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="n">pred_val</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span> <span class="c1"># to make the matrix quadratic</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">,</span> <span class="n">colnames</span><span class="o">=</span><span class="n">colnames</span><span class="p">,</span> <span class="n">rownames</span><span class="o">=</span><span class="n">rownames</span><span class="p">,</span> <span class="n">dropna</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="confusion_matrix_from_dominant_cluster_label">
+<a class="viewcode-back" href="../../api/rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.confusion_matrix_from_dominant_cluster_label">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">confusion_matrix_from_dominant_cluster_label</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">cluster_labels</span><span class="p">,</span> <span class="n">colnames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;predicted&quot;</span><span class="p">],</span> <span class="n">rownames</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;true&quot;</span><span class="p">],</span> <span class="n">categories</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create a confusion matrix from true and predicted values.</span>
+<span class="sd">    The predicted values are inferred from the dominant cluster label for each true label.</span>
+<span class="sd">    It can be especially used, if true labels are malfunction types and predicted values are cluster labels and each identified cluster is assigned to the malfunction type, which is most frequent in this cluster.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        true_val (array-like): True labels.</span>
+<span class="sd">        cluster_labels (array-like): Cluster labels.</span>
+<span class="sd">        colnames (list): Column names for the confusion matrix.</span>
+<span class="sd">        rownames (list): Row names for the confusion matrix.</span>
+<span class="sd">        categories (list): List of categories to include in the confusion matrix.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: Confusion matrix.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">contingency_table</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">crosstab</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">cluster_labels</span><span class="p">,</span> <span class="n">colnames</span><span class="o">=</span><span class="n">colnames</span><span class="p">,</span> <span class="n">rownames</span><span class="o">=</span><span class="n">rownames</span><span class="p">)</span>
+
+    <span class="n">main_true</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">pred_val</span><span class="p">,</span> <span class="n">true_val</span><span class="o">=</span><span class="p">[],[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+            <span class="n">pred_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">main_true</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">val</span><span class="p">))</span>
+            <span class="n">true_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">contingency_table</span><span class="p">,</span> <span class="n">confusion_matrix</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">,</span> <span class="n">colnames</span><span class="o">=</span><span class="n">colnames</span><span class="p">,</span> <span class="n">rownames</span><span class="o">=</span><span class="n">rownames</span><span class="p">,</span> <span class="n">categories</span><span class="o">=</span><span class="n">categories</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="prediction_performance">
+<a class="viewcode-back" href="../../api/rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.prediction_performance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prediction_performance</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,</span> <span class="n">contingency_table</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">times</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">noise_label</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">normal_label</span><span class="o">=</span><span class="s2">&quot;normal&quot;</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate main performance metrics from a confusion matrix and optionally a contingency_table.</span>
+<span class="sd">    The confusion matrix should have true labels as rows and predicted labels as columns.</span>
+<span class="sd">    If contingency_table is provided, it should be a confusion matrix with true labels as rows and cluster labels as columns.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        confusion_matrix (pd.DataFrame): Confusion matrix with true labels as rows and predicted labels as columns.</span>
+<span class="sd">        contingency_table (pd.DataFrame): Contingency table with true labels as rows and cluster labels as columns.</span>
+<span class="sd">        times (array-like): CPU and wall time for the prediction, if it shall be included in the performance summary.</span>
+<span class="sd">        noise_label (str or int): Label used for noise points.</span>
+<span class="sd">        normal_label (str or int): Label used for normal points.</span>
+<span class="sd">        verbose (bool): If True, print warnings for missing labels.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        performance_params_summary (dict): Summary of performance metrics.</span>
+<span class="sd">        detailed_performance (pd.DataFrame): Detailed performance metrics for each true label.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;normal&quot;</span><span class="p">:</span> <span class="n">normal_label</span><span class="p">,</span> <span class="s2">&quot;noise&quot;</span><span class="p">:</span> <span class="n">noise_label</span><span class="p">}</span>
+    <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">noise_label</span><span class="p">)</span><span class="o">==</span><span class="nb">str</span><span class="p">(</span><span class="n">normal_label</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Noise label and normal label cannot be the same&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;noise&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="ow">and</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in confusion matrix, trying to replace it with </span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]),</span> <span class="n">label</span><span class="p">)</span> <span class="c1"># replace cluster labels with noise or normal</span>
+            <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]),</span> <span class="n">label</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">label</span> <span class="o">!=</span> <span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label found in confusion matrix, but it is not the same as </span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">, keeping label </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in confusion matrix, adding it with 0 counts&quot;</span><span class="p">)</span>
+            <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">label</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in confusion matrix, adding it with 0 counts&quot;</span><span class="p">)</span>
+            <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="ow">and</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in contingency_table, trying to replace it with </span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+                <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]),</span> <span class="n">label</span><span class="p">)</span> <span class="c1"># replace cluster labels with noise or normal</span>
+                <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]),</span> <span class="n">label</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">label</span> <span class="o">!=</span> <span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label found in contingency_table, but it is not the same as </span><span class="si">{</span><span class="n">labels</span><span class="p">[</span><span class="n">label</span><span class="p">]</span><span class="si">}</span><span class="s2">, keeping label </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in contingency_table, adding it with 0 counts&quot;</span><span class="p">)</span>
+                <span class="n">contingency_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">label</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">if</span> <span class="n">label</span> <span class="ow">not</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: </span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2"> label not found in contingency_table, adding it with 0 counts&quot;</span><span class="p">)</span>
+                <span class="n">contingency_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span> <span class="n">label</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+                
+    <span class="n">confusion_matrix</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+   
+    
+    <span class="n">performance_params</span><span class="o">=</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_malfunction_pred_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s2">&quot;noise&quot;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span> <span class="c1"># fraction of the true malfunction that are predicted as noise</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_noise_pred_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">diag</span><span class="p">(</span><span class="n">cm</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">cm</span><span class="p">[</span><span class="n">key</span><span class="p">][</span><span class="n">key</span><span class="p">]</span> <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">cm</span><span class="o">.</span><span class="n">index</span><span class="p">])</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">diag</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;fake_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;normal&quot;</span><span class="p">,:]</span><span class="o">/</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">][</span><span class="s2">&quot;normal&quot;</span><span class="p">]</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span> <span class="c1"># fraction of true normals, which are predicted as malfunction</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;escape_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[:,</span><span class="s2">&quot;normal&quot;</span><span class="p">]</span><span class="o">/</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-12</span><span class="p">)</span> <span class="c1"># fraction of the true malfunction that are predicted as normal</span>
+    <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;f1_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">]</span> <span class="o">*</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">])</span> <span class="o">/</span> <span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-12</span><span class="p">)</span>
+    <span class="n">detailed_performance</span><span class="o">=</span><span class="n">performance_params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    
+    <span class="n">performance_params_summary</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">performance_params_summary</span><span class="p">,</span> <span class="n">sp</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;ri_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">])</span>
+    <span class="n">expected_ri</span><span class="o">=</span><span class="p">(</span><span class="nb">sum</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">])</span> <span class="o">*</span> <span class="nb">sum</span><span class="p">([</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">k</span><span class="p">),</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">]))</span><span class="o">/</span><span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()),</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;ari_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;ri_score&quot;</span><span class="p">]</span> <span class="o">-</span>  <span class="n">expected_ri</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">expected_ri</span><span class="p">)</span>
+
+    <span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="o">=</span><span class="p">[],[]</span>
+    <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">val</span> <span class="o">=</span> <span class="n">confusion_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+            <span class="n">true_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+            <span class="n">pred_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+    <span class="n">nmi</span> <span class="o">=</span> <span class="n">normalized_mutual_info_score</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">)</span>
+    <span class="n">ami</span> <span class="o">=</span> <span class="n">adjusted_mutual_info_score</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">)</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;nmi&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">nmi</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;ami&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ami</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="o">=</span><span class="p">[],[]</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;n_clusters&quot;</span><span class="p">]</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">val</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">loc</span><span class="p">[(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)]</span>
+                <span class="n">true_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">j</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+                <span class="n">pred_val</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">val</span><span class="p">))</span>
+        <span class="n">nmi</span> <span class="o">=</span> <span class="n">normalized_mutual_info_score</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">)</span>
+        <span class="n">ami</span> <span class="o">=</span> <span class="n">adjusted_mutual_info_score</span><span class="p">(</span><span class="n">true_val</span><span class="p">,</span> <span class="n">pred_val</span><span class="p">)</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;cluster_nmi&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">nmi</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;cluster_ami&quot;</span><span class="p">]</span><span class="o">=</span><span class="n">ami</span>
+        <span class="n">contingency_table_performance</span> <span class="o">=</span> <span class="n">cpm</span><span class="o">.</span><span class="n">cluster_performance_metrics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">contingency_table_performance</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+            <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;cluster_&quot;</span><span class="o">+</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table_performance</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="k">del</span> <span class="n">contingency_table_performance</span>
+
+    <span class="n">performance_params</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;noise&quot;</span><span class="p">,</span> <span class="s2">&quot;normal&quot;</span><span class="p">],</span><span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;n_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">detailed_performance</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="s2">&quot;noise&quot;</span><span class="p">]</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_efficiency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_true_malfunction_pred_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_malfunction_pred_noise&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_true_noise_pred_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_noise_pred_malfunction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_fake_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;fake_rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_escape_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;escape_rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;mean_f1_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;f1_score&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_efficiency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;efficiency&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_true_malfunction_pred_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_malfunction_pred_noise&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_true_noise_pred_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;true_noise_pred_malfunction&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_fake_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;fake_rate&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_escape_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;escape_rate&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_pred&quot;</span><span class="p">])</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_f1_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;f1_score&quot;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="n">performance_params</span><span class="p">[</span><span class="s2">&quot;n_true&quot;</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_efficiency&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_true_malfunction_pred_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_true_noise_pred_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_fake_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_escape_rate&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;expected_f1_score&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">times</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;wall_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">performance_params_summary</span><span class="p">[</span><span class="s2">&quot;cpu_time&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">performance_params_summary</span><span class="p">,</span> <span class="n">detailed_performance</span>    </div>
+
+<span class="c1"># predict with umap.fit and db_scan.predict</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

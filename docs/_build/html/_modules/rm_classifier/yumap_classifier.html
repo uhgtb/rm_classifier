@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.yumap_classifier &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.yumap_classifier</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.yumap_classifier</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Y-Shaped Parametric UMAP Classifier</span>
+<span class="sd">===================================</span>
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir</span><span class="p">))</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">parametric_umap_classifier</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">helpers.yumap</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">yumap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">copy</span>
+
+<div class="viewcode-block" id="yUMAPClassifier">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">yUMAPClassifier</span><span class="p">(</span><span class="n">parametric_umap_classifier</span><span class="o">.</span><span class="n">ParametricUMAPClassifier</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; y-shaped Parametric UMAP Classifier with integrated clustering and outlier detection.</span>
+<span class="sd">    This class extends the ParametricUMAPClassifier to include a classification head for semi-supervised learning.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="yUMAPClassifier.__init__">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">classifier_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">umap_loss_a</span><span class="o">=</span><span class="mf">1.929</span><span class="p">,</span> <span class="c1"># common parameters for min_dist=0</span>
+                 <span class="n">umap_loss_b</span><span class="o">=</span><span class="mf">0.7915</span><span class="p">,</span> <span class="c1"># common parameters for min_dist=0</span>
+                 <span class="n">negative_sample_rate</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">n_classes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Initialize the Parametric UMAP Classifier with the given parameters.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            classifier_head (keras.Model): The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.</span>
+<span class="sd">            umap_loss_a (float): The &#39;a&#39; parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.</span>
+<span class="sd">            umap_loss_b (float): The &#39;b&#39; parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.</span>
+<span class="sd">            negative_sample_rate (int): The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.</span>
+<span class="sd">            n_classes (int): The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).</span>
+<span class="sd">            classification_loss_weight (float): The weight of the classification loss in the total loss function. Defaults to 1.0.</span>
+<span class="sd">            **kwargs: Additional keyword arguments to be passed to the ParametricUMAPClassifier.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="n">classifier_head</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_a</span> <span class="o">=</span> <span class="n">umap_loss_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_b</span> <span class="o">=</span> <span class="n">umap_loss_b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">negative_sample_rate</span> <span class="o">=</span> <span class="n">negative_sample_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="n">n_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span> <span class="o">=</span> <span class="n">classification_loss_weight</span></div>
+
+
+<div class="viewcode-block" id="yUMAPClassifier.train_embed">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.train_embed">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">train_embed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+              <span class="n">class_labels</span><span class="p">,</span> 
+              <span class="n">keep_model</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> 
+              <span class="n">save_model</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> 
+              <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+              <span class="n">val_train_split</span> <span class="o">=</span> <span class="mf">0.2</span><span class="p">,</span>
+              <span class="n">n_training_epochs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+              <span class="n">yumap_kwargs</span> <span class="o">=</span> <span class="p">{},</span>
+              <span class="o">**</span><span class="n">kwargs</span>
+              <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Train the yUMAP model and embed the data.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (np.ndarray): The input data to be embedded.</span>
+<span class="sd">            class_labels (np.ndarray): The class labels for semi-supervised learning. Use -1 for unlabeled data.</span>
+<span class="sd">            keep_model (bool): Whether to keep the trained model in the instance. Defaults to True.</span>
+<span class="sd">            save_model (str or None): If provided, the path to save the trained model. Defauls to None.</span>
+<span class="sd">            verbose (bool): Whether to print progress messages. Defaults to True.</span>
+<span class="sd">            val_train_split (float): The fraction of data to use for validation during training. Defaults to 0.2.</span>
+<span class="sd">            n_training_epochs (int or None): If provided, overrides the number of training epochs. Defaults to None.</span>
+<span class="sd">            yumap_kwargs (dict): Additional keyword arguments to be passed to the yUMAP model. Defaults to {}.</span>
+<span class="sd">            **kwargs: Additional keyword arguments to override instance attributes.&quot;&quot;&quot;</span>
+        <span class="n">all_kwargs</span> <span class="o">=</span> <span class="p">{</span><span class="o">**</span><span class="n">kwargs</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="n">k</span><span class="p">:</span> <span class="n">v</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">yumap_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">()</span> <span class="k">if</span> <span class="n">k</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">kwargs</span><span class="p">}}</span>
+        <span class="n">new_all_kwargs</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">deepcopy</span><span class="p">(</span><span class="n">all_kwargs</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">new_all_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Overriding </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> with value </span><span class="si">{</span><span class="n">value</span><span class="si">}</span><span class="s2"> from kwargs.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="fm">__setattr__</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">key</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;n_neighbors&#39;</span><span class="p">,</span> <span class="s1">&#39;min_dist&#39;</span><span class="p">,</span> <span class="s1">&#39;n_components&#39;</span><span class="p">,</span> <span class="s1">&#39;metric&#39;</span><span class="p">,</span> <span class="s1">&#39;repulsion_strength&#39;</span><span class="p">,</span> <span class="s1">&#39;n_training_epochs&#39;</span><span class="p">,</span> <span class="s1">&#39;loss_report_frequency&#39;</span><span class="p">,</span> <span class="s1">&#39;classifier_head&#39;</span><span class="p">,</span> <span class="s1">&#39;umap_loss_a&#39;</span><span class="p">,</span> <span class="s1">&#39;umap_loss_b&#39;</span><span class="p">,</span> <span class="s1">&#39;negative_sample_rate&#39;</span><span class="p">,</span> <span class="s1">&#39;n_classes&#39;</span><span class="p">,</span> <span class="s1">&#39;classification_loss_weight&#39;</span><span class="p">]:</span>
+                <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Removing </span><span class="si">{</span><span class="n">key</span><span class="si">}</span><span class="s2"> from kwargs.&quot;</span><span class="p">)</span>
+                <span class="n">all_kwargs</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Embedding data with parameters: n_neighbors=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span><span class="si">}</span><span class="s2">, min_dist=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span><span class="si">}</span><span class="s2">, n_components=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="si">}</span><span class="s2">, metric=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n_training_epochs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_training_epochs</span> <span class="o">=</span> <span class="n">n_training_epochs</span>
+        <span class="n">yumap_model</span> <span class="o">=</span> <span class="n">yumap</span><span class="o">.</span><span class="n">YShapedUMAPClassifier</span><span class="p">(</span><span class="n">n_neighbors</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_neighbors</span><span class="p">,</span> 
+            <span class="n">min_dist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">min_dist</span><span class="p">,</span> 
+            <span class="n">n_components</span><span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,</span> 
+            <span class="n">metric</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span><span class="p">,</span> 
+            <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">,</span>
+            <span class="n">repulsion_strength</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">repulsion_strength</span><span class="p">,</span>
+            <span class="n">n_training_epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_training_epochs</span><span class="p">,</span>
+            <span class="n">loss_report_frequency</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loss_report_frequeny</span><span class="p">,</span>
+            <span class="n">classifier_head</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span><span class="p">,</span>
+            <span class="n">umap_loss_a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_a</span><span class="p">,</span>
+            <span class="n">umap_loss_b</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_b</span><span class="p">,</span>
+            <span class="n">negative_sample_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">negative_sample_rate</span><span class="p">,</span>
+            <span class="n">n_classes</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span><span class="p">,</span>
+            <span class="n">classification_loss_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span><span class="p">,</span>
+            <span class="o">**</span><span class="n">all_kwargs</span>
+            <span class="p">)</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="n">yumap_model</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">class_labels</span><span class="o">=</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">val_train_split</span><span class="o">=</span><span class="n">val_train_split</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">save_model</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving UMAP model to </span><span class="si">{</span><span class="n">save_model</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">:</span>
+                <span class="n">save_model</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dir</span><span class="p">,</span> <span class="n">save_model</span><span class="p">)</span>
+            <span class="n">yumap_model</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">save_model</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">keep_model</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yumap_model</span> <span class="o">=</span> <span class="n">yumap_model</span>
+        <span class="k">return</span> <span class="n">embedding</span></div>
+
+    
+<div class="viewcode-block" id="yUMAPClassifier.prepare_yumap_transform_prediction">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.prepare_yumap_transform_prediction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_yumap_transform_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cluster_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Prepare for transforming new data and predicting clusters.</span>
+<span class="sd">        This method computes the median reconstruction loss and classification likelihood for each cluster.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (np.ndarray): The input data to be transformed and predicted.</span>
+<span class="sd">            cluster_labels (np.ndarray or None): If provided, the cluster labels for the input data. If None, the method will predict clusters using the current classification model.</span>
+<span class="sd">            batch_size (int): The batch size to use for processing the data. Defaults to 20000.</span>
+<span class="sd">            verbose (bool): Whether to print progress messages. Defaults to True.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;yumap_model&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Parametric UMAP model not found. Please run &#39;train_embed&#39; first.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Preparing to transform data with Parametric UMAP model and predict clusters with DBSCAN&quot;</span><span class="p">)</span>
+        <span class="n">reconstructions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+        <span class="n">rec_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">data</span> <span class="o">-</span> <span class="n">reconstructions</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cluster_labels</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">_</span><span class="p">,</span><span class="n">likelihoods</span><span class="p">,</span><span class="n">cluster_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span><span class="n">likelihoods</span><span class="p">,</span><span class="n">_</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="n">likelihoods</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">likelihoods</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">cluster_rec_loss</span><span class="p">,</span> <span class="n">cluster_pred_likelihood</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cluster_idx</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_indices</span><span class="p">:</span>
+            <span class="n">cluster_rec_loss</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">rec_loss</span><span class="p">[</span><span class="n">cluster_labels</span> <span class="o">==</span> <span class="n">cluster_idx</span><span class="p">]))</span>
+            <span class="n">cluster_pred_likelihood</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">likelihoods</span><span class="p">[</span><span class="n">cluster_labels</span> <span class="o">==</span> <span class="n">cluster_idx</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_median_rec_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cluster_rec_loss</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_median_pred_likelihood</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">cluster_pred_likelihood</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>    </div>
+
+        
+<div class="viewcode-block" id="yUMAPClassifier.yumap_transform_prediction">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.yumap_transform_prediction">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">yumap_transform_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">rec_loss_noise_detection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rec_loss_alpha</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">rec_loss_threshold</span><span class="o">=</span><span class="mf">1e6</span><span class="p">,</span>
+                                   <span class="n">class_loss_noise_detection</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">class_loss_alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">class_loss_threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Transform new data and predict clusters with outlier detection.</span>
+<span class="sd">        This method transforms new data using the trained yUMAP model and predicts clusters with the included classifier head.</span>
+<span class="sd">        It also includes options for outlier detection based on reconstruction loss and classification likelihood.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (np.ndarray): The input data to be transformed and predicted.</span>
+<span class="sd">            batch_size (int): The batch size to use for processing the data. Defaults to 20000.</span>
+<span class="sd">            verbose (bool): Whether to print progress messages. Defaults to True.</span>
+<span class="sd">            rec_loss_noise_detection (bool): Whether to use reconstruction loss for outlier detection. Defaults to False.</span>
+<span class="sd">            rec_loss_alpha (float): The multiplier for the median reconstruction loss of the predicted cluster to determine outliers. Outliers are defined as having a reconstruction loss greater than rec_loss_alpha times the median reconstruction loss of the predicted cluster. Defaults to 100.</span>
+<span class="sd">            rec_loss_threshold (float): The absolute reconstruction loss threshold to determine outliers. Outliers are defined as having a reconstruction loss greater than this threshold. Defaults to 1e6.</span>
+<span class="sd">            class_loss_noise_detection (bool): Whether to use classification likelihood for outlier detection. Defaults to False.</span>
+<span class="sd">            class_loss_alpha (float): The multiplier for the median classification likelihood of the predicted cluster to determine outliers. Outliers are defined as having a classification likelihood less than class_loss_alpha times the median classification likelihood of the predicted cluster. Defaults to 0.</span>
+<span class="sd">            class_loss_threshold (float): The absolute classification likelihood threshold to determine outliers. Outliers are defined as having a classification likelihood less than this threshold. Defaults to 0.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            predicted_cluster (np.ndarray): The predicted cluster labels for the input data. Outliers are labeled as -1.</span>
+<span class="sd">            embedding (np.ndarray): The low-dimensional embedding of the input data.</span>
+<span class="sd">            rec_loss (np.ndarray or None): The reconstruction loss for each input data point. Returns None if rec_loss_noise_detection is False.</span>
+<span class="sd">            likelihoods (np.ndarray or None): The classification likelihood for each input data point. Returns None if class_loss_noise_detection is False.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;yumap_model&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;yUMAP model not found. Please run &#39;train_embed&#39; first.&quot;</span><span class="p">)</span>
+
+        <span class="n">embedding</span><span class="p">,</span> <span class="n">likelihoods</span><span class="p">,</span> <span class="n">predicted_cluster</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classify</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="n">verbose</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">rec_loss_noise_detection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;cluster_median_rec_loss&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cluster reconstruction loss not found. Please run &#39;prepare_yumap_transform_prediction&#39; first.&quot;</span><span class="p">)</span>	
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating reconstruction loss for outlier detection&quot;</span><span class="p">)</span>
+            <span class="n">reconstructions</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconstruct</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="n">batch_size</span><span class="p">)</span>
+            <span class="n">rec_loss</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">((</span><span class="n">data</span> <span class="o">-</span> <span class="n">reconstructions</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">predicted_cluster</span><span class="p">[</span><span class="n">rec_loss</span> <span class="o">&gt;</span> <span class="n">rec_loss_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">predicted_cluster</span><span class="p">[</span><span class="n">rec_loss</span> <span class="o">&gt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_median_rec_loss</span><span class="p">[</span><span class="n">predicted_cluster</span><span class="p">]</span> <span class="o">*</span> <span class="n">rec_loss_alpha</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rec_loss</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">class_loss_noise_detection</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;cluster_median_pred_likelihood&#39;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cluster prediction likelihood not found. Please run &#39;prepare_yumap_transform_prediction&#39; first.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Calculating classification likelihood for outlier detection&quot;</span><span class="p">)</span>
+            <span class="n">likelihoods</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">likelihoods</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">predicted_cluster</span><span class="p">[</span><span class="n">likelihoods</span> <span class="o">&lt;</span> <span class="n">class_loss_threshold</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">predicted_cluster</span><span class="p">[</span><span class="n">likelihoods</span> <span class="o">&lt;</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cluster_median_pred_likelihood</span><span class="p">[</span><span class="n">predicted_cluster</span><span class="p">]</span> <span class="o">*</span> <span class="n">class_loss_alpha</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">likelihoods</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">predicted_cluster</span><span class="p">,</span> <span class="n">embedding</span><span class="p">,</span> <span class="n">rec_loss</span><span class="p">,</span> <span class="n">likelihoods</span></div>
+
+
+<div class="viewcode-block" id="yUMAPClassifier.classify">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.classify">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">classify</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Classify new data using the trained yUMAP model.</span>
+<span class="sd">        This method transforms new data using the trained yUMAP model and predicts clusters with the included classifier head.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (np.ndarray): The input data to be classified.</span>
+<span class="sd">            batch_size (int): The batch size to use for processing the data. Defaults to 20000.</span>
+<span class="sd">            verbose (bool): Whether to print progress messages. Defaults to True.</span>
+<span class="sd">            **kwargs: Additional keyword arguments to be passed to the yUMAP model&#39;s transform method.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            embedding (np.ndarray): The low-dimensional embedding of the input data.</span>
+<span class="sd">            likelihoods (np.ndarray): The classification likelihood for each input data point.</span>
+<span class="sd">            predicted_cluster (np.ndarray): The predicted cluster labels for the input data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;yumap_model&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;yUMAP model not found. Please run &#39;train_embed&#39; first.&quot;</span><span class="p">)</span>
+        <span class="n">n_batches</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
+        <span class="n">embs</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">pred_classes</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">):</span>
+            <span class="n">start_idx</span> <span class="o">=</span> <span class="n">batch_idx</span> <span class="o">*</span> <span class="n">batch_size</span>
+            <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing batch </span><span class="si">{</span><span class="n">start_idx</span><span class="si">}</span><span class="s2"> to </span><span class="si">{</span><span class="n">start_idx</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">batch_size</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+            <span class="n">emb</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">pred_class</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yumap_model</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">batch</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="n">embs</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">emb</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">pred_classes</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">pred_class</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">pred_classes</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_classes</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cluster_indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">pred_classes</span><span class="p">[</span><span class="n">pred_classes</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">embs</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">probs</span><span class="p">),</span> <span class="n">pred_classes</span>     </div>
+
+    
+<div class="viewcode-block" id="yUMAPClassifier.reconstruct">
+<a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.reconstruct">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">reconstruct</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Reconstruct input data using the trained yUMAP model.</span>
+<span class="sd">        This method reconstructs input data using the decoder of the trained yUMAP model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data (np.ndarray): The input data to be reconstructed.</span>
+<span class="sd">            batch_size (int): The batch size to use for processing the data. Defaults to 20000.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            reconstructions (np.ndarray): The reconstructed input data.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;yumap_model&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;yUMAP model not found. Please run &#39;train_embed&#39; first.&quot;</span><span class="p">)</span>
+        <span class="n">n_batches</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
+        <span class="n">reconstructions</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">list</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">):</span>
+            <span class="n">start_idx</span> <span class="o">=</span> <span class="n">batch_idx</span> <span class="o">*</span> <span class="n">batch_size</span>
+            <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+            <span class="n">batch</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span>
+            <span class="n">reconstructions</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">yumap_model</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">yumap_model</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">batch</span><span class="p">))</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">reconstructions</span><span class="p">)</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

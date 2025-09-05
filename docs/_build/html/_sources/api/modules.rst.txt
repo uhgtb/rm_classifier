@@ -1,0 +1,12 @@
+rm_classifier
+=============
+
+.. toctree::
+   :maxdepth: 4
+
+   umap_classifier
+   parametric_umap_classifier
+   yumap_classifier
+   prepare_data
+   performance_metrics
+   helpers

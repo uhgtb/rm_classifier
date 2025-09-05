@@ -1,0 +1,618 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.helpers.visualization &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.helpers.visualization</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.helpers.visualization</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Visualizing Clustering Results and Data Embeddings</span>
+<span class="sd">==================================================</span>
+
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir</span><span class="p">))</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">rm_classifier</span><span class="w"> </span><span class="kn">import</span> <span class="n">prepare_data</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.models</span><span class="w"> </span><span class="kn">import</span> <span class="n">HoverTool</span><span class="p">,</span> <span class="n">ColumnDataSource</span><span class="p">,</span> <span class="n">CategoricalColorMapper</span><span class="p">,</span> <span class="n">LinearColorMapper</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.plotting</span><span class="w"> </span><span class="kn">import</span> <span class="n">figure</span><span class="p">,</span> <span class="n">show</span><span class="p">,</span> <span class="n">output_notebook</span><span class="p">,</span> <span class="n">output_file</span><span class="p">,</span> <span class="n">save</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">bokeh.palettes</span><span class="w"> </span><span class="kn">import</span> <span class="n">Viridis256</span>
+
+
+<div class="viewcode-block" id="create_axes_configurations">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.create_axes_configurations">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_axes_configurations</span><span class="p">():</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Predefined configurations for different plotting scenarios</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;time&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;x_label&#39;</span><span class="p">:</span> <span class="s2">&quot;t [ns]&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;y_label&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;ADC&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;x_func&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">(</span><span class="n">n_time</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">n_time</span><span class="p">),</span>
+            <span class="s1">&#39;y_scale&#39;</span><span class="p">:</span> <span class="s2">&quot;linear&quot;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;fft&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;x_label&#39;</span><span class="p">:</span> <span class="s2">&quot;f [MHz]&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;y_label&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$|X(f)|$&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;x_func&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">((</span><span class="n">suppress_dc</span><span class="o">*</span><span class="n">sampling_frequency</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_fft</span><span class="p">),</span> <span class="n">sampling_frequency</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">),</span>
+            <span class="s1">&#39;y_scale&#39;</span><span class="p">:</span> <span class="s2">&quot;log&quot;</span>
+        <span class="p">},</span>
+        <span class="s1">&#39;phase&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;x_label&#39;</span><span class="p">:</span> <span class="s2">&quot;f [MHz]&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;y_label&#39;</span><span class="p">:</span> <span class="sa">r</span><span class="s2">&quot;$\phi$&quot;</span><span class="p">,</span>
+            <span class="s1">&#39;x_func&#39;</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">((</span><span class="n">suppress_dc</span><span class="o">*</span><span class="n">sampling_frequency</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_fft</span><span class="p">),</span> <span class="n">sampling_frequency</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">),</span>
+            <span class="s1">&#39;y_scale&#39;</span><span class="p">:</span> <span class="s2">&quot;linear&quot;</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="default_plot_types">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.default_plot_types">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">default_plot_types</span><span class="p">(</span><span class="n">input_data_type</span><span class="p">,</span> <span class="n">plot_types</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Defines default plot types based on input data type.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        input_data_type (list of str): list of input data types</span>
+<span class="sd">        plot_types (list of str): list of plot types or string &quot;default&quot;</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        list of str: list of plot types</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># default plot types</span>
+    <span class="k">if</span> <span class="n">plot_types</span><span class="o">==</span><span class="s2">&quot;default&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">input_data_type</span><span class="o">==</span><span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="n">plot_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span><span class="o">==</span><span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">plot_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span><span class="o">==</span><span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+            <span class="n">plot_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">,</span><span class="s2">&quot;time&quot;</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span><span class="o">==</span><span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="n">plot_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">,</span><span class="s2">&quot;phase&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">plot_types</span></div>
+
+
+<div class="viewcode-block" id="plot_idx">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_idx">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_idx</span><span class="p">(</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Determine the start and end indices for plotting based on the plot type.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        plot_type (str): Type of plot (&quot;fft&quot;, &quot;phase&quot;, &quot;time&quot;).</span>
+<span class="sd">        data_type (str): Type of data (&quot;time&quot;, &quot;fft&quot;, &quot;fft_phase&quot;, &quot;fft_time&quot;).</span>
+<span class="sd">        n_fft (int): Number of FFT bins.</span>
+<span class="sd">        n_time (int): Number of time samples.</span>
+<span class="sd">        suppress_dc (bool): Whether DC component is suppressed.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (start_idx, end_idx) for slicing the data array.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mi">0</span><span class="p">,</span> <span class="n">n_fft</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;FFT plot type is not applicable for data type: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;phase&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_fft</span> <span class="o">*</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Phase plot type is only applicable for &#39;fft_phase&#39; data type, got: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">plot_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_fft</span> <span class="o">+</span> <span class="n">n_time</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time plot type is not applicable for data type: </span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown plot type: </span><span class="si">{</span><span class="n">plot_type</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="plot_spectra">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_spectra">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_spectra</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span>
+                 <span class="n">plot_types</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span> 
+                 <span class="n">modifier_function_name</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span>
+                 <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> 
+                 <span class="n">q</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> 
+                 <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the spectra of a given cluster with various statistical metrics.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): The UMAP classifier object containing data and methods.</span>
+<span class="sd">        k (int, str): cluster index</span>
+<span class="sd">        plot_types (str, optional): . Defaults to &quot;default&quot;.</span>
+<span class="sd">        modifier_function_name (str, optional): Name of the modifier function to apply to the traces. Defaults to &quot;&quot;.</span>
+<span class="sd">        sigma (int, float, optional): number of standard deviations to display. Defaults to 1.</span>
+<span class="sd">        q (float, optional): quantile ranges which are displayed. If None, no quantiles are shown. Defaults to None.</span>
+<span class="sd">        save_fig (str, optional): Location of the figure if it shall be saved. Defaults to None.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fig, axes: Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">data_type</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_data_type&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+    <span class="n">sampling_frequency</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+    <span class="n">suppress_dc</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suppress_dc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">suppress_dc</span><span class="o">=</span><span class="n">suppress_dc</span><span class="p">)</span>
+
+    <span class="n">plot_types</span><span class="o">=</span><span class="n">default_plot_types</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">plot_types</span><span class="p">)</span>
+    <span class="c1"># Get axes configurations</span>
+    <span class="n">axes_configs</span> <span class="o">=</span> <span class="n">create_axes_configurations</span><span class="p">()</span>
+    
+    <span class="c1"># Prepare figure based on number of plot types</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
+    
+    <span class="c1"># Ensure axes is always a list</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+    
+
+    <span class="c1"># Compute statistical metrics   </span>
+    <span class="k">if</span> <span class="n">q</span><span class="p">:</span>
+        <span class="n">qup_array</span> <span class="o">=</span>  <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;quantile&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">qdown_array</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;quantile&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">,</span> <span class="n">q</span><span class="o">=</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">median_array</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="s2">&quot;median&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">sigma</span><span class="p">:</span>
+        <span class="n">mean_array</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="s2">&quot;mean&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">)</span>
+        <span class="n">std_array</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">get_cluster_trace</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">trace_statistic</span><span class="o">=</span><span class="s2">&quot;std&quot;</span><span class="p">,</span> <span class="n">modifier_function_name</span><span class="o">=</span><span class="n">modifier_function_name</span><span class="p">)</span>
+        <span class="n">std_up_array</span> <span class="o">=</span> <span class="n">mean_array</span> <span class="o">+</span> <span class="n">sigma</span><span class="o">*</span><span class="n">std_array</span>
+        <span class="n">std_down_array</span> <span class="o">=</span> <span class="n">mean_array</span> <span class="o">-</span> <span class="n">sigma</span><span class="o">*</span><span class="n">std_array</span>
+    
+    <span class="c1"># Plot each specified type</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plot_types</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">axes_configs</span><span class="p">[</span><span class="n">plot_type</span><span class="p">]</span>
+        <span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span> <span class="o">=</span> <span class="n">plot_idx</span><span class="p">(</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        
+        <span class="c1"># Get x-axis values based on the configuration</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_func&#39;</span><span class="p">](</span><span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        
+        <span class="c1"># Plotting</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_scale&#39;</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">q</span><span class="p">:</span>    
+            <span class="n">ax</span><span class="o">.</span><span class="n">fill_between</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">qup_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="n">qdown_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">q</span><span class="si">}</span><span class="s1">-quantiles&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">median_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="s1">&#39;r-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;median&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">sigma</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mean_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;mean&#39;</span><span class="p">)</span>  
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">std_up_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="s1">&#39;b--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s1"> stds&#39;</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">std_down_array</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span> <span class="s1">&#39;b--&#39;</span><span class="p">)</span>
+
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_fig</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved figure to </span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span></div>
+
+    
+
+<div class="viewcode-block" id="plot_cluster_samples">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_cluster_samples">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_cluster_samples</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">clusters</span><span class="p">,</span> <span class="n">cluster_idx</span><span class="p">,</span>         
+                 <span class="n">n_samples</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="c1"># number of samples</span>
+                 <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span>
+                 <span class="n">plot_types</span><span class="o">=</span><span class="s2">&quot;default&quot;</span><span class="p">,</span>
+                 <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots random samples from a specified cluster.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): The UMAP classifier object containing data and methods.</span>
+<span class="sd">        data (np.ndarray): The data array containing all samples.</span>
+<span class="sd">        clusters (np.ndarray): Array of cluster assignments for each sample.</span>
+<span class="sd">        cluster_idx (int, str): The index of the cluster to plot samples from.</span>
+<span class="sd">        n_samples (int, optional): Number of random samples to plot. Defaults to 10.</span>
+<span class="sd">        alpha (float, optional): Transparency level for the sample plots. Defaults to 0.05.</span>
+<span class="sd">        plot_types (str, optional): Types of plots to generate. Defaults to &quot;default&quot;.</span>
+<span class="sd">        save_fig (str, optional): Location to save the figure. If None, the figure is returned. Defaults to None.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        fig, axes: Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    
+    <span class="n">data_type</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_data_type&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+    <span class="n">sampling_frequency</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+    <span class="n">suppress_dc</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suppress_dc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">suppress_dc</span><span class="o">=</span><span class="n">suppress_dc</span><span class="p">)</span>
+
+    <span class="n">plot_types</span><span class="o">=</span><span class="n">default_plot_types</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">plot_types</span><span class="p">)</span>
+
+    <span class="c1"># Get axes configurations</span>
+    <span class="n">axes_configs</span> <span class="o">=</span> <span class="n">create_axes_configurations</span><span class="p">()</span>
+    
+    <span class="c1"># Prepare figure based on number of plot types</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="mi">4</span><span class="p">))</span>
+    
+    <span class="c1"># Ensure axes is always a list</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+    
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">clusters</span> <span class="o">==</span> <span class="n">cluster_idx</span>
+    <span class="k">if</span> <span class="nb">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n_samples</span><span class="p">:</span>
+        <span class="n">n_samples</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">mask</span><span class="p">)</span>
+
+    <span class="n">samples</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">n_samples</span><span class="p">,</span> <span class="n">replace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plot_types</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">axes_configs</span><span class="p">[</span><span class="n">plot_type</span><span class="p">]</span>
+        <span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span> <span class="o">=</span> <span class="n">plot_idx</span><span class="p">(</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        <span class="c1"># Get x-axis values based on the configuration</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_func&#39;</span><span class="p">](</span><span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        
+        <span class="c1"># Plotting</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_scale&#39;</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">samples</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">mask</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span><span class="s1">&#39;k-&#39;</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_fig</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved figure to </span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span></div>
+
+    
+<div class="viewcode-block" id="plot_index">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_index">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_index</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">index</span><span class="p">,</span> 
+                 <span class="n">plot_types</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">,</span>
+                 <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the spectra of specified indices.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): The UMAP classifier object containing data and methods.</span>
+<span class="sd">        data (np.ndarray): The data array containing all samples.</span>
+<span class="sd">        index (list of int): List of indices to plot.</span>
+<span class="sd">        plot_types (str, optional): Types of plots to generate. Defaults to &quot;default&quot;.</span>
+<span class="sd">        save_fig (str, optional): Location to save the figure. If None, the figure is returned. Defaults to None.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        fig, axes: Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="n">data_type</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_data_type&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">)</span>
+    <span class="n">sampling_frequency</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">,</span> <span class="mi">180</span><span class="p">)</span>
+    <span class="n">suppress_dc</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;suppress_dc&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">prepare_data</span><span class="o">.</span><span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">suppress_dc</span><span class="o">=</span><span class="n">suppress_dc</span><span class="p">)</span>
+
+    <span class="n">plot_types</span><span class="o">=</span><span class="n">default_plot_types</span><span class="p">(</span><span class="n">data_type</span><span class="p">,</span><span class="n">plot_types</span><span class="p">)</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span><span class="o">**</span><span class="mf">0.3</span>
+    <span class="c1"># Get axes configurations</span>
+    <span class="n">axes_configs</span> <span class="o">=</span> <span class="n">create_axes_configurations</span><span class="p">()</span>
+    
+    <span class="c1"># Prepare figure based on number of plot types</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">),</span> <span class="mi">5</span><span class="p">))</span>
+    
+    <span class="c1"># Ensure axes is always a list</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">plot_types</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">axes</span> <span class="o">=</span> <span class="p">[</span><span class="n">axes</span><span class="p">]</span>
+        
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">plot_type</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">plot_types</span><span class="p">):</span>
+        <span class="n">config</span> <span class="o">=</span> <span class="n">axes_configs</span><span class="p">[</span><span class="n">plot_type</span><span class="p">]</span>
+        <span class="n">start_idx</span><span class="p">,</span> <span class="n">end_idx</span> <span class="o">=</span> <span class="n">plot_idx</span><span class="p">(</span><span class="n">plot_type</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        <span class="c1"># Get x-axis values based on the configuration</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_func&#39;</span><span class="p">](</span><span class="n">n_time</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">sampling_frequency</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="p">)</span>
+        
+        <span class="c1"># Plotting</span>
+        <span class="n">ax</span> <span class="o">=</span> <span class="n">axes</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;x_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_label&#39;</span><span class="p">],</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_yscale</span><span class="p">(</span><span class="n">config</span><span class="p">[</span><span class="s1">&#39;y_scale&#39;</span><span class="p">])</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">],</span><span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">j</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_fig</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved figure to </span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">axes</span></div>
+
+    
+<div class="viewcode-block" id="plot_embdding">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_embdding">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_embdding</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">label_name</span><span class="o">=</span><span class="s1">&#39;clusters&#39;</span><span class="p">,</span> <span class="n">label_type</span><span class="o">=</span><span class="s1">&#39;categorical&#39;</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.01</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots a 2D embedding with optional coloring based on labels. </span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        embedding (np.ndarray): 2D array of shape (n_samples, 2) representing the embedding coordinates.</span>
+<span class="sd">        labels (np.ndarray or None): Array of shape (n_samples,) containing labels for coloring. If None, no coloring is applied.</span>
+<span class="sd">        label_name (str): Name of the label for the legend or colorbar.</span>
+<span class="sd">        label_type (str): Type of labels, either &#39;categorical&#39; or &#39;continuous&#39; for continuous values.</span>
+<span class="sd">        save_fig (str or None): If provided, the path to save the figure. If None, the figure is returned.</span>
+<span class="sd">        alpha (float): Transparency level for the points in the scatter plot.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fig, ax: Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">labels</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+        <span class="k">if</span> <span class="n">label_type</span> <span class="o">==</span> <span class="s1">&#39;categorical&#39;</span><span class="p">:</span>
+            <span class="n">unique_labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">)</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">100</span><span class="p">:</span>
+                <span class="n">label_type</span> <span class="o">=</span> <span class="s1">&#39;continuous&#39;</span>
+                <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;More than 100 unique labels detected. Using continuous color mapping.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">label_type</span> <span class="o">==</span> <span class="s1">&#39;categorical&#39;</span><span class="p">:</span>                    
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">tab20</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)))</span>
+            <span class="n">legend_handles</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">col</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">,</span><span class="n">colors</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                    <span class="k">continue</span>
+                <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span>
+                <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">labels</span> <span class="o">==</span> <span class="n">j</span><span class="p">)</span>
+
+                <span class="n">xy</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+                <span class="n">line</span><span class="p">,</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">xy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="n">xy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="n">marker</span><span class="p">,</span>
+                    <span class="n">markerfacecolor</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">col</span><span class="p">),</span>
+                    <span class="n">markeredgecolor</span><span class="o">=</span><span class="nb">tuple</span><span class="p">(</span><span class="n">col</span><span class="p">),</span>
+                    <span class="n">markersize</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span>
+                    <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">,</span>
+                    <span class="n">label</span><span class="o">=</span><span class="n">j</span>
+                <span class="p">)</span>
+                <span class="n">legend_handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">markerfacecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="n">col</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">6</span><span class="p">))</span>
+            <span class="n">noise_mask</span> <span class="o">=</span> <span class="n">labels</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">xy</span> <span class="o">=</span> <span class="n">embedding</span><span class="p">[</span><span class="n">noise_mask</span><span class="p">]</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                    <span class="n">xy</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span>
+                    <span class="n">xy</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span>
+                    <span class="s2">&quot;xk&quot;</span><span class="p">,</span>
+                    <span class="n">markersize</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                    <span class="n">label</span> <span class="o">=</span> <span class="s2">&quot;not classified&quot;</span>
+                <span class="p">)</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">plot_labels</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">gca</span><span class="p">()</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_labels</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">22</span><span class="p">:</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">legend_handles</span> <span class="o">+</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">marker</span><span class="o">=</span><span class="s2">&quot;x&quot;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;w&#39;</span><span class="p">,</span><span class="n">markerfacecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">,</span> <span class="n">markeredgecolor</span><span class="o">=</span><span class="s2">&quot;k&quot;</span><span class="p">)],</span> <span class="n">title</span><span class="o">=</span><span class="n">label_name</span><span class="p">,</span> <span class="n">labels</span><span class="o">=</span><span class="n">plot_labels</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s1">&#39;center left&#39;</span><span class="p">,</span> <span class="n">bbox_to_anchor</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">),</span> <span class="n">markerscale</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">del</span> <span class="n">legend_handles</span><span class="p">,</span><span class="n">plot_labels</span>
+        <span class="k">elif</span> <span class="n">label_type</span> <span class="o">==</span> <span class="s1">&#39;continuous&#39;</span><span class="p">:</span>
+            <span class="n">cmap</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">viridis</span>
+            <span class="n">norm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">vmax</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+            <span class="n">colors</span> <span class="o">=</span> <span class="n">cmap</span><span class="p">(</span><span class="n">norm</span><span class="p">(</span><span class="n">labels</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">embedding</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">embedding</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">c</span><span class="o">=</span><span class="n">colors</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">label</span><span class="o">=</span><span class="n">label_name</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">embedding</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">embedding</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">s</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;latent dimension 1&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;latent dimension 2&quot;</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">save_fig</span><span class="p">:</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">savefig</span><span class="p">(</span><span class="n">save_fig</span><span class="p">,</span> <span class="n">dpi</span> <span class="o">=</span><span class="mi">300</span><span class="p">,</span> <span class="n">bbox_inches</span><span class="o">=</span><span class="s1">&#39;tight&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved figure to </span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+    
+<div class="viewcode-block" id="plot_overview_bokeh">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_overview_bokeh">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_overview_bokeh</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">color_key</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Bokeh Plot of Embedded Data&quot;</span><span class="p">,</span> <span class="n">save_fig</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">hover_kwargs</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Creates an interactive Bokeh plot of the 2D embedding with optional coloring based on additional properties.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        embedding (np.ndarray): 2D array of shape (n_samples, 2) representing the embedding coordinates.</span>
+<span class="sd">        color_key (str or None): Attribute name in hover_kwargs to use for coloring the points. If None, no coloring is applied.</span>
+<span class="sd">        title (str): Title of the plot.</span>
+<span class="sd">        save_fig (str or None): If provided, the path to save the plot as an HTML file. If None, the plot is shown in a notebook.</span>
+<span class="sd">        **hover_kwargs: Additional properties to include in the hover tooltips. Each property should be a list or numpy array of length n_samples.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        None: Displays the plot in a notebook or saves it as an HTML file.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">output_notebook</span><span class="p">()</span>
+
+    <span class="n">plot_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">embedding</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">))</span>
+    <span class="k">for</span> <span class="nb">property</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">hover_kwargs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Property &#39;</span><span class="si">{</span><span class="nb">property</span><span class="si">}</span><span class="s2">&#39; must be a list or numpy array.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">!=</span> <span class="n">plot_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Property &#39;</span><span class="si">{</span><span class="nb">property</span><span class="si">}</span><span class="s2">&#39; must have the same number of elements as the embedding data (</span><span class="si">{</span><span class="n">plot_df</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="si">}</span><span class="s2">).&quot;</span><span class="p">)</span>
+        <span class="n">plot_df</span><span class="p">[</span><span class="nb">property</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        
+    <span class="k">if</span> <span class="n">color_key</span><span class="p">:</span>    
+        <span class="k">if</span> <span class="n">color_key</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">plot_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Color key &#39;</span><span class="si">{</span><span class="n">color_key</span><span class="si">}</span><span class="s2">&#39; not found in the DataFrame columns. Available columns: </span><span class="si">{</span><span class="n">plot_df</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">])</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;=</span> <span class="mi">100</span><span class="p">:</span>
+            <span class="c1"># Create a color mapper from blue (low values) to red (high values)</span>
+            <span class="n">color_mapping</span> <span class="o">=</span> <span class="n">LinearColorMapper</span><span class="p">(</span><span class="n">palette</span><span class="o">=</span><span class="n">Viridis256</span><span class="p">,</span> 
+                                            <span class="n">low</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span><span class="mf">0.95</span><span class="p">),</span> 
+                                            <span class="n">high</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">quantile</span><span class="p">(</span><span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">],</span><span class="mf">0.05</span><span class="p">))</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">color_key</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">color_mapping</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">]</span> <span class="o">=</span> <span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+            <span class="n">cols</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">plot_df</span><span class="p">[</span><span class="n">color_key</span><span class="p">])</span>
+            <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">cols</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">)</span>
+            <span class="n">color_mapping</span> <span class="o">=</span> <span class="n">CategoricalColorMapper</span><span class="p">(</span><span class="n">factors</span><span class="o">=</span><span class="n">cols</span><span class="p">,</span> <span class="n">palette</span><span class="o">=</span><span class="p">[</span><span class="n">Viridis256</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">])</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">field</span><span class="o">=</span><span class="n">color_key</span><span class="p">,</span> <span class="n">transform</span><span class="o">=</span><span class="n">color_mapping</span><span class="p">)</span>
+    <span class="n">datasource</span> <span class="o">=</span> <span class="n">ColumnDataSource</span><span class="p">(</span><span class="n">plot_df</span><span class="p">)</span>
+    <span class="n">plot_figure</span> <span class="o">=</span> <span class="n">figure</span><span class="p">(</span>
+        <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+        <span class="n">width</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+        <span class="n">height</span><span class="o">=</span><span class="mi">600</span><span class="p">,</span>
+        <span class="n">tools</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;pan, wheel_zoom, reset&#39;</span><span class="p">),</span>
+        <span class="n">x_axis_label</span><span class="o">=</span><span class="s1">&#39;latent dimension 1&#39;</span><span class="p">,</span>
+        <span class="n">y_axis_label</span><span class="o">=</span><span class="s1">&#39;latent dimension 1&#39;</span>
+    <span class="p">)</span>
+    <span class="n">plot_figure</span><span class="o">.</span><span class="n">axis</span><span class="o">.</span><span class="n">axis_label_text_font_size</span> <span class="o">=</span> <span class="s2">&quot;14pt&quot;</span>
+    <span class="n">tooltip_html</span> <span class="o">=</span> <span class="s2">&quot;&lt;div&gt;&quot;</span>
+    <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">plot_df</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">]:</span>
+            <span class="n">tooltip_html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">                &lt;div&gt;</span>
+<span class="s2">                    &lt;span style=&#39;font-size: 14px; color: #224499&#39;&gt;</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">:&lt;/span&gt;</span>
+<span class="s2">                    &lt;span style=&#39;font-size: 14px&#39;&gt;@</span><span class="si">{</span><span class="n">col</span><span class="si">}</span><span class="s2">&lt;/span&gt;</span>
+<span class="s2">                &lt;/div&gt;&quot;&quot;&quot;</span>
+    <span class="n">tooltip_html</span> <span class="o">+=</span> <span class="s2">&quot;&lt;/div&gt;&quot;</span>
+    <span class="n">plot_figure</span><span class="o">.</span><span class="n">add_tools</span><span class="p">(</span><span class="n">HoverTool</span><span class="p">(</span><span class="n">tooltips</span><span class="o">=</span><span class="n">tooltip_html</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;mouse&#39;</span><span class="p">,</span> <span class="n">point_policy</span><span class="o">=</span><span class="s1">&#39;follow_mouse&#39;</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">color_key</span><span class="p">:</span>
+        <span class="n">plot_figure</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span>
+                    <span class="n">source</span><span class="o">=</span><span class="n">datasource</span><span class="p">,</span>
+                    <span class="n">line_alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                    <span class="c1">#color=factor_cmap(&#39;x&#39;, palette=palette, factors=str_categories)</span>
+                    <span class="n">color</span><span class="o">=</span><span class="n">color</span><span class="p">,</span>
+                    <span class="n">fill_alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                    <span class="n">size</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">plot_figure</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">,</span> <span class="s1">&#39;y&#39;</span><span class="p">,</span>
+                    <span class="n">source</span><span class="o">=</span><span class="n">datasource</span><span class="p">,</span>
+                    <span class="n">line_alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                    <span class="n">fill_alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span>
+                    <span class="n">size</span><span class="o">=</span><span class="mi">10</span>
+                <span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">save_fig</span><span class="o">==</span><span class="kc">None</span><span class="p">:</span>
+        <span class="n">show</span><span class="p">(</span><span class="n">plot_figure</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">output_file</span><span class="p">(</span><span class="n">save_fig</span><span class="p">)</span>
+        <span class="n">save</span><span class="p">(</span><span class="n">plot_figure</span><span class="p">)</span>
+        <span class="c1">#show(plot_figure)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saved bokeh plot at </span><span class="si">{</span><span class="n">save_fig</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="plot_k_distance">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_k_distance">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_k_distance</span><span class="p">(</span><span class="n">sorted_data</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">50</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Plots the k-distance graph for a given k value.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        sorted_data (np.ndarray): Sorted distances to the k-th nearest neighbor.</span>
+<span class="sd">        cdf (np.ndarray): Cumulative distribution function values corresponding to sorted_data.</span>
+<span class="sd">        k (int): The k value used for nearest neighbors.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        fig, ax: Matplotlib figure and axes objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sorted_data</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;k=</span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;CDF&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xscale</span><span class="p">(</span><span class="s1">&#39;log&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Distance to k-th Nearest Neighbor&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

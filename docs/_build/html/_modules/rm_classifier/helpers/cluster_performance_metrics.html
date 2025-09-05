@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.helpers.cluster_performance_metrics &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.helpers.cluster_performance_metrics</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.helpers.cluster_performance_metrics</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions to Evaluate Clustering Performance on Predicted Clusters and Known Malfunctions Labels</span>
+<span class="sd">================================================================================================</span>
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<div class="viewcode-block" id="get_main_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_main_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_main_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the malfunction that is most represented in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: malfunction that is most represented in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_second_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the malfunction that is second most represented in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: malfunction that is second most represented in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">max_col</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">max_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_main_cluster">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_main_cluster">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_main_cluster</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the cluster that is most represented for each malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: cluster that is most represented for each malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_malfunction_separability">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_separability">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_malfunction_separability</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the separability of each malfunction</span>
+<span class="sd">    separability = sum_i (n_i^2 / N_i) / M</span>
+<span class="sd">    where n_i is the number of events from the malfunction in cluster i, N_i is the total number of events in cluster i, and M is the total number of events from the malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: separability of each malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">malfunction_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">separability</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="c1"># Get the cluster counts for the current malfunction</span>
+        <span class="n">separability</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span> <span class="k">if</span> <span class="n">cluster</span><span class="o">!=</span><span class="s2">&quot;noise&quot;</span><span class="p">])</span><span class="o">/</span><span class="n">malfunction_sizes</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">separability</span></div>
+
+
+<div class="viewcode-block" id="get_cluster_purity">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_purity">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_purity</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the purity of each cluster</span>
+<span class="sd">    purity = sum_j (n_j^2 / N) / N</span>
+<span class="sd">    where n_j is the number of events from malfunction j in the cluster, N is the total number of events in the cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: purity of each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">purity</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">purity</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">])</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">purity</span></div>
+
+
+<div class="viewcode-block" id="get_cluster_fraction_of_dominant_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_dominant_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_fraction_of_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fraction of the dominant malfunction in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args: </span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of the dominant malfunction in each cluster </span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cluster_fraction</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="n">dominant_malfunctions</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="c1"># Get the cluster counts for the current malfunction</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cluster_fraction</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="p">[</span><span class="n">dominant_malfunctions</span><span class="p">[</span><span class="n">cluster</span><span class="p">]][</span><span class="n">cluster</span><span class="p">]</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span> 
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">cluster_fraction</span></div>
+
+
+<div class="viewcode-block" id="get_second_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_second_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_second_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the malfunction that is second most represented in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: malfunction that is second most represented in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="n">max_col</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">max_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_third_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_third_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_third_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the malfunction that is third most represented in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: malfunction that is third most represented in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">temp</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="c1"># Remove first max</span>
+        <span class="n">max_col</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">max_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+        <span class="c1"># Remove second max</span>
+        <span class="n">max_col</span> <span class="o">=</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="n">temp</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="n">max_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">temp</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_cluster_fraction_of_second_dominant_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_second_dominant_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_fraction_of_second_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fraction of the second dominant malfunction in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of the second dominant malfunction in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">malfunction2</span> <span class="o">=</span> <span class="n">get_second_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cluster_fraction</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="c1"># Get the cluster counts for the current malfunction</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cluster_fraction</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction2</span><span class="p">[</span><span class="n">cluster</span><span class="p">]][</span><span class="n">cluster</span><span class="p">]</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span> 
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">cluster_fraction</span></div>
+
+
+<div class="viewcode-block" id="get_cluster_fraction_of_third_dominant_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_third_dominant_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_cluster_fraction_of_third_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fraction of the third dominant malfunction in each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of the third dominant malfunction in each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">malfunction3</span> <span class="o">=</span> <span class="n">get_third_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cluster_fraction</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+        <span class="c1"># Get the cluster counts for the current malfunction</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">cluster_fraction</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction3</span><span class="p">[</span><span class="n">cluster</span><span class="p">]][</span><span class="n">cluster</span><span class="p">]</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span>
+        <span class="k">except</span><span class="p">:</span> 
+            <span class="k">pass</span>
+    <span class="k">return</span> <span class="n">cluster_fraction</span></div>
+
+
+<div class="viewcode-block" id="get_malfunction_fraction_of_dominated_clusters">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_fraction_of_dominated_clusters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_malfunction_fraction_of_dominated_clusters</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fraction of the malfunction in the clusters which are dominated by the malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of the malfunction in the clusters which are dominated by this malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cluster_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">malfunction_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">fidc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">mm</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">clusters</span><span class="o">=</span><span class="n">mm</span><span class="p">[</span><span class="n">mm</span><span class="o">==</span><span class="n">malfunction</span><span class="p">]</span>
+        <span class="n">fidc</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">cluster_sizes</span><span class="p">[</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">index</span><span class="p">])</span><span class="o">/</span><span class="n">malfunction_sizes</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">fidc</span></div>
+
+
+<div class="viewcode-block" id="get_malfunction_accuracy">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_accuracy">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_malfunction_accuracy</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Accuracy/Efficiency, i.e. the fraction of the events from a malfunction which are mapped into a cluster which is dominated by the malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: accuracy of each malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">malfunction_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">accuracy</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">mm</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">clusters</span><span class="o">=</span><span class="n">mm</span><span class="p">[</span><span class="n">mm</span><span class="o">==</span><span class="n">malfunction</span><span class="p">]</span>
+        <span class="n">accuracy</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">index</span><span class="p">])</span><span class="o">/</span><span class="n">malfunction_sizes</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">accuracy</span></div>
+
+
+<div class="viewcode-block" id="get_malfunction_number_of_relevant_clusters">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_number_of_relevant_clusters">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_malfunction_number_of_relevant_clusters</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Fraction of the events from a malfunction which are mapped into a cluster which is dominated by the malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">        threshold (int): minimum number of events from the malfunction in the cluster to be considered relevant</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: number of relevant clusters for each malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">mnorc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">mnorc</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span><span class="o">&gt;</span><span class="n">threshold</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">mnorc</span></div>
+
+
+<div class="viewcode-block" id="get_malfunction_classified_normal">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_classified_normal">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_malfunction_classified_normal</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fraction of events from a malfunction that are classified as normal</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of events from a malfunction that are classified as normal</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">malfunction_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">mcn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">mm</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">clusters</span><span class="o">=</span><span class="n">mm</span><span class="p">[</span><span class="n">mm</span><span class="o">==</span><span class="s2">&quot;normal&quot;</span><span class="p">]</span>
+        <span class="n">mcn</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="n">malfunction</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">index</span><span class="p">])</span><span class="o">/</span><span class="n">malfunction_sizes</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mcn</span></div>
+
+
+<div class="viewcode-block" id="get_normal_classified_as_malfunction">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_normal_classified_as_malfunction">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_normal_classified_as_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get the fraction of events from normal that are classified as malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.Series: fraction of events from normal that are classified as malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">malfunction_sizes</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">mcn</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span>
+    <span class="n">mm</span><span class="o">=</span><span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">malfunction</span> <span class="ow">in</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+        <span class="n">clusters</span><span class="o">=</span><span class="n">mm</span><span class="p">[</span><span class="n">mm</span><span class="o">==</span><span class="n">malfunction</span><span class="p">]</span>
+        <span class="n">mcn</span><span class="p">[</span><span class="n">malfunction</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">contingency_table</span><span class="p">[</span><span class="s2">&quot;normal&quot;</span><span class="p">][</span><span class="n">cluster</span><span class="p">]</span> <span class="k">for</span> <span class="n">cluster</span> <span class="ow">in</span> <span class="n">clusters</span><span class="o">.</span><span class="n">index</span><span class="p">])</span><span class="o">/</span><span class="n">malfunction_sizes</span><span class="p">[</span><span class="s2">&quot;normal&quot;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">mcn</span></div>
+
+
+<div class="viewcode-block" id="malfunction_characteristics">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.malfunction_characteristics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">malfunction_characteristics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get main characteristics of each malfunction</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: characteristics of each malfunction</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">dict</span><span class="o">=</span><span class="p">{}</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;malfunction_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;main_cluster&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;separability&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_malfunction_separability</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_malfunction_accuracy</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;fraction_of_dominated_clusters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_malfunction_fraction_of_dominated_clusters</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;malfunction_classified_as_normal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_malfunction_classified_normal</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;normal_classified_as_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_normal_classified_as_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;n_dominated_clusters&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_characteristics">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.cluster_characteristics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_characteristics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get main characteristics of each cluster</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        pd.DataFrame: characteristics of each cluster</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">dict</span><span class="o">=</span><span class="p">{}</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_cluster_purity</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;main_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">contingency_table</span><span class="o">.</span><span class="n">idxmax</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;fraction_of_dominant_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_cluster_fraction_of_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;second_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_second_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;fraction_of_second_dominant_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_cluster_fraction_of_second_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;third_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_third_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;fraction_of_third_dominant_malfunction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">get_cluster_fraction_of_third_dominant_malfunction</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="nb">dict</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cluster_performance_metrics">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.cluster_performance_metrics">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cluster_performance_metrics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Get overall performance metrics of the clustering</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        contingency_table (pd.DataFrame): contingency table with clusters as index and malfunctions as columns</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        dict: overall performance metrics of the clustering</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cc</span><span class="o">=</span><span class="n">cluster_characteristics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="n">clean_cc</span><span class="o">=</span><span class="n">cc</span><span class="p">[</span><span class="n">cc</span><span class="o">.</span><span class="n">index</span> <span class="o">!=</span> <span class="s2">&quot;noise&quot;</span><span class="p">]</span>
+    <span class="n">mc</span><span class="o">=</span><span class="n">malfunction_characteristics</span><span class="p">(</span><span class="n">contingency_table</span><span class="p">)</span>
+    <span class="n">abnormal_mc</span> <span class="o">=</span> <span class="n">mc</span><span class="p">[(</span><span class="n">mc</span><span class="o">.</span><span class="n">index</span> <span class="o">!=</span> <span class="s2">&quot;normal&quot;</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">mc</span><span class="o">.</span><span class="n">index</span> <span class="o">!=</span> <span class="s2">&quot;noise&quot;</span><span class="p">)]</span>
+    <span class="nb">dict</span><span class="o">=</span><span class="p">{}</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;n_clusters&quot;</span><span class="p">]</span><span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cc</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;n_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">][</span><span class="s2">&quot;noise&quot;</span><span class="p">]</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;n_noise&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;malfunction_size&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_separability&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s1">&#39;separability&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;malfunction_size&quot;</span><span class="p">]))</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s1">&#39;accuracy&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;malfunction_size&quot;</span><span class="p">]))</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_malfunction_classified_as_normal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s1">&#39;malfunction_classified_as_normal&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;malfunction_size&quot;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_separability&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_accuracy&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_malfunction_classified_as_normal&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">clean_cc</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">average</span><span class="p">(</span><span class="n">clean_cc</span><span class="p">[</span><span class="s1">&#39;purity&#39;</span><span class="p">],</span> <span class="n">weights</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">clean_cc</span><span class="p">[</span><span class="s2">&quot;cluster_size&quot;</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;expected_purity&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span> 
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;mean_separability&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;separability&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;mean_accuracy&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;accuracy&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;mean_malfunction_classified_as_normal&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;malfunction_classified_as_normal&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;mean_purity&quot;</span><span class="p">]</span><span class="o">=</span> <span class="n">clean_cc</span><span class="p">[</span><span class="s2">&quot;purity&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="nb">dict</span><span class="p">[</span><span class="s2">&quot;false_alerts&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">abnormal_mc</span><span class="p">[</span><span class="s2">&quot;normal_classified_as_malfunction&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">return</span> <span class="nb">dict</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

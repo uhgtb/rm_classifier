@@ -1,0 +1,447 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.helpers.cluster_performance_metrics module &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rm_classifier.helpers.high_entropy_subset module" href="rm_classifier.helpers.high_entropy_subset.html" />
+    <link rel="prev" title="rm_classifier.helpers package" href="rm_classifier.helpers.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="rm_classifier.helpers.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">rm_classifier.helpers.cluster_performance_metrics module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions-to-evaluate-clustering-performance-on-predicted-clusters-and-known-malfunctions-labels">Functions to Evaluate Clustering Performance on Predicted Clusters and Known Malfunctions Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_main_malfunction"><code class="docutils literal notranslate"><span class="pre">get_main_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_main_cluster"><code class="docutils literal notranslate"><span class="pre">get_main_cluster()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_separability"><code class="docutils literal notranslate"><span class="pre">get_malfunction_separability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_purity"><code class="docutils literal notranslate"><span class="pre">get_cluster_purity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_second_malfunction"><code class="docutils literal notranslate"><span class="pre">get_second_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_third_malfunction"><code class="docutils literal notranslate"><span class="pre">get_third_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_second_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_second_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_third_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_third_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_fraction_of_dominated_clusters"><code class="docutils literal notranslate"><span class="pre">get_malfunction_fraction_of_dominated_clusters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_accuracy"><code class="docutils literal notranslate"><span class="pre">get_malfunction_accuracy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_number_of_relevant_clusters"><code class="docutils literal notranslate"><span class="pre">get_malfunction_number_of_relevant_clusters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_classified_normal"><code class="docutils literal notranslate"><span class="pre">get_malfunction_classified_normal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.get_normal_classified_as_malfunction"><code class="docutils literal notranslate"><span class="pre">get_normal_classified_as_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.malfunction_characteristics"><code class="docutils literal notranslate"><span class="pre">malfunction_characteristics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.cluster_characteristics"><code class="docutils literal notranslate"><span class="pre">cluster_characteristics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.helpers.cluster_performance_metrics.cluster_performance_metrics"><code class="docutils literal notranslate"><span class="pre">cluster_performance_metrics()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.high_entropy_subset.html">rm_classifier.helpers.high_entropy_subset module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html">rm_classifier.helpers.statistical_models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.tracked_parametric_umap.html">rm_classifier.helpers.tracked_parametric_umap module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.umap_data_loader.html">rm_classifier.helpers.umap_data_loader module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.visualization.html">rm_classifier.helpers.visualization module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.yumap.html">rm_classifier.helpers.yumap module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rm_classifier.html">rm_classifier package</a></li>
+          <li class="breadcrumb-item"><a href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+      <li class="breadcrumb-item active">rm_classifier.helpers.cluster_performance_metrics module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/rm_classifier.helpers.cluster_performance_metrics.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rm_classifier.helpers.cluster_performance_metrics">
+<span id="rm-classifier-helpers-cluster-performance-metrics-module"></span><h1>rm_classifier.helpers.cluster_performance_metrics module<a class="headerlink" href="#module-rm_classifier.helpers.cluster_performance_metrics" title="Link to this heading"></a></h1>
+<section id="functions-to-evaluate-clustering-performance-on-predicted-clusters-and-known-malfunctions-labels">
+<h2>Functions to Evaluate Clustering Performance on Predicted Clusters and Known Malfunctions Labels<a class="headerlink" href="#functions-to-evaluate-clustering-performance-on-predicted-clusters-and-known-malfunctions-labels" title="Link to this heading"></a></h2>
+<p>Author: Johann Luca Kastner
+Date: 15/09/2025
+License: MIT</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_main_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_main_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_main_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_main_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the malfunction that is most represented in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>malfunction that is most represented in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_main_cluster">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_main_cluster</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_main_cluster"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_main_cluster" title="Link to this definition"></a></dt>
+<dd><p>Get the cluster that is most represented for each malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>cluster that is most represented for each malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_malfunction_separability">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_malfunction_separability</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_malfunction_separability"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_separability" title="Link to this definition"></a></dt>
+<dd><p>Get the separability of each malfunction
+separability = sum_i (n_i^2 / N_i) / M
+where n_i is the number of events from the malfunction in cluster i, N_i is the total number of events in cluster i, and M is the total number of events from the malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>separability of each malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_cluster_purity">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cluster_purity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_cluster_purity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_purity" title="Link to this definition"></a></dt>
+<dd><p>Get the purity of each cluster
+purity = sum_j (n_j^2 / N) / N
+where n_j is the number of events from malfunction j in the cluster, N is the total number of events in the cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>purity of each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_dominant_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cluster_fraction_of_dominant_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_cluster_fraction_of_dominant_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_dominant_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the fraction of the dominant malfunction in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of the dominant malfunction in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_second_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_second_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_second_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_second_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the malfunction that is second most represented in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>malfunction that is second most represented in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_third_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_third_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_third_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_third_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the malfunction that is third most represented in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>malfunction that is third most represented in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_second_dominant_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cluster_fraction_of_second_dominant_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_cluster_fraction_of_second_dominant_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_second_dominant_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the fraction of the second dominant malfunction in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of the second dominant malfunction in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_third_dominant_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_cluster_fraction_of_third_dominant_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_cluster_fraction_of_third_dominant_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_third_dominant_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the fraction of the third dominant malfunction in each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of the third dominant malfunction in each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_malfunction_fraction_of_dominated_clusters">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_malfunction_fraction_of_dominated_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_malfunction_fraction_of_dominated_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_fraction_of_dominated_clusters" title="Link to this definition"></a></dt>
+<dd><p>Fraction of the malfunction in the clusters which are dominated by the malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of the malfunction in the clusters which are dominated by this malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_malfunction_accuracy">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_malfunction_accuracy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_malfunction_accuracy"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_accuracy" title="Link to this definition"></a></dt>
+<dd><p>Accuracy/Efficiency, i.e. the fraction of the events from a malfunction which are mapped into a cluster which is dominated by the malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>accuracy of each malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_malfunction_number_of_relevant_clusters">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_malfunction_number_of_relevant_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_malfunction_number_of_relevant_clusters"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_number_of_relevant_clusters" title="Link to this definition"></a></dt>
+<dd><p>Fraction of the events from a malfunction which are mapped into a cluster which is dominated by the malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p></li>
+<li><p><strong>threshold</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – minimum number of events from the malfunction in the cluster to be considered relevant</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>number of relevant clusters for each malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_malfunction_classified_normal">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_malfunction_classified_normal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_malfunction_classified_normal"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_classified_normal" title="Link to this definition"></a></dt>
+<dd><p>Get the fraction of events from a malfunction that are classified as normal</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of events from a malfunction that are classified as normal</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.get_normal_classified_as_malfunction">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">get_normal_classified_as_malfunction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#get_normal_classified_as_malfunction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.get_normal_classified_as_malfunction" title="Link to this definition"></a></dt>
+<dd><p>Get the fraction of events from normal that are classified as malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>fraction of events from normal that are classified as malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.Series</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.malfunction_characteristics">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">malfunction_characteristics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#malfunction_characteristics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.malfunction_characteristics" title="Link to this definition"></a></dt>
+<dd><p>Get main characteristics of each malfunction</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>characteristics of each malfunction</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.cluster_characteristics">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">cluster_characteristics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#cluster_characteristics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.cluster_characteristics" title="Link to this definition"></a></dt>
+<dd><p>Get main characteristics of each cluster</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>characteristics of each cluster</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>pd.DataFrame</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.helpers.cluster_performance_metrics.cluster_performance_metrics">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.cluster_performance_metrics.</span></span><span class="sig-name descname"><span class="pre">cluster_performance_metrics</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">contingency_table</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/cluster_performance_metrics.html#cluster_performance_metrics"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.cluster_performance_metrics.cluster_performance_metrics" title="Link to this definition"></a></dt>
+<dd><p>Get overall performance metrics of the clustering</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>contingency_table</strong> (<em>pd.DataFrame</em>) – contingency table with clusters as index and malfunctions as columns</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>overall performance metrics of the clustering</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rm_classifier.helpers.html" class="btn btn-neutral float-left" title="rm_classifier.helpers package" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rm_classifier.helpers.high_entropy_subset.html" class="btn btn-neutral float-right" title="rm_classifier.helpers.high_entropy_subset module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

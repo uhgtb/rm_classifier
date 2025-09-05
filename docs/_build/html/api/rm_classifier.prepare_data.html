@@ -1,0 +1,341 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.prepare_data module &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rm_classifier.umap_classifier module" href="rm_classifier.umap_classifier.html" />
+    <link rel="prev" title="rm_classifier.performance_metrics module" href="rm_classifier.performance_metrics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rm_classifier.html">rm_classifier package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="rm_classifier.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html">rm_classifier.parametric_umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.performance_metrics.html">rm_classifier.performance_metrics module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">rm_classifier.prepare_data module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions-for-preparing-and-normalizing-data-for-umap-classification">Functions for Preparing and Normalizing Data for UMAP Classification</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.find_bin"><code class="docutils literal notranslate"><span class="pre">find_bin()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.cut_beacon_frequency_spectra"><code class="docutils literal notranslate"><span class="pre">cut_beacon_frequency_spectra()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.cut_beacon_frequency_timeseries"><code class="docutils literal notranslate"><span class="pre">cut_beacon_frequency_timeseries()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.calculate_n_frequency_bins"><code class="docutils literal notranslate"><span class="pre">calculate_n_frequency_bins()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.denoiser"><code class="docutils literal notranslate"><span class="pre">denoiser()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.welch_abs_fft"><code class="docutils literal notranslate"><span class="pre">welch_abs_fft()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.prepare_data"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.normalize_data"><code class="docutils literal notranslate"><span class="pre">normalize_data()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.prepare_data.pooling_data"><code class="docutils literal notranslate"><span class="pre">pooling_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html">rm_classifier.umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html">rm_classifier.yumap_classifier module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rm_classifier.html">rm_classifier package</a></li>
+      <li class="breadcrumb-item active">rm_classifier.prepare_data module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/rm_classifier.prepare_data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rm_classifier.prepare_data">
+<span id="rm-classifier-prepare-data-module"></span><h1>rm_classifier.prepare_data module<a class="headerlink" href="#module-rm_classifier.prepare_data" title="Link to this heading"></a></h1>
+<section id="functions-for-preparing-and-normalizing-data-for-umap-classification">
+<h2>Functions for Preparing and Normalizing Data for UMAP Classification<a class="headerlink" href="#functions-for-preparing-and-normalizing-data-for-umap-classification" title="Link to this heading"></a></h2>
+<p>Author: Johann Luca Kastner
+Date: 15/09/2025
+License: MIT</p>
+</section>
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.find_bin">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">find_bin</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">frequency</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#find_bin"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.find_bin" title="Link to this definition"></a></dt>
+<dd><p>Find the bin index of a given frequency in a list of frequency bins.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The frequency to find.</p></li>
+<li><p><strong>freq_bins</strong> (<em>array-like</em>) – The array of frequency bins.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The index of the bin closest to the given frequency.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.cut_beacon_frequency_spectra">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">cut_beacon_frequency_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">spectra</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beacon_frequencies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#cut_beacon_frequency_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.cut_beacon_frequency_spectra" title="Link to this definition"></a></dt>
+<dd><p>Cut the spectra around the beacon frequencies.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spectra</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The spectral data</p></li>
+<li><p><strong>beacon_frequencies</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> or </em><em>array</em>) – Frequencies to cut out</p></li>
+<li><p><strong>freq_bins</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a><em>, </em><em>optional</em>) – Frequency bins used in the spectra</p></li>
+<li><p><strong>peak_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The spectra with the beacon frequencies cut out.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.cut_beacon_frequency_timeseries">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">cut_beacon_frequency_timeseries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">signal</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">beacon_frequencies</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">freq_bins</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">peak_width</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#cut_beacon_frequency_timeseries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.cut_beacon_frequency_timeseries" title="Link to this definition"></a></dt>
+<dd><p>Cut the time series around the beacon frequencies using the hard cuts in the fft spectra.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>signal</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The time series data</p></li>
+<li><p><strong>beacon_frequencies</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em> or </em><em>array</em>) – Frequencies to cut out</p></li>
+<li><p><strong>freq_bins</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a><em>, </em><em>optional</em>) – Frequency bins used in the FFT of the time series</p></li>
+<li><p><strong>peak_width</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em> or </em><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>optional</em>) – Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The time series with the beacon frequencies cut out.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.calculate_n_frequency_bins">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">calculate_n_frequency_bins</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_data_type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">len_input_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suppress_dc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#calculate_n_frequency_bins"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.calculate_n_frequency_bins" title="Link to this definition"></a></dt>
+<dd><p>Calculate the number of frequency bins and time bins based on the input data type and length.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_data_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Type of the input data. Must be one of ‘fft’, ‘time’, ‘fft_phase’, or ‘fft_time’.</p></li>
+<li><p><strong>len_input_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Length of the input data (number of columns).</p></li>
+<li><p><strong>suppress_dc</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether the DC component is suppressed.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(n_fft, n_time) where n_fft is the number of frequency bins and n_time is the number of time bins.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.denoiser">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">denoiser</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_rolling_average</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">10</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_peak</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_fft</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#denoiser"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.denoiser" title="Link to this definition"></a></dt>
+<dd><p>Remove statistical noise from the data using a rolling average, without smoothing out peaks.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The input data to be denoised.</p></li>
+<li><p><strong>n_rolling_average</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of bins for the rolling average.</p></li>
+<li><p><strong>n_peak</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of bins for the peak, which are excluded from the rolling average calculation.</p></li>
+<li><p><strong>n_fft</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of frequency bins. If None, it is set to the number of columns in data.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The denoised data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.welch_abs_fft">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">welch_abs_fft</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">input_time_trace</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">params</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#welch_abs_fft"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.welch_abs_fft" title="Link to this definition"></a></dt>
+<dd><p>Calculate the absolute FFT of the input time trace using either standard FFT or Welch’s method.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_time_trace</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The input time trace data.</p></li>
+<li><p><strong>params</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – <p>Dictionary containing parameters for the FFT calculation, including:</p>
+<p>-** “spectrum_filter”: Method to use for FFT calculation. Must be either None or “welch”.
+-** “sampling_frequency”: Sampling frequency of the input time trace.
+-** “welch_nperseg”: Length of each segment for Welch’s method.
+-** “welch_window”: Type of window to use for Welch’s method.
+-** “welch_average”: Method to use for averaging in Welch’s method.
+-** “welch_noverlap”: Number of overlapping points between segments for Welch’s method.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The absolute FFT of the input time trace.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.prepare_data">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">umap_classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.prepare_data" title="Link to this definition"></a></dt>
+<dd><p>Prepare the data according to the specifications in the umap_classifier object.
+This includes cutting beacon frequencies, applying window functions, converting data types,
+suppressing DC components, applying denoising and log filters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>umap_classifier</strong> (<em>_umap_classifier_</em>) – An umap_classifier object containing data preparation specifications.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The input data to be prepared.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The prepared data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.normalize_data">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">normalize_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">umap_classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#normalize_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.normalize_data" title="Link to this definition"></a></dt>
+<dd><p>Normalize the data using the mean and standard deviation from the training data.
+If the mean and std are not provided, they are calculated from the provided data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>umap_classifier</strong> (<em>_umap_classifier_</em>) – An umap_classifier object containing normalization specifications.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The input data to be normalized.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>(normalized_data, params) where normalized_data is the normalized data and params is the updated data preparation parameters.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.13)">tuple</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="rm_classifier.prepare_data.pooling_data">
+<span class="sig-prename descclassname"><span class="pre">rm_classifier.prepare_data.</span></span><span class="sig-name descname"><span class="pre">pooling_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">umap_classifier</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/prepare_data.html#pooling_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.prepare_data.pooling_data" title="Link to this definition"></a></dt>
+<dd><p>Apply pooling to the data according to the specifications in the umap_classifier object.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>umap_classifier</strong> (<em>_umap_classifier_</em>) – An umap_classifier object containing pooling specifications.</p></li>
+<li><p><strong>data</strong> (<a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)"><em>numpy.ndarray</em></a>) – The input data to be pooled.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The pooled data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v2.3)">numpy.ndarray</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rm_classifier.performance_metrics.html" class="btn btn-neutral float-left" title="rm_classifier.performance_metrics module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rm_classifier.umap_classifier.html" class="btn btn-neutral float-right" title="rm_classifier.umap_classifier module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

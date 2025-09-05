@@ -1,0 +1,299 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier package &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rm_classifier.helpers package" href="rm_classifier.helpers.html" />
+    <link rel="prev" title="rm_classifier documentation" href="../index.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">rm_classifier package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#subpackages">Subpackages</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html">rm_classifier.parametric_umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.performance_metrics.html">rm_classifier.performance_metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.prepare_data.html">rm_classifier.prepare_data module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html">rm_classifier.umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html">rm_classifier.yumap_classifier module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">rm_classifier package</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/rm_classifier.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rm_classifier">
+<span id="rm-classifier-package"></span><h1>rm_classifier package<a class="headerlink" href="#module-rm_classifier" title="Link to this heading"></a></h1>
+<p>rm_classifier</p>
+<p>This package provides tools for cluster identification and classification tasks
+related to the monitoring of radio antennas.</p>
+<p>It includes functionalities for data preprocessing, model training,
+evaluation, and visualization.</p>
+<dl class="simple">
+<dt>Classes:</dt><dd><p>UMAPClassifier: Classifier using UMAP for dimensionality reduction.</p>
+</dd>
+</dl>
+<section id="subpackages">
+<h2>Subpackages<a class="headerlink" href="#subpackages" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.helpers.html#submodules">Submodules</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html">rm_classifier.helpers.cluster_performance_metrics module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#functions-to-evaluate-clustering-performance-on-predicted-clusters-and-known-malfunctions-labels">Functions to Evaluate Clustering Performance on Predicted Clusters and Known Malfunctions Labels</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_main_malfunction"><code class="docutils literal notranslate"><span class="pre">get_main_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_main_cluster"><code class="docutils literal notranslate"><span class="pre">get_main_cluster()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_separability"><code class="docutils literal notranslate"><span class="pre">get_malfunction_separability()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_purity"><code class="docutils literal notranslate"><span class="pre">get_cluster_purity()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_second_malfunction"><code class="docutils literal notranslate"><span class="pre">get_second_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_third_malfunction"><code class="docutils literal notranslate"><span class="pre">get_third_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_second_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_second_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_cluster_fraction_of_third_dominant_malfunction"><code class="docutils literal notranslate"><span class="pre">get_cluster_fraction_of_third_dominant_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_fraction_of_dominated_clusters"><code class="docutils literal notranslate"><span class="pre">get_malfunction_fraction_of_dominated_clusters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_accuracy"><code class="docutils literal notranslate"><span class="pre">get_malfunction_accuracy()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_number_of_relevant_clusters"><code class="docutils literal notranslate"><span class="pre">get_malfunction_number_of_relevant_clusters()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_malfunction_classified_normal"><code class="docutils literal notranslate"><span class="pre">get_malfunction_classified_normal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.get_normal_classified_as_malfunction"><code class="docutils literal notranslate"><span class="pre">get_normal_classified_as_malfunction()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.malfunction_characteristics"><code class="docutils literal notranslate"><span class="pre">malfunction_characteristics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.cluster_characteristics"><code class="docutils literal notranslate"><span class="pre">cluster_characteristics()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.cluster_performance_metrics.html#rm_classifier.helpers.cluster_performance_metrics.cluster_performance_metrics"><code class="docutils literal notranslate"><span class="pre">cluster_performance_metrics()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.high_entropy_subset.html">rm_classifier.helpers.high_entropy_subset module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.high_entropy_subset.html#algorithm-to-select-a-subset-of-data-maximizing-label-entropy">Algorithm to Select a Subset of Data Maximizing Label Entropy</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.high_entropy_subset.html#rm_classifier.helpers.high_entropy_subset.handle_few_event_classes"><code class="docutils literal notranslate"><span class="pre">handle_few_event_classes()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.high_entropy_subset.html#rm_classifier.helpers.high_entropy_subset.high_entropy_subset_mask"><code class="docutils literal notranslate"><span class="pre">high_entropy_subset_mask()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html">rm_classifier.helpers.statistical_models module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html#statistical-models-for-likelihood-evaluations">Statistical Models for Likelihood Evaluations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html#rm_classifier.helpers.statistical_models.logl_uncorrelated_normal"><code class="docutils literal notranslate"><span class="pre">logl_uncorrelated_normal()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html#rm_classifier.helpers.statistical_models.cholesky_factors"><code class="docutils literal notranslate"><span class="pre">cholesky_factors()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.statistical_models.html#rm_classifier.helpers.statistical_models.logl_normal"><code class="docutils literal notranslate"><span class="pre">logl_normal()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.tracked_parametric_umap.html">rm_classifier.helpers.tracked_parametric_umap module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.tracked_parametric_umap.html#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback"><code class="docutils literal notranslate"><span class="pre">AutoencoderLossCallback</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.tracked_parametric_umap.html#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP"><code class="docutils literal notranslate"><span class="pre">TrackedPUMAP</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.tracked_parametric_umap.html#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel"><code class="docutils literal notranslate"><span class="pre">TrackedUMAPModel</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.umap_data_loader.html">rm_classifier.helpers.umap_data_loader module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.umap_data_loader.html#functions-to-load-data">Functions to Load Data</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.umap_data_loader.html#rm_classifier.helpers.umap_data_loader.load_umap_data_from_dir"><code class="docutils literal notranslate"><span class="pre">load_umap_data_from_dir()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.umap_data_loader.html#rm_classifier.helpers.umap_data_loader.load_umap_data_batchwise_from_dir"><code class="docutils literal notranslate"><span class="pre">load_umap_data_batchwise_from_dir()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.visualization.html">rm_classifier.helpers.visualization module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#visualizing-clustering-results-and-data-embeddings">Visualizing Clustering Results and Data Embeddings</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.create_axes_configurations"><code class="docutils literal notranslate"><span class="pre">create_axes_configurations()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.default_plot_types"><code class="docutils literal notranslate"><span class="pre">default_plot_types()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_idx"><code class="docutils literal notranslate"><span class="pre">plot_idx()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_spectra"><code class="docutils literal notranslate"><span class="pre">plot_spectra()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_cluster_samples"><code class="docutils literal notranslate"><span class="pre">plot_cluster_samples()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_index"><code class="docutils literal notranslate"><span class="pre">plot_index()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_embdding"><code class="docutils literal notranslate"><span class="pre">plot_embdding()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_overview_bokeh"><code class="docutils literal notranslate"><span class="pre">plot_overview_bokeh()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.visualization.html#rm_classifier.helpers.visualization.plot_k_distance"><code class="docutils literal notranslate"><span class="pre">plot_k_distance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.helpers.yumap.html">rm_classifier.helpers.yumap module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.yumap.html#y-shaped-umap-with-classification-head">Y-shaped UMAP with Classification Head</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.ClassificationValidationCallback"><code class="docutils literal notranslate"><span class="pre">ClassificationValidationCallback</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.create_classification_loss_fn"><code class="docutils literal notranslate"><span class="pre">create_classification_loss_fn()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier"><code class="docutils literal notranslate"><span class="pre">YShapedUMAPClassifier</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel"><code class="docutils literal notranslate"><span class="pre">yUMAPModel</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="submodules">
+<h2>Submodules<a class="headerlink" href="#submodules" title="Link to this heading"></a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html">rm_classifier.parametric_umap_classifier module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#parametric-umap-classifier-extension-of-the-umapclassifier">Parametric UMAP Classifier Extension of the UMAPClassifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.train_embed"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier.train_embed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.prepare_pumap_transform_prediction"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier.prepare_pumap_transform_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.pumap_transform_prediction"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier.pumap_transform_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.reconstruct"><code class="docutils literal notranslate"><span class="pre">ParametricUMAPClassifier.reconstruct()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.performance_metrics.html">rm_classifier.performance_metrics module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.performance_metrics.html#collection-of-performance-metrics-for-classification-and-clustering">Collection of Performance Metrics for Classification and Clustering</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.confusion_matrix"><code class="docutils literal notranslate"><span class="pre">confusion_matrix()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.confusion_matrix_from_dominant_cluster_label"><code class="docutils literal notranslate"><span class="pre">confusion_matrix_from_dominant_cluster_label()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.performance_metrics.html#rm_classifier.performance_metrics.prediction_performance"><code class="docutils literal notranslate"><span class="pre">prediction_performance()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.prepare_data.html">rm_classifier.prepare_data module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#functions-for-preparing-and-normalizing-data-for-umap-classification">Functions for Preparing and Normalizing Data for UMAP Classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.find_bin"><code class="docutils literal notranslate"><span class="pre">find_bin()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.cut_beacon_frequency_spectra"><code class="docutils literal notranslate"><span class="pre">cut_beacon_frequency_spectra()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.cut_beacon_frequency_timeseries"><code class="docutils literal notranslate"><span class="pre">cut_beacon_frequency_timeseries()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.calculate_n_frequency_bins"><code class="docutils literal notranslate"><span class="pre">calculate_n_frequency_bins()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.denoiser"><code class="docutils literal notranslate"><span class="pre">denoiser()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.welch_abs_fft"><code class="docutils literal notranslate"><span class="pre">welch_abs_fft()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.prepare_data"><code class="docutils literal notranslate"><span class="pre">prepare_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.normalize_data"><code class="docutils literal notranslate"><span class="pre">normalize_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.prepare_data.html#rm_classifier.prepare_data.pooling_data"><code class="docutils literal notranslate"><span class="pre">pooling_data()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.umap_classifier.html">rm_classifier.umap_classifier module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.umap_classifier.html#umap-classifier-with-dbscan-for-radio-monitoring-with-dbscan">UMAP Classifier with DBSCAN for Radio Monitoring with DBSCAN</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.__init__"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.prepare_data"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.prepare_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.custom_prepare_data"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.custom_prepare_data()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.train_embed"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.train_embed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.db_classify"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.db_classify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.k_distance_plot"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.k_distance_plot()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.hdb_classify"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.hdb_classify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.save_cluster_trace"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.save_cluster_trace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.get_cluster_trace"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.get_cluster_trace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_trace"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.save_modified_cluster_trace()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.save_cluster_cholesky_factors"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.save_cluster_cholesky_factors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_cholesky_factors"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.save_modified_cluster_cholesky_factors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.prepare_minimum_distance_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.prepare_minimum_distance_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.minimum_distance_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.minimum_distance_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_uncorrelated_normal_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.prepare_ml_uncorrelated_normal_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.ml_uncorrelated_normal_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.ml_uncorrelated_normal_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_correlated_normal_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.prepare_ml_correlated_normal_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.ml_correlated_normal_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.ml_correlated_normal_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.umap_transform_prediction"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.umap_transform_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.plot_spectra"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.plot_spectra()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.plot_cluster_samples"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.plot_cluster_samples()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.plot_index"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.plot_index()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.plot_embedding"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.plot_embedding()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.plot_overview_bokeh"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.plot_overview_bokeh()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_batchwise_from_dir"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.load_umap_data_batchwise_from_dir()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.umap_classifier.html#rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_from_dir"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier.load_umap_data_from_dir()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.yumap_classifier.html">rm_classifier.yumap_classifier module</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.yumap_classifier.html#y-shaped-parametric-umap-classifier">Y-Shaped Parametric UMAP Classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.__init__"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.train_embed"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.train_embed()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.prepare_yumap_transform_prediction"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.prepare_yumap_transform_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.yumap_transform_prediction"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.yumap_transform_prediction()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.classify"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.classify()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.reconstruct"><code class="docutils literal notranslate"><span class="pre">yUMAPClassifier.reconstruct()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="../index.html" class="btn btn-neutral float-left" title="rm_classifier documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rm_classifier.helpers.html" class="btn btn-neutral float-right" title="rm_classifier.helpers package" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

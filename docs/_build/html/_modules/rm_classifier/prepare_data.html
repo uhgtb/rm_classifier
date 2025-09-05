@@ -1,0 +1,558 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.prepare_data &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.prepare_data</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.prepare_data</h1><div class="highlight"><pre>
+<span></span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Functions for Preparing and Normalizing Data for UMAP Classification</span>
+<span class="sd">====================================================================</span>
+
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">gc</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">scipy</span><span class="w"> </span><span class="kn">import</span> <span class="n">signal</span>
+
+<div class="viewcode-block" id="find_bin">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.find_bin">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_bin</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">freq_bins</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the bin index of a given frequency in a list of frequency bins.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        frequency (float): The frequency to find.</span>
+<span class="sd">        freq_bins (array-like): The array of frequency bins.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        int: The index of the bin closest to the given frequency.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">argmin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">freq_bins</span> <span class="o">-</span> <span class="n">frequency</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="cut_beacon_frequency_spectra">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.cut_beacon_frequency_spectra">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cut_beacon_frequency_spectra</span><span class="p">(</span><span class="n">spectra</span><span class="p">,</span> <span class="n">beacon_frequencies</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peak_width</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cut the spectra around the beacon frequencies.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:           </span>
+<span class="sd">        spectra (numpy.ndarray): The spectral data</span>
+<span class="sd">        beacon_frequencies (list or array): Frequencies to cut out</span>
+<span class="sd">        freq_bins (numpy.ndarray, optional): Frequency bins used in the spectra</span>
+<span class="sd">        peak_width (int or list, optional): Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The spectra with the beacon frequencies cut out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Convert peak_width to a list if it&#39;s a single value</span>
+
+    <span class="n">peak_width</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">peak_width</span><span class="p">))</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">peak_width</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+        <span class="n">peak_width</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak_width</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">)</span>
+    
+    <span class="c1"># Ensure peak_width and beacon_frequencies have the same length</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_width</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If peak_width is a list, it must have the same length as beacon_frequencies&quot;</span><span class="p">)</span>
+        
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frequency</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">):</span>
+        <span class="n">pw</span> <span class="o">=</span> <span class="n">peak_width</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">freq_bin</span> <span class="o">=</span> <span class="n">find_bin</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">freq_bins</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">avg_values</span> <span class="o">=</span> <span class="p">(</span><span class="n">spectra</span><span class="p">[:,</span><span class="n">freq_bin</span><span class="o">-</span><span class="n">pw</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">spectra</span><span class="p">[:,</span><span class="n">freq_bin</span><span class="o">+</span><span class="n">pw</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">spectra</span><span class="p">[:,</span><span class="n">freq_bin</span><span class="o">-</span><span class="n">pw</span><span class="p">:</span><span class="n">freq_bin</span><span class="o">+</span><span class="n">pw</span><span class="p">]</span> <span class="o">=</span> <span class="n">avg_values</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pw</span><span class="p">))</span>
+    <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">spectra</span></div>
+
+
+<div class="viewcode-block" id="cut_beacon_frequency_timeseries">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.cut_beacon_frequency_timeseries">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">cut_beacon_frequency_timeseries</span><span class="p">(</span><span class="n">signal</span><span class="p">,</span> <span class="n">beacon_frequencies</span><span class="p">,</span> <span class="n">freq_bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">peak_width</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cut the time series around the beacon frequencies using the hard cuts in the fft spectra.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        signal (numpy.ndarray): The time series data</span>
+<span class="sd">        beacon_frequencies (list or array): Frequencies to cut out</span>
+<span class="sd">        freq_bins (numpy.ndarray, optional): Frequency bins used in the FFT of the time series</span>
+<span class="sd">        peak_width (int or list, optional): Width of the peak(s) to cut. If a list, must be the same length as beacon_frequencies.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The time series with the beacon frequencies cut out.</span>
+<span class="sd">    &quot;&quot;&quot;</span>	
+    <span class="c1"># process in chunks to avoid memory issues</span>
+    <span class="n">signal</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Avoid modifying the original data</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">n_batches</span> <span class="o">=</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">)</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
+    <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">):</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="n">batch_idx</span> <span class="o">*</span> <span class="n">batch_size</span>
+        <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">signal</span><span class="p">))</span>
+
+        <span class="n">signal_fft</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">])</span><span class="o">+</span><span class="mf">1e-10</span>
+        <span class="c1"># Convert peak_width to a list if it&#39;s a single value</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">peak_width</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)):</span>
+            <span class="n">peak_width</span> <span class="o">=</span> <span class="p">[</span><span class="n">peak_width</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">)</span>
+        
+        <span class="c1"># Ensure peak_width and beacon_frequencies have the same length</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">peak_width</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;If peak_width is a list, it must have the same length as beacon_frequencies&quot;</span><span class="p">)</span>
+        
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">frequency</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">beacon_frequencies</span><span class="p">):</span>
+            <span class="n">pw</span> <span class="o">=</span> <span class="n">peak_width</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">freq_bin</span> <span class="o">=</span> <span class="n">find_bin</span><span class="p">(</span><span class="n">frequency</span><span class="p">,</span> <span class="n">freq_bins</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span>
+            <span class="n">avg_values</span> <span class="o">=</span> <span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">signal_fft</span><span class="p">)[:,</span><span class="n">freq_bin</span><span class="o">-</span><span class="n">pw</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">signal_fft</span><span class="p">)[:,</span><span class="n">freq_bin</span><span class="o">+</span><span class="n">pw</span><span class="o">+</span><span class="mi">1</span><span class="p">])</span><span class="o">/</span><span class="mi">2</span>
+            <span class="n">signal_fft</span><span class="p">[:,</span><span class="n">freq_bin</span><span class="o">-</span><span class="n">pw</span><span class="p">:</span><span class="n">freq_bin</span><span class="o">+</span><span class="n">pw</span><span class="p">]</span> <span class="o">*=</span> <span class="p">(</span><span class="n">avg_values</span><span class="p">[:,</span> <span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="n">pw</span><span class="p">))</span><span class="o">/</span><span class="nb">abs</span><span class="p">(</span><span class="n">signal_fft</span><span class="p">)[:,</span><span class="n">freq_bin</span><span class="o">-</span><span class="n">pw</span><span class="p">:</span><span class="n">freq_bin</span><span class="o">+</span><span class="n">pw</span><span class="p">])</span>
+        <span class="n">signal</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">signal_fft</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">signal</span></div>
+
+
+<div class="viewcode-block" id="calculate_n_frequency_bins">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.calculate_n_frequency_bins">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">input_data_type</span><span class="p">,</span> <span class="n">len_input_data</span><span class="p">,</span> <span class="n">suppress_dc</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span> 
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the number of frequency bins and time bins based on the input data type and length.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        input_data_type (str): Type of the input data. Must be one of &#39;fft&#39;, &#39;time&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.</span>
+<span class="sd">        len_input_data (int): Length of the input data (number of columns).</span>
+<span class="sd">        suppress_dc (bool): Whether the DC component is suppressed.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (n_fft, n_time) where n_fft is the number of frequency bins and n_time is the number of time bins.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">len_input_data</span><span class="p">,</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">len_input_data</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">suppress_dc</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">len_input_data</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">int</span><span class="p">(</span><span class="n">suppress_dc</span><span class="p">),</span> <span class="n">len_input_data</span>
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">len_input_data</span> <span class="o">%</span> <span class="mi">2</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">n_fft</span> <span class="o">=</span> <span class="n">len_input_data</span> <span class="o">//</span> <span class="mi">2</span>
+            <span class="n">n_time</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">n_fft</span> <span class="o">-</span> <span class="mi">1</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">suppress_dc</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fft_phase data must have an even number of columns for conversion to FFT.&quot;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">len_input_data</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">suppress_dc</span><span class="p">))</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">n_fft</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_input_data</span> <span class="o">+</span> <span class="mi">2</span> <span class="p">)</span> <span class="o">//</span> <span class="mi">3</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">len_input_data</span> <span class="o">+</span> <span class="nb">int</span><span class="p">(</span><span class="n">suppress_dc</span><span class="p">))</span> <span class="o">%</span> <span class="mi">3</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">n_fft</span> <span class="o">=</span> <span class="p">(</span><span class="n">len_input_data</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="mi">3</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;fft_time data must have a shape, where n_fft_bins = n_time_bins // 2 +1&quot;</span><span class="p">)</span>
+        <span class="n">n_time</span> <span class="o">=</span> <span class="n">len_input_data</span> <span class="o">-</span> <span class="n">n_fft</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input_data_type: </span><span class="si">{</span><span class="n">input_data_type</span><span class="si">}</span><span class="s2">. Must be one of &#39;fft&#39;, &#39;time&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span></div>
+
+
+<div class="viewcode-block" id="denoiser">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.denoiser">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">denoiser</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">n_rolling_average</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">n_peak</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">n_fft</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove statistical noise from the data using a rolling average, without smoothing out peaks.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        data (numpy.ndarray): The input data to be denoised.</span>
+<span class="sd">        n_rolling_average (int): Number of bins for the rolling average.</span>
+<span class="sd">        n_peak (int): Number of bins for the peak, which are excluded from the rolling average calculation.</span>
+<span class="sd">        n_fft (int, optional): Number of frequency bins. If None, it is set to the number of columns in data.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The denoised data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">if</span> <span class="n">n_fft</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">n_fft</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">cut_function</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cut1</span><span class="p">,</span> <span class="n">cut2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">cut1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">cut2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">cut1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">cut2</span> <span class="o">-</span> <span class="n">cut1</span><span class="p">)))</span>
+    <span class="n">conv</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">n_rolling_average</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">n_peak</span><span class="p">)</span>
+    <span class="n">conv</span><span class="p">[</span><span class="n">n_rolling_average</span><span class="o">-</span><span class="n">n_peak</span><span class="p">:</span><span class="o">-</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="n">n_peak</span><span class="p">]</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_peak</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="c1"># calculate the rolling average with n_pak bins excluded in the middle</span>
+    
+    <span class="c1"># process in chunks to avoid memory issues</span>
+    <span class="n">batch_size</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">n_batches</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">batch_size</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">//</span> <span class="n">batch_size</span>
+    <span class="k">for</span> <span class="n">batch_idx</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_batches</span><span class="p">):</span>
+        <span class="n">start_idx</span> <span class="o">=</span> <span class="n">batch_idx</span> <span class="o">*</span> <span class="n">batch_size</span>
+        <span class="n">end_idx</span> <span class="o">=</span> <span class="nb">min</span><span class="p">((</span><span class="n">batch_idx</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        
+        <span class="c1"># calculate rolling average for the current batch</span>
+        <span class="n">rolling_average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">apply_along_axis</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">conv</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;same&#39;</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">])</span>
+        
+        <span class="c1"># calculate alpha, which is the weight of the rolling average</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">cut_function</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span><span class="o">-</span><span class="n">rolling_average</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">rolling_average</span><span class="p">)</span><span class="o">+</span><span class="mf">1e-9</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">2.5</span><span class="p">)</span>
+        <span class="n">alpha</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">alpha</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">2</span><span class="p">],</span> <span class="n">alpha</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="p">[:,</span><span class="mi">2</span><span class="p">:])</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">alpha</span><span class="p">[:,</span> <span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">n_fft</span><span class="o">-</span><span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">)],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1"># Ensure alpha is between 0 and 1 and has the same shape as the data after cutting the edges</span>
+        <span class="c1"># apply the rolling average to the data</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">n_fft</span><span class="o">-</span><span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">*=</span> <span class="n">alpha</span> <span class="c1">#keep the edges unchanged</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">start_idx</span><span class="p">:</span><span class="n">end_idx</span><span class="p">,</span> <span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">n_fft</span><span class="o">-</span><span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">+=</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">rolling_average</span><span class="p">[:,(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">n_fft</span><span class="o">-</span><span class="p">(</span><span class="n">n_rolling_average</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+    
+    <span class="k">return</span> <span class="n">data</span> <span class="c1"># return weighted denoised data</span></div>
+
+
+<div class="viewcode-block" id="welch_abs_fft">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.welch_abs_fft">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">welch_abs_fft</span><span class="p">(</span><span class="n">input_time_trace</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate the absolute FFT of the input time trace using either standard FFT or Welch&#39;s method.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        input_time_trace (numpy.ndarray): The input time trace data.</span>
+<span class="sd">        params (dict): Dictionary containing parameters for the FFT calculation, including:</span>
+
+<span class="sd">            -** &quot;spectrum_filter&quot;: Method to use for FFT calculation. Must be either None or &quot;welch&quot;.</span>
+<span class="sd">            -** &quot;sampling_frequency&quot;: Sampling frequency of the input time trace.</span>
+<span class="sd">            -** &quot;welch_nperseg&quot;: Length of each segment for Welch&#39;s method.</span>
+<span class="sd">            -** &quot;welch_window&quot;: Type of window to use for Welch&#39;s method.</span>
+<span class="sd">            -** &quot;welch_average&quot;: Method to use for averaging in Welch&#39;s method.</span>
+<span class="sd">            -** &quot;welch_noverlap&quot;: Number of overlapping points between segments for Welch&#39;s method.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The absolute FFT of the input time trace.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;spectrum_filter&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">&quot;welch&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">input_time_trace</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Applying Welch&#39;s method to calculate absolute FFT.&quot;</span><span class="p">)</span>
+        <span class="n">psd</span><span class="o">=</span><span class="n">signal</span><span class="o">.</span><span class="n">welch</span><span class="p">(</span><span class="n">input_time_trace</span><span class="p">,</span> 
+                         <span class="n">fs</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">],</span> 
+                         <span class="n">nperseg</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_nperseg&quot;</span><span class="p">],</span> 
+                         <span class="n">window</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_window&quot;</span><span class="p">],</span> 
+                         <span class="n">average</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_average&quot;</span><span class="p">],</span> 
+                         <span class="n">noverlap</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_noverlap&quot;</span><span class="p">],</span> 
+                         <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">win</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">get_window</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_window&quot;</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_nperseg&quot;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">win</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">psd</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">win</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span> <span class="c1"># Normalize the power spectral density</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">win</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">])</span>
+        <span class="n">psd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">psd</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>  <span class="c1"># Avoid log(0) issues</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">psd</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="prepare_data">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.prepare_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">prepare_data</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Prepare the data according to the specifications in the umap_classifier object.</span>
+<span class="sd">    This includes cutting beacon frequencies, applying window functions, converting data types,</span>
+<span class="sd">    suppressing DC components, applying denoising and log filters.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): An umap_classifier object containing data preparation specifications.</span>
+<span class="sd">        data (numpy.ndarray): The input data to be prepared.</span>
+<span class="sd">        verbose (bool): Whether to print progress messages.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The prepared data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">input_data_type</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">input_data_type</span>
+    <span class="n">target_data_type</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target_data_type&quot;</span><span class="p">,</span> <span class="n">input_data_type</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span>
+    <span class="c1"># Check for invalid input data types</span>
+    <span class="k">if</span> <span class="n">input_data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid input_data_type: </span><span class="si">{</span><span class="n">input_data_type</span><span class="si">}</span><span class="s2">. Must be one of &#39;fft&#39;, &#39;time&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">target_data_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">&quot;fft&quot;</span><span class="p">,</span> <span class="s2">&quot;time&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">,</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid target_data_type: </span><span class="si">{</span><span class="n">target_data_type</span><span class="si">}</span><span class="s2">. Must be one of &#39;fft&#39;, &#39;time&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.&quot;</span><span class="p">)</span>    
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;spectrum_filter&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;welch&quot;</span><span class="p">,</span> <span class="s2">&quot;denoiser&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid spectrum_filter: </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;spectrum_filter&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. Must be None, &#39;welch&#39;, or &#39;denoiser&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="s2">&quot;hamming&quot;</span><span class="p">,</span> <span class="s2">&quot;hanning&quot;</span><span class="p">,</span> <span class="s2">&quot;blackman&quot;</span><span class="p">,</span> <span class="s2">&quot;blackmanharris&quot;</span><span class="p">,</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">,</span> <span class="s2">&quot;kaiser&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid windowing: </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. Must be None, &#39;hamming&#39;, &#39;hanning&#39;, &#39;blackman&#39;, &#39;blackmanharris&#39;, &#39;bartlett&#39;, or &#39;kaiser&#39;.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;spectrum_filter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;welch&quot;</span> <span class="ow">and</span> <span class="n">input_data_type</span> <span class="o">!=</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Welch filter can only be applied to time traces as input data. Specify input_data_type as &#39;time&#39;.&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Cut beacon frequencies if specified</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;cut_beacon_frequencies&quot;</span><span class="p">]:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">input_data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">]:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Beacon frequencies must be specified if cut_beacon_frequencies is True.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">]:</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">3</span>  <span class="c1"># Default width if not specified</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;Beacon width not specified. Using default value of 3.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;sampling_frequency&quot;</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">n_fft</span><span class="p">)</span>  <span class="c1"># Default frequency bins if not specified</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Frequency bins not specified. Using default frequency bins from 0 to </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;sampling_frequency&#39;</span><span class="p">]</span><span class="o">/</span><span class="mi">2</span><span class="si">}</span><span class="s2"> MHz with </span><span class="si">{</span><span class="n">n_fft</span><span class="si">}</span><span class="s2"> bins.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">cut_beacon_frequency_spectra</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">],</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span><span class="n">peak_width</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">cut_beacon_frequency_timeseries</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">],</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span> <span class="n">peak_width</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">])</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+            <span class="n">data_fft</span> <span class="o">=</span> <span class="n">cut_beacon_frequency_spectra</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">],</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span> <span class="n">peak_width</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">])</span>
+            <span class="n">data_time</span> <span class="o">=</span> <span class="n">cut_beacon_frequency_timeseries</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">],</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span> <span class="n">peak_width</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">])</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data_fft</span><span class="p">,</span> <span class="n">data_time</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">data_fft</span><span class="p">,</span> <span class="n">data_time</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="n">data_fft</span> <span class="o">=</span> <span class="n">cut_beacon_frequency_spectra</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_frequencies&quot;</span><span class="p">],</span> <span class="n">freq_bins</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;frequency_bins&quot;</span><span class="p">],</span> <span class="n">peak_width</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;beacon_width&quot;</span><span class="p">])</span>
+            <span class="n">data_phase</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data_fft</span><span class="p">,</span> <span class="n">data_phase</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">data_fft</span><span class="p">,</span> <span class="n">data_phase</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    
+    <span class="c1"># apply window functions to the time traces</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Applying </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> windowing to the time traces.&quot;</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Remove DC component</span>
+            <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;hamming&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hamming</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;hanning&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hanning</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;blackman&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">blackman</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;blackmanharris&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">blackmanharris</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;bartlett&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bartlett</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">elif</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;windowing&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;kaiser&quot;</span><span class="p">:</span>
+                <span class="n">window</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kaiser</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">beta</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid window type: </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;windowing&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. Must be one of &#39;hamming&#39;, &#39;hanning&#39;, &#39;blackman&#39;, &#39;blackmanharris&#39;, &#39;bartlett&#39;, or &#39;kaiser&#39;.&quot;</span><span class="p">)</span>
+            
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">*</span> <span class="n">window</span>
+            <span class="k">del</span> <span class="n">window</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Windowing can only be applied to time traces as input data. Specify input_data_type as &#39;time&#39;.&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># finally convert the data to the target data type</span>
+    <span class="k">if</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;FFT data can only be converted to &#39;fft&#39; target data type. Specify target_data_type as &#39;fft&#39;.&quot;</span><span class="p">)</span>        
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">welch_abs_fft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="n">phases</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))</span>
+            <span class="n">abs_values</span> <span class="o">=</span> <span class="n">welch_abs_fft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">abs_values</span><span class="p">,</span> <span class="n">phases</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">phases</span><span class="p">,</span> <span class="n">abs_values</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+            <span class="n">fft_data</span> <span class="o">=</span> <span class="n">welch_abs_fft</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">fft_data</span><span class="p">,</span> <span class="n">data</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">del</span> <span class="n">fft_data</span>
+            <span class="n">gc</span><span class="o">.</span><span class="n">collect</span><span class="p">()</span>
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">input_data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">angle</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">rfft</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">input_data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span>  <span class="c1"># Keep only absolute values of the fft</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">fft</span><span class="o">.</span><span class="n">irfft</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">1</span><span class="n">j</span> <span class="o">*</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    
+    <span class="c1">#claculate n_fft and n_time</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;spectrum_filter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;welch&quot;</span><span class="p">:</span>
+        <span class="n">n_fft</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;welch_nperseg&quot;</span><span class="p">]</span> <span class="o">//</span> <span class="mi">2</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Adjust n_fft for Welch filter</span>
+        <span class="n">n_time</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">n_fft</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">n_fft</span><span class="p">,</span> <span class="n">n_time</span> <span class="o">=</span> <span class="n">calculate_n_frequency_bins</span><span class="p">(</span><span class="n">target_data_type</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="c1">#apply suppress_dc if specified</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;suppress_dc&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">n_fft</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span><span class="s2">&quot;fft_phase&quot;</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:</span><span class="n">n_fft</span><span class="p">],</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="o">+</span><span class="mi">1</span><span class="p">:]],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">n_fft</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">elif</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft_time&quot;</span><span class="p">:</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="n">n_fft</span><span class="p">:],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">keepdims</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">:]</span>
+            <span class="n">n_fft</span> <span class="o">-=</span> <span class="mi">1</span>
+    <span class="c1"># apply denoiser if specified</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;spectrum_filter&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;denoiser&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Denoiser can only be applied to FFT data. Specify target_data_type as &#39;fft&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">denoiser</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">n_rolling_average</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;denoiser_n&quot;</span><span class="p">],</span> <span class="n">n_peak</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;denoiser_npeak&quot;</span><span class="p">],</span> <span class="n">n_fft</span><span class="o">=</span><span class="n">n_fft</span><span class="p">)</span>
+
+    <span class="c1"># apply log filter if specified</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;log_filter&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;time&quot;</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Log filter can only be applied to FFT data. Specify target_data_type as &#39;fft&#39;, &#39;fft_phase&#39;, or &#39;fft_time&#39;.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">input_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span> <span class="ow">and</span> <span class="n">target_data_type</span> <span class="o">==</span> <span class="s2">&quot;fft&quot;</span><span class="p">:</span>
+                <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>  <span class="c1"># Avoid modifying the original data</span>
+            <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n_fft</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">)</span>  <span class="c1"># Add small value to avoid log(0)</span>
+    <span class="k">return</span> <span class="n">data</span></div>
+
+
+<div class="viewcode-block" id="normalize_data">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.normalize_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">normalize_data</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Normalize the data using the mean and standard deviation from the training data.</span>
+<span class="sd">    If the mean and std are not provided, they are calculated from the provided data.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): An umap_classifier object containing normalization specifications.</span>
+<span class="sd">        data (numpy.ndarray): The input data to be normalized.</span>
+<span class="sd">        verbose (bool): Whether to print progress messages.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        tuple: (normalized_data, params) where normalized_data is the normalized data and params is the updated data preparation parameters.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;normalization&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;rd_train_mean&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_mean&quot;</span><span class="p">],</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No rd_train_std provided. Calculating std from the provided prepared data.&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_mean&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span><span class="s2">&quot;rd_train_std&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">params</span><span class="p">)</span><span class="o">|</span><span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_std&quot;</span><span class="p">],</span><span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">))):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No rd_train_std provided. Calculating std from the provided prepared data.&quot;</span><span class="p">)</span>
+            <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_std&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Using previous rd_train_mean and rd_train_std for normalization.&quot;</span><span class="p">)</span>
+
+        <span class="n">data</span> <span class="o">-=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_mean&quot;</span><span class="p">]</span>
+        <span class="n">data</span> <span class="o">/=</span> <span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;rd_train_std&quot;</span><span class="p">]</span> <span class="o">+</span> <span class="mf">1e-10</span><span class="p">)</span>  <span class="c1"># Add small value to avoid division by zero</span>
+    <span class="k">return</span> <span class="n">data</span><span class="p">,</span> <span class="n">params</span></div>
+
+
+<div class="viewcode-block" id="pooling_data">
+<a class="viewcode-back" href="../../api/rm_classifier.prepare_data.html#rm_classifier.prepare_data.pooling_data">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">pooling_data</span><span class="p">(</span><span class="n">umap_classifier</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">verbose</span> <span class="o">=</span> <span class="kc">True</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply pooling to the data according to the specifications in the umap_classifier object.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        umap_classifier (_umap_classifier_): An umap_classifier object containing pooling specifications.</span>
+<span class="sd">        data (numpy.ndarray): The input data to be pooled.</span>
+<span class="sd">        verbose (bool): Whether to print progress messages.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        numpy.ndarray: The pooled data.&quot;&quot;&quot;</span>  
+    <span class="n">params</span> <span class="o">=</span> <span class="n">umap_classifier</span><span class="o">.</span><span class="n">data_preparation</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="n">data</span>
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot apply both avg_pooling and max_pooling at the same time. Choose one.&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Applying average pooling with pool size </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;avg_pooling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data length </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a multiple of avg_pooling </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;avg_pooling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. Truncating data to the nearest multiple.&quot;</span><span class="p">)</span>
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_idx</span><span class="p">]</span>  <span class="c1"># Ensure the data length is a multiple of avg_pooling</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;avg_pooling&quot;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Applying max pooling with pool size </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_pooling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">%</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Data length </span><span class="si">{</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="si">}</span><span class="s2"> is not a multiple of max_pooling </span><span class="si">{</span><span class="n">params</span><span class="p">[</span><span class="s1">&#39;max_pooling&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">. Truncating data to the nearest multiple.&quot;</span><span class="p">)</span>
+            <span class="n">max_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">//</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">])</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span> <span class="p">:</span><span class="n">max_idx</span><span class="p">]</span>  <span class="c1"># Ensure the data length is a multiple of max_pooling</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;max_pooling&quot;</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="n">data</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

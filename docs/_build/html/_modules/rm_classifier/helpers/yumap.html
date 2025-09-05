@@ -1,0 +1,737 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.helpers.yumap &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">rm_classifier.helpers.yumap</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for rm_classifier.helpers.yumap</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Y-shaped UMAP with Classification Head</span>
+<span class="sd">======================================</span>
+
+<span class="sd">Author: Johann Luca Kastner</span>
+<span class="sd">Date: 15/09/2025</span>
+<span class="sd">License: MIT                 </span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="n">script_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">str</span><span class="p">(</span><span class="n">script_dir</span><span class="p">))</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">joblib</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sklearn.model_selection</span><span class="w"> </span><span class="kn">import</span> <span class="n">train_test_split</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tensorflow</span><span class="w"> </span><span class="kn">import</span> <span class="n">keras</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">keras</span><span class="w"> </span><span class="kn">import</span> <span class="n">ops</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">umap</span><span class="w"> </span><span class="kn">import</span> <span class="n">parametric_umap</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">rm_classifier.helpers.tracked_parametric_umap</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">tracked_parametric_umap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">warnings</span><span class="w"> </span><span class="kn">import</span> <span class="n">warn</span><span class="p">,</span> <span class="n">filterwarnings</span>
+
+<div class="viewcode-block" id="ClassificationValidationCallback">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.ClassificationValidationCallback">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ClassificationValidationCallback</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Callback to compute and log a classification validation loss at the end of each epoch.&quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ClassificationValidationCallback.__init__">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.ClassificationValidationCallback.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">validation_data</span><span class="p">,</span> <span class="n">validation_loss_fn</span><span class="p">,</span> <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;costum_loss&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validation_data</span> <span class="o">=</span> <span class="n">validation_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">validation_loss_fn</span> <span class="o">=</span> <span class="n">validation_loss_fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span> <span class="o">=</span> <span class="n">metric_name</span></div>
+
+    
+<div class="viewcode-block" id="ClassificationValidationCallback.on_epoch_end">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.ClassificationValidationCallback.on_epoch_end">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_epoch_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">epoch</span><span class="p">,</span> <span class="n">logs</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        
+        <span class="k">if</span> <span class="n">logs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">logs</span> <span class="o">=</span> <span class="p">{}</span>    
+        <span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_data</span>        
+        <span class="n">val_loss</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validation_loss_fn</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">)</span>
+        
+        <span class="n">logs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="p">]</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">val_loss</span><span class="o">.</span><span class="n">numpy</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot; - </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">logs</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">metric_name</span><span class="p">]</span><span class="si">:</span><span class="s2">.4f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+<div class="viewcode-block" id="create_classification_loss_fn">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.create_classification_loss_fn">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">create_classification_loss_fn</span><span class="p">(</span><span class="n">model_instance</span><span class="p">):</span>
+    <span class="n">classifier_head</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span> <span class="s1">&#39;classifier_head&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">encoder</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">model_instance</span><span class="p">,</span> <span class="s1">&#39;encoder&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">classifier_head</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">encoder</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Classifier head and encoder must be defined in the model instance.&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_val_classification_loss_fn</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">class_labels</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Calculate the validation classification loss.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">classified_mask</span> <span class="o">=</span> <span class="n">class_labels</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">labeled_true_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">classified_mask</span><span class="p">)</span>
+        <span class="c1"># Get the embeddings for the validation data</span>
+        <span class="n">embeddings</span> <span class="o">=</span> <span class="n">encoder</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="c1"># Get the predicted class_labels</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="n">classifier_head</span><span class="p">(</span><span class="n">embeddings</span><span class="p">)</span>
+        <span class="n">labeled_pred_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">classified_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1"># Calculate the classification loss</span>
+        <span class="n">classification_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">sparse_categorical_crossentropy</span><span class="p">(</span>
+            <span class="n">labeled_true_class_labels</span><span class="p">,</span> <span class="n">labeled_pred_class_labels</span>
+        <span class="p">)</span>
+        <span class="c1"># Return the mean classification loss</span>
+        <span class="k">return</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span><span class="n">classification_loss</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">_val_classification_loss_fn</span></div>
+
+    
+<span class="n">filterwarnings</span><span class="p">(</span><span class="s1">&#39;ignore&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="YShapedUMAPClassifier">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">YShapedUMAPClassifier</span><span class="p">(</span><span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">TrackedPUMAP</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Y-shaped network that combines UMAP loss with classification loss</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="YShapedUMAPClassifier.__init__">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> 
+                 <span class="n">classifier_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">umap_loss_a</span><span class="o">=</span><span class="mf">1.929</span><span class="p">,</span> <span class="c1"># common parameters for min_dist=0</span>
+                 <span class="n">umap_loss_b</span><span class="o">=</span><span class="mf">0.7915</span><span class="p">,</span> <span class="c1"># common parameters for min_dist=0</span>
+                 <span class="n">negative_sample_rate</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+                 <span class="n">n_classes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                 <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="n">keras_fit_kwargs</span><span class="o">=</span><span class="p">{},</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the Y-shaped UMAP classifier.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
+<span class="sd">            umap_loss_a(float): UMAP loss parameter a. Defaults to 1.929.</span>
+<span class="sd">            umap_loss_b(float): UMAP loss parameter b. Defaults to 0.7915.</span>
+<span class="sd">            negative_sample_rate(int): Number of negative samples per positive sample. Defaults to 5.</span>
+<span class="sd">            n_classes(int): Number of classes for classification. Defaults to 100.</span>
+<span class="sd">            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
+<span class="sd">            keras_fit_kwargs(dict): Additional keyword arguments for the keras fit method. Defaults to {}.</span>
+<span class="sd">            **kwargs: Additional arguments for the TrackedPUMAP class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">negative_sample_rate</span> <span class="o">=</span> <span class="n">negative_sample_rate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_a</span> <span class="o">=</span> <span class="n">umap_loss_a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_b</span> <span class="o">=</span> <span class="n">umap_loss_b</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seed_generator</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedGenerator</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="n">classifier_head</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="n">n_classes</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span> <span class="o">=</span> <span class="n">classification_loss_weight</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span> <span class="o">=</span> <span class="n">keras_fit_kwargs</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_build_classifier_head</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Build classification head (one branch of Y)&quot;&quot;&quot;</span>
+        <span class="n">model</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">Sequential</span><span class="p">([</span>
+            <span class="n">keras</span><span class="o">.</span><span class="n">Input</span><span class="p">(</span><span class="n">shape</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,)),</span>  <span class="c1"># Explicit input layer</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">BatchNormalization</span><span class="p">(),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">negative_slope</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">BatchNormalization</span><span class="p">(),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">negative_slope</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="mi">100</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">BatchNormalization</span><span class="p">(),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">LeakyReLU</span><span class="p">(</span><span class="n">negative_slope</span><span class="o">=</span><span class="mf">0.1</span><span class="p">),</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">layers</span><span class="o">.</span><span class="n">Dense</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span><span class="p">,</span> <span class="n">activation</span><span class="o">=</span><span class="s1">&#39;softmax&#39;</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;classification&#39;</span><span class="p">)</span>
+        <span class="p">])</span>
+        <span class="k">return</span> <span class="n">model</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_define_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Define the model in keras&quot;&quot;&quot;</span>
+        <span class="n">prlw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction_loss_weight</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction_loss_fcn</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">:</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s2">&quot;No reconstruction loss function specified. Using MeanSquaredError as default.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction_loss_fcn</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">MeanSquaredError</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span> <span class="o">=</span> <span class="n">yUMAPModel</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_a</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_b</span><span class="p">,</span>
+            <span class="n">negative_sample_rate</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">negative_sample_rate</span><span class="p">,</span>
+            <span class="n">encoder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span>
+            <span class="n">decoder</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">,</span>
+            <span class="n">classification_loss_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span><span class="p">,</span>
+            <span class="n">parametric_reconstruction_loss_fn</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction_loss_fcn</span><span class="p">,</span>
+            <span class="n">parametric_reconstruction</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">,</span>
+            <span class="n">parametric_reconstruction_loss_weight</span><span class="o">=</span><span class="n">prlw</span><span class="p">,</span>
+            <span class="n">global_correlation_loss_weight</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">global_correlation_loss_weight</span><span class="p">,</span>
+            <span class="n">autoencoder_loss</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">autoencoder_loss</span><span class="p">,</span>
+            <span class="n">classifier_head</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span><span class="p">,</span>
+        <span class="p">)</span>
+<div class="viewcode-block" id="YShapedUMAPClassifier.save">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier.save">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filepath</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Save the model to a directory, handling circular references in callbacks.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath (str): Directory path to save the model.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:    </span>
+<span class="sd">            None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Temporarily break the circular reference</span>
+        <span class="n">original_callbacks</span> <span class="o">=</span> <span class="kc">None</span>
+        
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;parametric_model&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">model</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="s1">&#39;_callbacks&#39;</span><span class="p">):</span>
+                <span class="n">original_callbacks</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">_callbacks</span>
+                <span class="c1"># Create new callbacks without the circular reference</span>
+                <span class="n">safe_callbacks</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="n">model</span><span class="o">.</span><span class="n">_callbacks</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="s1">&#39;validation_loss_fn&#39;</span><span class="p">):</span>
+                        <span class="c1"># Replace the method reference with None temporarily</span>
+                        <span class="n">cb</span><span class="o">.</span><span class="n">_original_loss_fn</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">validation_loss_fn</span>
+                        <span class="n">cb</span><span class="o">.</span><span class="n">validation_loss_fn</span> <span class="o">=</span> <span class="kc">None</span>
+                    <span class="n">safe_callbacks</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">cb</span><span class="p">)</span>
+                <span class="n">model</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">safe_callbacks</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="c1"># Now save</span>
+            <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">:</span>
+                <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;history.pkl&#39;</span><span class="p">))</span>
+        <span class="k">finally</span><span class="p">:</span>
+            <span class="c1"># Restore the original callbacks</span>
+            <span class="k">if</span> <span class="n">original_callbacks</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="n">original_callbacks</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="s1">&#39;_original_loss_fn&#39;</span><span class="p">):</span>
+                        <span class="n">cb</span><span class="o">.</span><span class="n">validation_loss_fn</span> <span class="o">=</span> <span class="n">cb</span><span class="o">.</span><span class="n">_original_loss_fn</span>
+                        <span class="nb">delattr</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="s1">&#39;_original_loss_fn&#39;</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span><span class="o">.</span><span class="n">_callbacks</span> <span class="o">=</span> <span class="n">original_callbacks</span>
+        <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">:</span>
+            <span class="n">joblib</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_history</span><span class="p">,</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;history.pkl&#39;</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="YShapedUMAPClassifier.transform">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier.transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Transform new data and get embeddings, class probabilities, and class labels.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            X (array): New data to be transformed.</span>
+<span class="sd">            **kwargs: Additional arguments for the superclass transform method.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            embs (array): Low-dimensional embeddings.</span>
+<span class="sd">            probs (array): Class probabilities.</span>
+<span class="sd">            class_labels (array): Predicted class labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">embs</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span><span class="p">(</span><span class="n">embs</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="n">class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">argmax</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">embs</span><span class="p">,</span> <span class="n">probs</span><span class="p">,</span> <span class="n">class_labels</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="YShapedUMAPClassifier.fit_transform">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.YShapedUMAPClassifier.fit_transform">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">fit_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">val_train_split</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span><span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Fit the model and transform the data.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            X (array): New data to be transformed.</span>
+<span class="sd">            class_labels (array): Class labels for the samples in X. Used for classification tasks. Use -1 for unlabeled samples.</span>
+<span class="sd">            validation_data (tuple): Tuple of validation data (X_val, class_labels_val). If None, a fraction of training data is used for validation. Defaults to None.</span>
+<span class="sd">            val_train_split (float): Fraction of training data to use for validation if no validation_data is provided. Defaults to 0.2.</span>
+<span class="sd">            **kwargs: Additional arguments for the superclass fit_transform method.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            embs (array): Low-dimensional embeddings.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">class_labels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;class_labels must be provided for classification tasks.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_classes</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">class_labels</span><span class="p">))</span>            
+        <span class="c1"># Build the classification network</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_classifier_head</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">val_train_split</span> <span class="o">=</span> <span class="n">val_train_split</span>         
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">validation_data</span><span class="p">,</span> <span class="nb">type</span><span class="p">(</span><span class="kc">None</span><span class="p">)):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Warning: No validation data provided. Taking </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">val_train_split</span><span class="o">*</span><span class="mi">100</span><span class="si">}</span><span class="s2">% of training data for validation.&quot;</span><span class="p">)</span> 
+            <span class="n">X_train</span><span class="p">,</span> <span class="n">X_val</span><span class="p">,</span> <span class="n">class_labels_train</span><span class="p">,</span> <span class="n">class_labels_val</span> <span class="o">=</span> <span class="n">train_test_split</span><span class="p">(</span><span class="n">X</span><span class="p">,</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">test_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">val_train_split</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">class_labels_train</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">class_labels_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_val</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X_train</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X_val</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">validation_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">train_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">val_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">validation_data</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">int16</span><span class="p">)</span>
+            <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">validation_data</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">validation_data</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_construct_edge_dataset</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+        <span class="n">X</span><span class="p">,</span>
+        <span class="n">graph_</span><span class="p">,</span>
+        <span class="n">n_epochs</span><span class="p">,</span>
+        <span class="n">batch_size</span><span class="p">,</span>
+        <span class="n">parametric_reconstruction</span><span class="p">,</span>
+        <span class="n">global_correlation_loss_weight</span><span class="p">,</span>
+        <span class="n">landmark_positions</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="n">class_labels</span><span class="o">=</span><span class="kc">None</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Construct a tf.data.Dataset of edges, sampled by edge weight.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            X (array, shape (n_samples, n_features)): New data to be transformed.</span>
+<span class="sd">            graph_ (scipy.sparse.csr.csr_matrix): Generated UMAP graph</span>
+<span class="sd">            n_epochs (int): # of epochs to train each edge</span>
+<span class="sd">            batch_size (int): batch size</span>
+<span class="sd">            parametric_reconstruction (bool): Whether the decoder is parametric or non-parametric</span>
+<span class="sd">            landmark_positions (array, shape (n_samples, n_components), optional): The desired position in low-dimensional space of each sample in X. Points that are not landmarks should have nan coordinates.</span>
+<span class="sd">            class_labels (array, shape (n_samples,), optional): Class labels for the samples in X. Used for classification tasks.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">gather_index</span><span class="p">(</span><span class="n">tensor</span><span class="p">,</span> <span class="n">index</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">tensor</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="c1"># if X is &gt; 512Mb in size, we need to use a different, slower method for</span>
+        <span class="c1">#    batching data.</span>
+        <span class="n">gather_indices_in_python</span> <span class="o">=</span> <span class="kc">True</span> <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">*</span> <span class="mf">1e-9</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">landmark_positions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">gather_landmark_indices_in_python</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="kc">True</span> <span class="k">if</span> <span class="n">landmark_positions</span><span class="o">.</span><span class="n">nbytes</span> <span class="o">*</span> <span class="mf">1e-9</span> <span class="o">&gt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="kc">False</span>
+            <span class="p">)</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">gather_X</span><span class="p">(</span><span class="n">edge_to</span><span class="p">,</span> <span class="n">edge_from</span><span class="p">):</span>
+            <span class="c1"># gather data from indexes (edges) in either numpy of tf, depending on array size</span>
+            <span class="k">if</span> <span class="n">gather_indices_in_python</span><span class="p">:</span>
+                <span class="n">edge_to_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">py_function</span><span class="p">(</span><span class="n">gather_index</span><span class="p">,</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">],</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">edge_from_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">py_function</span><span class="p">(</span>
+                    <span class="n">gather_index</span><span class="p">,</span> <span class="p">[</span><span class="n">X</span><span class="p">,</span> <span class="n">edge_from</span><span class="p">],</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">]</span>
+                <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">class_labels_to_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">py_function</span><span class="p">(</span><span class="n">gather_index</span><span class="p">,</span> <span class="p">[</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">],</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">int16</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">edge_to_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">)</span>
+                <span class="n">edge_from_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">edge_from</span><span class="p">)</span>
+                <span class="n">class_labels_to_batch</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">class_labels</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">edge_to</span><span class="p">,</span> <span class="n">edge_from</span><span class="p">,</span> <span class="n">edge_to_batch</span><span class="p">,</span> <span class="n">edge_from_batch</span><span class="p">,</span> <span class="n">class_labels_to_batch</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">get_outputs</span><span class="p">(</span><span class="n">edge_to</span><span class="p">,</span> <span class="n">edge_from</span><span class="p">,</span> <span class="n">edge_to_batch</span><span class="p">,</span> <span class="n">edge_from_batch</span><span class="p">,</span> <span class="n">class_labels_to_batch</span><span class="p">):</span>
+            <span class="n">outputs</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;umap&quot;</span><span class="p">:</span> <span class="n">ops</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">)}</span>
+            <span class="k">if</span> <span class="n">global_correlation_loss_weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;global_correlation&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_to_batch</span>
+            <span class="k">if</span> <span class="n">parametric_reconstruction</span><span class="p">:</span>
+                <span class="c1"># add reconstruction to iterator output</span>
+                <span class="c1"># edge_out = ops.concatenate([edge_to_batch, edge_from_batch], axis=0)</span>
+                <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;reconstruction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">edge_to_batch</span>
+            <span class="k">if</span> <span class="n">landmark_positions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">gather_landmark_indices_in_python</span><span class="p">:</span>
+                    <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;landmark_to&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">py_function</span><span class="p">(</span>
+                        <span class="n">gather_index</span><span class="p">,</span> <span class="p">[</span><span class="n">landmark_positions</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">],</span> <span class="p">[</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">]</span>
+                    <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1"># Make sure we explicitly cast landmark_positions to float32,</span>
+                    <span class="c1"># as it&#39;s user-provided and needs to play nice with loss functions.</span>
+                    <span class="n">outputs</span><span class="p">[</span><span class="s2">&quot;landmark_to&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">gather</span><span class="p">(</span><span class="n">landmark_positions</span><span class="p">,</span> <span class="n">edge_to</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">edge_to_batch</span><span class="p">,</span> <span class="n">edge_from_batch</span><span class="p">,</span> <span class="n">class_labels_to_batch</span><span class="p">),</span> <span class="n">outputs</span>
+
+        <span class="c1"># get data from graph</span>
+        <span class="n">_</span><span class="p">,</span> <span class="n">epochs_per_sample</span><span class="p">,</span> <span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">,</span> <span class="n">weight</span><span class="p">,</span> <span class="n">n_vertices</span> <span class="o">=</span> <span class="n">parametric_umap</span><span class="o">.</span><span class="n">get_graph_elements</span><span class="p">(</span>
+            <span class="n">graph_</span><span class="p">,</span> <span class="n">n_epochs</span>
+        <span class="p">)</span>
+
+        <span class="c1"># number of elements per batch for embedding</span>
+        <span class="k">if</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># batch size can be larger if its just over embeddings</span>
+            <span class="n">batch_size</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">n_vertices</span><span class="p">,</span> <span class="mi">1000</span><span class="p">]))</span>
+
+        <span class="n">edges_to_exp</span><span class="p">,</span> <span class="n">edges_from_exp</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">head</span><span class="p">,</span> <span class="n">epochs_per_sample</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)),</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span> <span class="n">epochs_per_sample</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s2">&quot;int&quot;</span><span class="p">)),</span>
+        <span class="p">)</span>
+
+        <span class="c1"># shuffle edges</span>
+        <span class="n">shuffle_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">permutation</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">edges_to_exp</span><span class="p">)))</span>
+        <span class="n">edges_to_exp</span> <span class="o">=</span> <span class="n">edges_to_exp</span><span class="p">[</span><span class="n">shuffle_mask</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+        <span class="n">edges_from_exp</span> <span class="o">=</span> <span class="n">edges_from_exp</span><span class="p">[</span><span class="n">shuffle_mask</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">)</span>
+
+        <span class="c1"># create edge iterator</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">Dataset</span><span class="o">.</span><span class="n">from_tensor_slices</span><span class="p">((</span><span class="n">edges_to_exp</span><span class="p">,</span> <span class="n">edges_from_exp</span><span class="p">))</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">repeat</span><span class="p">()</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">shuffle</span><span class="p">(</span><span class="mi">10000</span><span class="p">)</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">batch</span><span class="p">(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">drop_remainder</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">gather_X</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span>
+        <span class="p">)</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+            <span class="n">get_outputs</span><span class="p">,</span> <span class="n">num_parallel_calls</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">experimental</span><span class="o">.</span><span class="n">AUTOTUNE</span>
+        <span class="p">)</span>
+        <span class="n">edge_dataset</span> <span class="o">=</span> <span class="n">edge_dataset</span><span class="o">.</span><span class="n">prefetch</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">edge_dataset</span><span class="p">,</span> <span class="n">batch_size</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">edges_to_exp</span><span class="p">),</span> <span class="n">head</span><span class="p">,</span> <span class="n">tail</span><span class="p">,</span> <span class="n">weight</span>
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_fit_embed_data</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">n_epochs</span><span class="p">,</span> <span class="n">init</span><span class="p">,</span> <span class="n">random_state</span><span class="p">,</span> <span class="n">landmark_positions</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">metric</span> <span class="o">==</span> <span class="s2">&quot;precomputed&quot;</span><span class="p">:</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_X</span>
+
+        <span class="c1"># get dimensionality of dataset</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dims</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">X</span><span class="p">)[</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># reshape data for network</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">))</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span> <span class="ow">and</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">1.0</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">):</span>
+            <span class="n">warn</span><span class="p">(</span>
+                <span class="s2">&quot;Data should be scaled to the range 0-1 for cross-entropy reconstruction loss.&quot;</span>
+            <span class="p">)</span>
+
+        <span class="c1"># get dataset of edges</span>
+        <span class="p">(</span>
+            <span class="n">edge_dataset</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">n_edges</span><span class="p">,</span>
+            <span class="n">head</span><span class="p">,</span>
+            <span class="n">tail</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">edge_weight</span><span class="p">,</span>
+        <span class="p">)</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_construct_edge_dataset</span><span class="p">(</span>
+            <span class="n">X</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">graph_</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_epochs</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">global_correlation_loss_weight</span><span class="p">,</span>
+            <span class="n">class_labels</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">train_class_labels</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">head</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">head</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tail</span> <span class="o">=</span> <span class="n">ops</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">tail</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int64</span><span class="p">),</span> <span class="mi">0</span><span class="p">))</span>
+
+        <span class="n">init_embedding</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># create encoder and decoder model</span>
+        <span class="n">n_data</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span> <span class="o">=</span> <span class="n">parametric_umap</span><span class="o">.</span><span class="n">prepare_networks</span><span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_components</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">,</span>
+            <span class="n">n_data</span><span class="p">,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">,</span>
+            <span class="n">init_embedding</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="c1"># create the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_define_model</span><span class="p">()</span>
+
+        <span class="c1"># report every loss_report_frequency subdivision of an epochs</span>
+        <span class="n">steps_per_epoch</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span>
+            <span class="n">n_edges</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">loss_report_frequency</span>
+        <span class="p">)</span>
+
+        <span class="c1"># Validation dataset </span>
+        <span class="c1"># for reconstruction</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span>
+            <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span>
+        <span class="p">):</span>
+
+            <span class="c1"># reshape data for network</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span><span class="p">,</span>
+                    <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dims</span><span class="p">),</span>
+                <span class="p">)</span>
+
+            <span class="n">validation_data</span> <span class="o">=</span> <span class="p">(</span>
+                <span class="p">(</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span><span class="p">,</span>
+                    <span class="n">ops</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span><span class="p">),</span>
+                <span class="p">),</span>
+                <span class="p">{</span><span class="s2">&quot;reconstruction&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_validation</span><span class="p">},</span>
+            <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">validation_data</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">X_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_val</span>
+        <span class="n">y_val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">val_class_labels</span>    
+        <span class="n">validation_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">X_val</span><span class="p">,</span> <span class="n">y_val</span><span class="p">)</span>
+        <span class="n">_val_classification_loss_fn</span> <span class="o">=</span> <span class="n">create_classification_loss_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1">#Tracking history</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">X_val</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">X_val</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">_val_autoencoder_loss_fn</span> <span class="o">=</span> <span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">_create_autoencoder_loss_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+                
+                <span class="n">autoencoder_val_callback</span> <span class="o">=</span> <span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">AutoencoderLossCallback</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">X_val</span><span class="p">,</span>
+                    <span class="n">loss_fn</span><span class="o">=</span><span class="n">_val_autoencoder_loss_fn</span><span class="p">,</span>
+                    <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;val_autoencoder_loss&#39;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Create training loss callback</span>
+                <span class="n">autoencoder_train_callback</span> <span class="o">=</span> <span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">AutoencoderLossCallback</span><span class="p">(</span>
+                    <span class="n">data</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">convert_to_tensor</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">tf</span><span class="o">.</span><span class="n">float32</span><span class="p">),</span>
+                    <span class="n">loss_fn</span><span class="o">=</span><span class="n">_val_autoencoder_loss_fn</span><span class="p">,</span>  <span class="c1"># same function, same model</span>
+                    <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;train_autoencoder_loss&#39;</span>
+                <span class="p">)</span>
+
+                <span class="c1"># Clean old callbacks of same type (optional)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">cb</span> <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;callbacks&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">AutoencoderLossCallback</span><span class="p">)</span>
+                <span class="p">]</span>
+
+                <span class="c1"># Insert both callbacks</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">autoencoder_val_callback</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">autoencoder_train_callback</span><span class="p">)</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">validation_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">custom_val_callback</span> <span class="o">=</span> <span class="n">ClassificationValidationCallback</span><span class="p">(</span>
+                <span class="n">validation_data</span><span class="o">=</span><span class="n">validation_data</span><span class="p">,</span>
+                <span class="n">validation_loss_fn</span><span class="o">=</span><span class="n">_val_classification_loss_fn</span><span class="p">,</span>
+                <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;val_classification_loss&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+                    <span class="n">cb</span> <span class="k">for</span> <span class="n">cb</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;callbacks&#39;</span><span class="p">,</span> <span class="p">[])</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cb</span><span class="p">,</span> <span class="n">ClassificationValidationCallback</span><span class="p">)</span>
+                <span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">custom_val_callback</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="c1">###test###</span>
+        <span class="n">y_train</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">train_class_labels</span>    
+        <span class="n">train_class_data</span> <span class="o">=</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y_train</span><span class="p">)</span>
+        <span class="n">_train_classification_loss_fn</span> <span class="o">=</span> <span class="n">create_classification_loss_fn</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">validation_data</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">custom_train_callback</span> <span class="o">=</span> <span class="n">ClassificationValidationCallback</span><span class="p">(</span>
+                <span class="n">validation_data</span><span class="o">=</span><span class="n">train_class_data</span><span class="p">,</span>
+                <span class="n">validation_loss_fn</span><span class="o">=</span><span class="n">_train_classification_loss_fn</span><span class="p">,</span>
+                <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;train_classification_loss&#39;</span>
+            <span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;callbacks&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">insert</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">custom_train_callback</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span><span class="p">[</span><span class="s1">&#39;verbose&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="c1"># create embedding</span>
+        <span class="n">history</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span>
+            <span class="n">edge_dataset</span><span class="p">,</span>
+            <span class="n">epochs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">n_training_epochs</span><span class="p">,</span>
+            <span class="n">batch_size</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">batch_size</span><span class="p">,</span>
+            <span class="n">steps_per_epoch</span><span class="o">=</span><span class="n">steps_per_epoch</span><span class="p">,</span>
+            <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">keras_fit_kwargs</span>
+        <span class="p">)</span>
+        <span class="c1"># save loss history dictionary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_history</span> <span class="o">=</span> <span class="n">history</span><span class="o">.</span><span class="n">history</span>
+
+        <span class="c1"># get the final embedding</span>
+        <span class="n">embedding</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">embedding</span><span class="p">,</span> <span class="p">{}</span></div>
+
+
+<div class="viewcode-block" id="yUMAPModel">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">yUMAPModel</span><span class="p">(</span><span class="n">parametric_umap</span><span class="o">.</span><span class="n">UMAPModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot; Y-shaped UMAP model with classification head</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="yUMAPModel.__init__">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>         
+                 <span class="n">umap_loss_a</span><span class="p">,</span>
+                 <span class="n">umap_loss_b</span><span class="p">,</span>
+                 <span class="n">negative_sample_rate</span><span class="p">,</span>
+                 <span class="n">encoder</span><span class="p">,</span>
+                 <span class="n">decoder</span><span class="p">,</span>
+                 <span class="n">classifier_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                 <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
+                 <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the Y-shaped UMAP model.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            umap_loss_a(float): UMAP loss parameter a.</span>
+<span class="sd">            umap_loss_b(float): UMAP loss parameter b.</span>
+<span class="sd">            negative_sample_rate(int): Number of negative samples per positive sample.</span>
+<span class="sd">            encoder(keras.Model): The encoder model.</span>
+<span class="sd">            decoder(keras.Model): The decoder model.</span>
+<span class="sd">            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
+<span class="sd">            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
+<span class="sd">            **kwargs: Additional arguments for the ParametricUMAP class.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">umap_loss_a</span><span class="p">,</span> <span class="n">umap_loss_b</span><span class="p">,</span> <span class="n">negative_sample_rate</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="n">classifier_head</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span> <span class="o">=</span> <span class="n">classification_loss_weight</span></div>
+
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_classification_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">):</span>
+
+        <span class="n">classified_mask</span> <span class="o">=</span> <span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;true_class&quot;</span><span class="p">]</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span>
+        <span class="n">labeled_true_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;true_class&quot;</span><span class="p">],</span> <span class="n">classified_mask</span><span class="p">)</span>
+        <span class="n">labeled_pred_class_labels</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">boolean_mask</span><span class="p">(</span><span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;pred_class&quot;</span><span class="p">],</span> <span class="n">classified_mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="n">classification_loss</span> <span class="o">=</span> <span class="n">tf</span><span class="o">.</span><span class="n">reduce_mean</span><span class="p">(</span>
+            <span class="n">tf</span><span class="o">.</span><span class="n">keras</span><span class="o">.</span><span class="n">losses</span><span class="o">.</span><span class="n">sparse_categorical_crossentropy</span><span class="p">(</span>
+                <span class="n">labeled_true_class_labels</span><span class="p">,</span> <span class="n">labeled_pred_class_labels</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span> <span class="o">*</span> <span class="n">classification_loss</span>
+<div class="viewcode-block" id="yUMAPModel.call">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel.call">[docs]</a>
+    <span class="nd">@tf</span><span class="o">.</span><span class="n">function</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">call</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">inputs</span><span class="p">):</span>
+        <span class="n">to_x</span><span class="p">,</span> <span class="n">from_x</span><span class="p">,</span> <span class="n">class_labels</span> <span class="o">=</span> <span class="n">inputs</span>
+        <span class="n">embedding_to</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">to_x</span><span class="p">)</span>
+        <span class="n">embedding_from</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">encoder</span><span class="p">(</span><span class="n">from_x</span><span class="p">)</span>
+        <span class="n">y_pred</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;embedding_to&quot;</span><span class="p">:</span> <span class="n">embedding_to</span><span class="p">,</span>
+            <span class="s2">&quot;embedding_from&quot;</span><span class="p">:</span> <span class="n">embedding_from</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="n">classification</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span><span class="p">(</span><span class="n">embedding_to</span><span class="p">)</span>
+        <span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;pred_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">classification</span>
+        <span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;true_class&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">class_labels</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">:</span>
+            <span class="c1"># parametric reconstruction</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">autoencoder_loss</span><span class="p">:</span>
+                <span class="n">embedding_to_recon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">embedding_to</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="c1"># stop gradient of reconstruction loss before it reaches the encoder</span>
+                <span class="n">embedding_to_recon</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">decoder</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">stop_gradient</span><span class="p">(</span><span class="n">embedding_to</span><span class="p">))</span>
+            <span class="n">y_pred</span><span class="p">[</span><span class="s2">&quot;reconstruction&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">embedding_to_recon</span>
+        <span class="k">return</span> <span class="n">y_pred</span></div>
+
+    
+<div class="viewcode-block" id="yUMAPModel.compute_loss">
+<a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel.compute_loss">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">compute_loss</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">y_pred</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sample_weight</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot; Compute the combined loss for UMAP, classification, and reconstruction.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            x: Input data (not used).</span>
+<span class="sd">            y: True labels and reconstruction targets.</span>
+<span class="sd">            y_pred: Predictions from the model.</span>
+<span class="sd">            sample_weight: Sample weights (not used).</span>
+<span class="sd">            **kwargs: Additional arguments.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Total loss as a scalar tensor.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">losses</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># Regularization losses.</span>
+        <span class="k">for</span> <span class="n">loss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">losses</span><span class="p">:</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">ops</span><span class="o">.</span><span class="n">cast</span><span class="p">(</span><span class="n">loss</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">keras</span><span class="o">.</span><span class="n">backend</span><span class="o">.</span><span class="n">floatx</span><span class="p">()))</span>
+
+        <span class="c1"># umap loss</span>
+        <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_umap_loss</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+
+        <span class="c1"># classification loss</span>
+        <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_classification_loss</span><span class="p">(</span><span class="n">y_pred</span><span class="p">))</span>
+
+        <span class="c1"># global correlation loss</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">global_correlation_loss_weight</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_global_correlation_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+
+        <span class="c1"># parametric reconstruction loss</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">parametric_reconstruction</span><span class="p">:</span>
+            <span class="n">losses</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_parametric_reconstruction_loss</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">y_pred</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">ops</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">losses</span><span class="p">)</span></div>
+</div>
+
+    
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

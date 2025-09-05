@@ -1,0 +1,786 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>rm_classifier.umap_classifier module &mdash; rm_classifier 0.1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=01f34227"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="rm_classifier.yumap_classifier module" href="rm_classifier.yumap_classifier.html" />
+    <link rel="prev" title="rm_classifier.prepare_data module" href="rm_classifier.prepare_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search"  style="background: #2980B9" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            rm_classifier
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="rm_classifier.html">rm_classifier package</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="rm_classifier.html#subpackages">Subpackages</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="rm_classifier.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.parametric_umap_classifier.html">rm_classifier.parametric_umap_classifier module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.performance_metrics.html">rm_classifier.performance_metrics module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.prepare_data.html">rm_classifier.prepare_data module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">rm_classifier.umap_classifier module</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#umap-classifier-with-dbscan-for-radio-monitoring-with-dbscan">UMAP Classifier with DBSCAN for Radio Monitoring with DBSCAN</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#rm_classifier.umap_classifier.UMAPClassifier"><code class="docutils literal notranslate"><span class="pre">UMAPClassifier</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rm_classifier.yumap_classifier.html">rm_classifier.yumap_classifier module</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu"  style="background: #2980B9" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">rm_classifier</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="rm_classifier.html">rm_classifier package</a></li>
+      <li class="breadcrumb-item active">rm_classifier.umap_classifier module</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/rm_classifier.umap_classifier.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-rm_classifier.umap_classifier">
+<span id="rm-classifier-umap-classifier-module"></span><h1>rm_classifier.umap_classifier module<a class="headerlink" href="#module-rm_classifier.umap_classifier" title="Link to this heading"></a></h1>
+<section id="umap-classifier-with-dbscan-for-radio-monitoring-with-dbscan">
+<h2>UMAP Classifier with DBSCAN for Radio Monitoring with DBSCAN<a class="headerlink" href="#umap-classifier-with-dbscan-for-radio-monitoring-with-dbscan" title="Link to this heading"></a></h2>
+<p>Author: Johann Luca Kastner
+Date: 15/09/2025
+License: MIT License</p>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rm_classifier.umap_classifier.</span></span><span class="sig-name descname"><span class="pre">UMAPClassifier</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'braycurtis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_preparation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.13)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>A class to handle UMAP classification tasks especially for radio monitoring data.
+This class provides methods for data preparation, UMAP embedding, clustering with DBSCAN,
+and various prediction methods based on cluster statistics.</p>
+<dl class="field-list simple">
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'braycurtis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_preparation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the UMAP classifier with parameters.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>yaml_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to the YAML configuration file. Defaults to None, which means no YAML file is loaded.</p></li>
+<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the model. Defaults to “umap_classifier”.</p></li>
+<li><p><strong>dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Directory to save the model. Defaults to “umap_classifier”.</p></li>
+<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of neighbors for UMAP. Defaults to 35.</p></li>
+<li><p><strong>min_dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum distance between points in UMAP. Defaults to 0.0.</p></li>
+<li><p><strong>n_components</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of dimensions in the latent space. Defaults to 2.</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Distance metric for UMAP. Defaults to “braycurtis”.</p></li>
+<li><p><strong>input_data_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Type of input data (e.g., “fft”, “time”, “fft_time”, “fft_phase”). Defaults to “time”.</p></li>
+<li><p><strong>data_preparation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – <p>Dictionary containing data preparation parameters.
+These override the default parameters. The following keys are supported:</p>
+<ul>
+<li><p><strong>spectrum_filter</strong> (str, optional): Type of filter to apply to the spectrum.</p></li>
+<li><p><strong>denoiser_n</strong> (int): Number of denoiser iterations.</p></li>
+<li><p><strong>denoiser_npeak</strong> (int): Number of peaks for the denoiser.</p></li>
+<li><p><strong>welch_nperseg</strong> (int): Length of each segment for Welch’s method.</p></li>
+<li><p><strong>welch_noverlap</strong> (int): Number of points to overlap between segments.</p></li>
+<li><p><strong>welch_window</strong> (str): Type of window to use in Welch’s method.</p></li>
+<li><p><strong>welch_average</strong> (str): Averaging method for Welch’s method (e.g., “mean” or “median”).</p></li>
+<li><p><strong>windowing</strong> (str): Type of windowing function to apply.</p></li>
+<li><p><strong>log_filter</strong> (bool): Whether to apply a logarithmic filter.</p></li>
+<li><p><strong>cut_beacon_frequencies</strong> (bool): Whether to cut beacon frequencies.</p></li>
+<li><p><strong>beacon_frequencies</strong> (list): Frequencies of the beacons.</p></li>
+<li><p><strong>beacon_width</strong> (float): Width of the beacons.</p></li>
+</ul>
+<p>Defaults to an empty dictionary.</p>
+</p></li>
+<li><p><strong>db_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum distance between two samples for one to be considered as in the neighborhood of the other in DBSCAN. Defaults to 0.45.</p></li>
+<li><p><strong>db_min_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples in a neighborhood for a point to be considered as a core point in DBSCAN. Defaults to 50.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.prepare_data">
+<span class="sig-name descname"><span class="pre">prepare_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_preparation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.prepare_data" title="Link to this definition"></a></dt>
+<dd><p>Prepare data for UMAP classification.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data to be prepared.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print preparation details. Defaults to True.</p></li>
+<li><p><strong>data_preparation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Dictionary containing data preparation parameters to override the class defaults
+Defaults to an empty dictionary.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to override class attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prepared data ready for UMAP classification.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.custom_prepare_data">
+<span class="sig-name descname"><span class="pre">custom_prepare_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">custom_prepare_fcn</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.custom_prepare_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.custom_prepare_data" title="Link to this definition"></a></dt>
+<dd><p>Prepare data using a custom preparation function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data to be prepared.</p></li>
+<li><p><strong>custom_prepare_fcn</strong> (<em>callable</em>) – Custom function to prepare the data. It should accept
+the data as its first argument and return the prepared data.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print preparation details. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the custom preparation function.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Prepared data.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.train_embed">
+<span class="sig-name descname"><span class="pre">train_embed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.train_embed"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.train_embed" title="Link to this definition"></a></dt>
+<dd><p>Train the UMAP model and embed the training data into a lower-dimensional space using UMAP.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data to be embedded.</p></li>
+<li><p><strong>keep_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to save the trained UMAP model as the class variable self.umap_model. Defaults to True.</p></li>
+<li><p><strong>save_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to save the trained UMAP model using joblib. Defaults to None, which means the model is not saved to disk.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print embedding details. Defaults to True.</p></li>
+<li><p><strong>umap_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Additional keyword arguments to pass to the UMAP constructor. Defaults to empty dict.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to override class attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Embedded data in lower-dimensional space.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.db_classify">
+<span class="sig-name descname"><span class="pre">db_classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">auto_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.db_classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.db_classify" title="Link to this definition"></a></dt>
+<dd><p>Classify data using DBSCAN clustering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data to be classified.</p></li>
+<li><p><strong>keep_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to save the trained DBSCAN model as the class variable self.db_model. Defaults to True.</p></li>
+<li><p><strong>save_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to save the trained DBSCAN model using joblib. Defaults to None, which means the model is not saved to disk.</p></li>
+<li><p><strong>auto_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to automatically determine optimal DBSCAN parameters. Defaults to False.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print classification details. Defaults to True.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to override class attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cluster labels for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.k_distance_plot">
+<span class="sig-name descname"><span class="pre">k_distance_plot</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">k</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.k_distance_plot"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.k_distance_plot" title="Link to this definition"></a></dt>
+<dd><p>Generate a k-distance plot to help determine the optimal epsilon value for DBSCAN.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data for which to generate the k-distance plot.</p></li>
+<li><p><strong>k</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of nearest neighbors to consider. Defaults to 50.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Displays the k-distance plot.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.hdb_classify">
+<span class="sig-name descname"><span class="pre">hdb_classify</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">keep_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_model</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hdb_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.hdb_classify"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.hdb_classify" title="Link to this definition"></a></dt>
+<dd><p>Classify data using HDBSCAN clustering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – Input data to be classified.</p></li>
+<li><p><strong>keep_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to save the trained HDBSCAN model as the class variable self.hdb_model. Defaults to True.</p></li>
+<li><p><strong>save_model</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to save the trained HDBSCAN model using joblib. Defaults to None, which means the model is not saved to disk.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print classification details. Defaults to True.</p></li>
+<li><p><strong>hdb_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – Additional keyword arguments to pass to the HDBSCAN constructor. Defaults to empty dict.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to override class attributes.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Cluster labels for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.save_cluster_trace">
+<span class="sig-name descname"><span class="pre">save_cluster_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.1</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.save_cluster_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.save_cluster_trace" title="Link to this definition"></a></dt>
+<dd><p>Save cluster as class variables traces based on the provided statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data from which to calculate cluster traces.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>trace_statistic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Statistic to use for calculating cluster traces.
+Options are “mean”, “median”, “min”, “max”, “std”, or “quantile”. Defaults to “mean”.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces.
+This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Quantile value to use if trace_statistic is “quantile”. Must be between 0 and 1. Defaults to 0.1.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.get_cluster_trace">
+<span class="sig-name descname"><span class="pre">get_cluster_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">cluster_idx</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.5</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.get_cluster_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.get_cluster_trace" title="Link to this definition"></a></dt>
+<dd><p>Retrieve the trace for a specific cluster based on the provided statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>cluster_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The index of the cluster for which to retrieve the trace.</p></li>
+<li><p><strong>trace_statistic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Statistic used for calculating the cluster trace.
+Options are “mean”, “median”, “min”, “max”, “std”, or “quantile”. Defaults to “mean”.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces.
+This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>q</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Quantile value to use if trace_statistic is “quantile”. Must be between 0 and 1. Defaults to 0.5.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The trace of the specified cluster.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_trace">
+<span class="sig-name descname"><span class="pre">save_modified_cluster_trace</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.save_modified_cluster_trace"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_trace" title="Link to this definition"></a></dt>
+<dd><p>Apply a modifier function to the data and save the cluster traces based on the provided statistic.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data from which to calculate cluster traces.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>modifier_function</strong> (<em>callable</em>) – Function to modify the data before calculating traces.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function. If None, the function’s __name__ attribute is used.</p></li>
+<li><p><strong>trace_statistic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Statistic to use for calculating cluster traces.
+Options are “mean”, “median”, “min”, “max”, “std”, or “quantile”. Defaults to “mean”.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.save_cluster_cholesky_factors">
+<span class="sig-name descname"><span class="pre">save_cluster_cholesky_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.save_cluster_cholesky_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.save_cluster_cholesky_factors" title="Link to this definition"></a></dt>
+<dd><p>Save cluster Cholesky factors as class variables.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data from which to calculate cluster Cholesky factors.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Small value added to the diagonal of the covariance matrix for numerical stability. Defaults to 1e-8.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating Cholesky factors.
+This is used to differentiate between factors calculated on raw and modified data. Defaults to an empty string.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_cholesky_factors">
+<span class="sig-name descname"><span class="pre">save_modified_cluster_cholesky_factors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.save_modified_cluster_cholesky_factors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.save_modified_cluster_cholesky_factors" title="Link to this definition"></a></dt>
+<dd><p>Apply a modifier function to the data and save the cluster Cholesky factors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data from which to calculate cluster Cholesky factors.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>modifier_function</strong> (<em>callable</em>) – Function to modify the data before calculating Cholesky factors.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function. If None, the function’s __name__ attribute is used.</p></li>
+<li><p><strong>eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Small value added to the diagonal of the covariance matrix for numerical stability. Defaults to 1e-8.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.prepare_minimum_distance_prediction">
+<span class="sig-name descname"><span class="pre">prepare_minimum_distance_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.prepare_minimum_distance_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.prepare_minimum_distance_prediction" title="Link to this definition"></a></dt>
+<dd><p>Prepare for minimum distance prediction by calculating and saving the median distances of each cluster trace.
+And also ensures that the cluster traces are calculated and saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Distance metric to use. Defaults to ‘euclidean’.</p></li>
+<li><p><strong>trace_statistic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Statistic used for calculating the cluster traces. Options are “mean”, “median”, “min”, “max”, “std”, or “quantile”. Defaults to “mean”.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.minimum_distance_prediction">
+<span class="sig-name descname"><span class="pre">minimum_distance_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'euclidean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_distance</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">trace_statistic</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'mean'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.minimum_distance_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.minimum_distance_prediction" title="Link to this definition"></a></dt>
+<dd><p>Predict cluster labels based on the minimum distance to cluster traces.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Distance metric to use. Defaults to “euclidean”.</p></li>
+<li><p><strong>noise_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Multiplier for the median distance to determine noise threshold. Points with a distance greater than median_distance * noise_alpha are labeled as noise (-1). Defaults to 100.</p></li>
+<li><p><strong>max_distance</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Maximum distance to consider a point as belonging to a cluster. Points with a distance greater than max_distance are labeled as noise (-1). Defaults to 1.0.</p></li>
+<li><p><strong>trace_statistic</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Statistic used for calculating the cluster traces. Options are “mean”, “median”, “min”, “max”, “std”, or “quantile”. Defaults to “mean”.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted cluster labels for each data point.
+minimum_distances (np.ndarray): Minimum distances to the nearest cluster trace for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>predicted_cluster (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_uncorrelated_normal_prediction">
+<span class="sig-name descname"><span class="pre">prepare_ml_uncorrelated_normal_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.prepare_ml_uncorrelated_normal_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_uncorrelated_normal_prediction" title="Link to this definition"></a></dt>
+<dd><p>Prepare for maximum likelihood prediction assuming uncorrelated normal distributions by calculating and saving the median uncorrelated normal likelihoods of each cluster.
+And also ensures that the cluster mean and std traces are calculated and saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.ml_uncorrelated_normal_prediction">
+<span class="sig-name descname"><span class="pre">ml_uncorrelated_normal_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_logl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.ml_uncorrelated_normal_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.ml_uncorrelated_normal_prediction" title="Link to this definition"></a></dt>
+<dd><p>Predict cluster labels based on maximum likelihood estimation assuming uncorrelated normal distributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>noise_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Multiplier for the median likelihood to determine noise threshold. Points with a likelihood below median_likelihood * noise_alpha are labeled as noise (-1). Defaults to 0.</p></li>
+<li><p><strong>min_logl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum log-likelihood threshold to consider a point as belonging to a cluster. Points with a log-likelihood below min_logl are labeled as noise (-1). Defaults to -100.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>data_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of data batches for processing. Defaults to 1000.</p></li>
+<li><p><strong>cluster_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of cluster batches for processing. Defaults to 30.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted cluster labels for each data point.
+np.ndarray: Maximum log-likelihood values for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_correlated_normal_prediction">
+<span class="sig-name descname"><span class="pre">prepare_ml_correlated_normal_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.prepare_ml_correlated_normal_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.prepare_ml_correlated_normal_prediction" title="Link to this definition"></a></dt>
+<dd><p>Prepare for maximum likelihood prediction assuming correlated normal distributions by calculating and saving the Cholesky factors of each cluster.
+And also ensures that the cluster mean traces are calculated and saved.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.ml_correlated_normal_prediction">
+<span class="sig-name descname"><span class="pre">ml_correlated_normal_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_logl</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">noise_alpha</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">30</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.ml_correlated_normal_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.ml_correlated_normal_prediction" title="Link to this definition"></a></dt>
+<dd><p>Predict cluster labels based on maximum likelihood estimation assuming correlated normal distributions.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be classified.</p></li>
+<li><p><strong>min_logl</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum log-likelihood threshold to consider a point as belonging to a cluster. Points with a log-likelihood below min_logl are labeled as noise (-1). Defaults to -100.</p></li>
+<li><p><strong>noise_alpha</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Multiplier for the median likelihood to determine noise threshold. Points with a likelihood below median_likelihood * noise_alpha are labeled as noise (-1). Defaults to 0.</p></li>
+<li><p><strong>modifier_function_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the modifier function applied to the data before calculating traces. This is used to differentiate between traces calculated on raw and modified data. Defaults to an empty string.</p></li>
+<li><p><strong>data_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of data batches for processing. Defaults to 1000.</p></li>
+<li><p><strong>cluster_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of cluster batches for processing. Defaults to 30.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted cluster labels for each data point.
+np.ndarray: Maximum log-likelihood values for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.umap_transform_prediction">
+<span class="sig-name descname"><span class="pre">umap_transform_prediction</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.umap_transform_prediction"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.umap_transform_prediction" title="Link to this definition"></a></dt>
+<dd><p>Transform data using the trained UMAP model and predict clusters using the trained DBSCAN model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>data</strong> (<em>np.ndarray</em>) – The input data to be transformed and classified.</p></li>
+<li><p><strong>db_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Epsilon parameter for DBSCAN. If None, uses the value from the trained DBSCAN model. Defaults to None.</p></li>
+<li><p><strong>data_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Size of data batches for processing. Defaults to 20000.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a><em>, </em><em>optional</em>) – Whether to print progress messages. Defaults to True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Predicted cluster labels for each data point.
+np.ndarray: UMAP embeddings for each data point.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>np.ndarray</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.plot_spectra">
+<span class="sig-name descname"><span class="pre">plot_spectra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">k</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">modifier_function_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">''</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.plot_spectra"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.plot_spectra" title="Link to this definition"></a></dt>
+<dd><p>Plot the spectra of the cluster traces.
+:type k: 
+:param k: The index of the cluster to plot.
+:type k: int
+:type modifier_function_name: 
+:param modifier_function_name: Name of the modifier function applied to the data before plotting the traces. This is used to differentiate between traces plotted and the raw data. Defaults to an empty string.
+:type modifier_function_name: str, optional
+:type sigma: 
+:param sigma: Number of standard deviations to plot around the mean trace. If None, standard deviation is not plotted. Defaults to 2.
+:type sigma: float, optional
+:type q: 
+:param q: Quantile value to plot if quantile traces are available. Must be between 0 and 1. If None, quantile traces are not plotted. Defaults to None.
+:type q: float, optional
+:type **kwargs: 
+:param **kwargs: Additional keyword arguments to pass to the plotting function. These can include:</p>
+<blockquote>
+<div><p>-** plot_type (list, str): Type of input data to plot. Options are ‘fft’, ‘time’, ‘phase’ or ‘default’ which are all provided input data types.
+-** save_fig (str): Path to save the figure. If None, the figure is not saved. Defaults to None.</p>
+</div></blockquote>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>fig, axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.plot_cluster_samples">
+<span class="sig-name descname"><span class="pre">plot_cluster_samples</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prepared_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clusters</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cluster_idx</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.plot_cluster_samples"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.plot_cluster_samples" title="Link to this definition"></a></dt>
+<dd><p>Plot samples from a specific cluster.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prepared_data</strong> (<em>np.ndarray</em>) – The prepared data used for clustering.</p></li>
+<li><p><strong>clusters</strong> (<em>np.ndarray</em>) – Array of cluster indices for each data point.</p></li>
+<li><p><strong>cluster_idx</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – The index of the cluster to plot samples from.</p></li>
+<li><p><strong>**kwargs</strong> – <p>Additional keyword arguments to pass to the plotting function.
+These can include:</p>
+<p>-** n_samples (int): Number of samples to plot. Defaults to 100.
+-** random_state (int): Random seed for reproducibility. Defaults to None.
+-** plot_type (list, str): Type of input data to plot. Options are ‘fft’, ‘time’, ‘phase’ or ‘default’ which are all provided input data types.
+-** save_fig (str): Path to save the figure. If None, the figure is not saved. Defaults to None.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.plot_index">
+<span class="sig-name descname"><span class="pre">plot_index</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">prepared_data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.plot_index"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.plot_index" title="Link to this definition"></a></dt>
+<dd><p>Plot data samples based on a provided index array.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>prepared_data</strong> (<em>np.ndarray</em>) – The prepared data used for clustering.</p></li>
+<li><p><strong>index</strong> (<em>np.ndarray</em>) – Array of indices to plot. Should be the same length as prepared_data.</p></li>
+<li><p><strong>**kwargs</strong> – <p>Additional keyword arguments to pass to the plotting function.
+These can include:</p>
+<p>-** plot_type (list, str): Type of input data to plot. Options are ‘fft’, ‘time’, ‘phase’ or ‘default’ which are all provided input data types.
+-** save_fig (str): Path to save the figure. If None, the figure is not saved. Defaults to None.</p>
+</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib figure and axes objects if save_fig is None, otherwise True</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.plot_embedding">
+<span class="sig-name descname"><span class="pre">plot_embedding</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">labels</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.plot_embedding"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.plot_embedding" title="Link to this definition"></a></dt>
+<dd><p>Plot the UMAP embedding with optional labels.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> (<em>np.ndarray</em>) – The UMAP embedding to plot.</p></li>
+<li><p><strong>labels</strong> (<em>np.ndarray</em><em>, </em><em>optional</em>) – Array of labels for coloring the embedding. If None, no labels are used. Defaults to None.</p></li>
+<li><p><strong>**kwargs</strong> – Additional keyword arguments to pass to the plotting function.
+These can include:
+-** save_fig (str): Path to save the figure. If None, the figure is not saved. Defaults to None.
+-** label_name (str): Name of the labels for the colorbar. Defaults to “Cluster”.
+-** label_type (str): Type of labels. Options are ‘categorical’ or ‘continuous’. Defaults to ‘categorical’.
+-** alpha (float): Alpha value for point transparency. Defaults to 0.01.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>Matplotlib figure and axes objects if save_fig is None, otherwise True after saving the figure.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>fig, axes</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.plot_overview_bokeh">
+<span class="sig-name descname"><span class="pre">plot_overview_bokeh</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">embedding</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color_key</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">title</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'UMAP</span> <span class="pre">Overview'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">save_fig</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">hover_kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.plot_overview_bokeh"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.plot_overview_bokeh" title="Link to this definition"></a></dt>
+<dd><p>Create an interactive Bokeh plot of the UMAP embedding.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>embedding</strong> (<em>np.ndarray</em>) – The UMAP embedding to plot.</p></li>
+<li><p><strong>color_key</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em> or </em><em>None</em>) – Attribute name in hover_kwargs to use for coloring the points. If None, no coloring is applied.</p></li>
+<li><p><strong>title</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Title of the plot. Defaults to “UMAP Overview”.</p></li>
+<li><p><strong>save_fig</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to save the Bokeh plot as an HTML file</p></li>
+<li><p><strong>**hover_kwargs</strong> – Additional keyword arguments to pass to the plotting function essentially arrays with the same length as embedding, which contain information about each point in the embedding, which is displayed when hovering over the points.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_batchwise_from_dir">
+<span class="sig-name descname"><span class="pre">load_umap_data_batchwise_from_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch_loader_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_batch_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_umap_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_selected_per_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dbscan'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.pkl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.load_umap_data_batchwise_from_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_batchwise_from_dir" title="Link to this definition"></a></dt>
+<dd><p>Load data from a directory in batches, perform UMAP embedding and clustering on each batch, and select a high-entropy subset of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the directory containing data files.</p></li>
+<li><p><strong>data_batch_loader</strong> (<em>callable</em>) – A function that takes a batch index and a file path, and returns a tuple (data_batch, properties_batch, change_file). Here data_batch is a numpy array of shape (n_samples_in_batch, n_features), properties_batch is an optional numpy array of shape (n_samples_in_batch, n_properties), and change_file is a boolean indicating whether to move to the next file. Default is None, which uses a default loader that expects .pkl files containing pandas DataFrames.</p></li>
+<li><p><strong>data_batch_loader_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the data_batch_loader function. Defaults to {}.</p></li>
+<li><p><strong>max_umap_events</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Maximum number of events to select for UMAP embedding. Defaults to 1e5.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to process in each batch. If None defaults to max_umap_events. Defaults to None.</p></li>
+<li><p><strong>n_selected_per_batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to select from each batch. If None defaults to max_umap_events/10. Defaults to None.</p></li>
+<li><p><strong>summary_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to accumulate before performing a final selection. If None defaults to batch_size. Defaults to None.</p></li>
+<li><p><strong>local_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use parameters for UMAP and DBSCAN supporting local embedding and clustering for each batch. Default is True.</p></li>
+<li><p><strong>return_raw</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to return the raw data along with the processed data. Default is False.</p></li>
+<li><p><strong>umap_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the UMAP embedding function. Defaults to {}.</p></li>
+<li><p><strong>clustering_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the clustering function. Defaults to {}.</p></li>
+<li><p><strong>clustering_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Clustering algorithm to use, either “dbscan” or “hdbscan”. Default is “dbscan”.</p></li>
+<li><p><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File extension of the data files to load. Default is “.pkl”.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A numpy array of shape (n_selected_events, n_features) containing the selected events after UMAP embedding and clustering.
+selected_raw_data (np.ndarray): A numpy array of shape (n_selected_events, n_raw_features) containing the raw data of the selected events. Returned only if return_raw is True.
+selected_properties (np.ndarray): A numpy array of shape (n_selected_events, n_properties) containing the properties of the selected events. Returned only if properties are provided by the data_batch_loader.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>selected_data (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_from_dir">
+<span class="sig-name descname"><span class="pre">load_umap_data_from_dir</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dir_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_loader</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_loader_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_umap_events</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100000.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_selected_per_batch</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">summary_batch_size</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_embedding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">return_raw</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_kwargs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">clustering_mode</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'dbscan'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">file_extension</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'.pkl'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">verbose</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.load_umap_data_from_dir"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.load_umap_data_from_dir" title="Link to this definition"></a></dt>
+<dd><p>Load data from a directory, seperate into batches, perform UMAP embedding and clustering on each batch, and select a high-entropy subset of the data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>dir_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Path to the directory containing data files.</p></li>
+<li><p><strong>data_loader</strong> (<em>callable</em>) – A function that takes a file path and returns a tuple (data, properties). Here data is a numpy array of shape (n_samples, n_features) and properties is an optional numpy array of shape (n_samples, n_properties). Default is None, which uses a default loader that expects .pkl files containing pandas DataFrames.</p></li>
+<li><p><strong>data_loader_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the data_loader function. Defaults to {}.</p></li>
+<li><p><strong>max_umap_events</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Maximum number of events to select for UMAP embedding. Default is 1e5.</p></li>
+<li><p><strong>batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to process in each batch. If None defaults to max_umap_events. Defaults to None.</p></li>
+<li><p><strong>n_selected_per_batch</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to select from each batch. If None defaults to max_umap_events/10. Defaults to None.</p></li>
+<li><p><strong>summary_batch_size</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of events to accumulate before performing a final selection. If None defaults to batch_size. Defaults to None.</p></li>
+<li><p><strong>local_embedding</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to use parameters for UMAP and DBSCAN supporting local embedding and clustering for each batch. Default is True.</p></li>
+<li><p><strong>return_raw</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to return the raw data along with the processed data. Default is False.</p></li>
+<li><p><strong>umap_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the UMAP embedding function. Defaults to {}.</p></li>
+<li><p><strong>clustering_kwargs</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a>) – Additional keyword arguments to pass to the clustering function. Defaults to {}.</p></li>
+<li><p><strong>clustering_mode</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – Clustering algorithm to use, either “dbscan” or “hdbscan”. Default is “dbscan”.</p></li>
+<li><p><strong>file_extension</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a>) – File extension of the data files to load. Default is “.pkl”.</p></li>
+<li><p><strong>verbose</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.13)"><em>bool</em></a>) – Whether to print progress messages. Default is True.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A numpy array of shape (n_selected_events, n_features) containing the selected events after UMAP embedding and clustering.
+selected_raw_data (np.ndarray): A numpy array of shape (n_selected_events, n_raw_features) containing the raw data of the selected events. Returned only if return_raw is True.
+selected_properties (np.ndarray): A numpy array of shape (n_selected_events, n_properties) containing the properties of the selected events. Returned only if properties are provided by the data_loader.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>selected_data (np.ndarray)</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="rm_classifier.prepare_data.html" class="btn btn-neutral float-left" title="rm_classifier.prepare_data module" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="rm_classifier.yumap_classifier.html" class="btn btn-neutral float-right" title="rm_classifier.yumap_classifier module" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Johann Luca Kastner.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
