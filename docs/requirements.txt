@@ -21,4 +21,3 @@ sphinx
 sphinx-autodoc-typehints
 sphinx_rtd_theme
 myst-parser
-sphinxext-napoleon
