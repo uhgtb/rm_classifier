@@ -2,11 +2,11 @@
 # See https://docs.readthedocs.io/en/stable/config-file/v2.html for details
 
 # Required
-version: 0.1.0
+version: 1
 
 # Set the OS, Python version, and other tools you might need
 build:
-  os: ubuntu-24.04
+  os: Linux
   tools:
     python: "3.11"
 
