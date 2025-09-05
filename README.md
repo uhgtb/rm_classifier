@@ -15,7 +15,7 @@ conda activate rm_classifier
 pip install -e .
 ``` </pre>
 
-### Method 2: Pip
+### Method 2: Pip (might not run in some python versions)
 <pre>
 ```bash
 pip install git+https://github.com/uhgtb/rm_classifier.git
@@ -34,3 +34,4 @@ pip install -e .
 ``` </pre>
 
 ## Documentation
+Sphinx documentation in the /docs/_build/html/index.html folder

@@ -1,0 +1,17 @@
+numpy>=1.24.0,<3.0.0      
+scipy>=1.10.0,<2.0.0
+h5py>=3.8.0,<4.0.0 
+bokeh==3.6.0
+joblib==1.4.2
+keras==3.9.2
+matplotlib==3.10.0
+numba==0.61.0
+pandas==2.2.3
+PyYAML==6.0.2
+scikit_learn==1.6.1
+tensorflow==2.19.0
+umap_learn==0.5.7
+bottleneck==1.4.2
+mkl-service==2.4.1
+numexpr==2.10.1
+memory_profiler==0.61.0
