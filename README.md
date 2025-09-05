@@ -34,4 +34,4 @@ pip install -e .
 ``` </pre>
 
 ## Documentation
-Sphinx documentation in the /docs/_build/html/index.html folder
+Sphinx documentation in the /docs/_build/html/index.html folder or can be found at [readthedocs](https://rm-classifier.readthedocs.io/).
