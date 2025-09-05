@@ -6,9 +6,8 @@
 rm_classifier documentation
 ===========================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+The rm_classifier package provides tools for training and applying UMAP-based classifiers, including standard, parametric, and y-shaped UMAP classifiers. It is designed for efficient handling of large datasets and offers various utilities for data processing, model training, and evaluation.
+It is developed in the context of radio array monitoring, which rely on one dimensionsional electric field or ADC monitoring time traces, but can be applied to other domains as well.
 
 
 .. toctree::
