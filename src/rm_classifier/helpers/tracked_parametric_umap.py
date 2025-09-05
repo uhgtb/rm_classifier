@@ -26,15 +26,14 @@ import umap.parametric_umap as parametric_umap
 import warnings
 
 class AutoencoderLossCallback(keras.callbacks.Callback):
-    """Callback to compute and log autoencoder loss on any dataset (train/val) during training."""
+    """Callback to compute and log autoencoder loss on any dataset (train/val) during training.
+    
+    Attributes:
+        validation_data (list, np.ndarray): Validation data.
+        loss_fn (Callable): Validation loss function.
+        metric_name (str, optional): name of the callbacks metric. Defaults to 'val_autoencoder_loss'.
+    """
     def __init__(self, data, loss_fn, metric_name='autoencoder_loss'):
-        """Initialize the callback.
-
-        Args:
-            validation_data (list, np.ndarray): Validation data.
-            loss_fn (Callable): Validation loss function.
-            metric_name (str, optional): name of the callbacks metric. Defaults to 'val_autoencoder_loss'.
-        """
         super().__init__()
         self.data = data
         self.loss_fn = loss_fn
@@ -90,6 +89,13 @@ def _create_autoencoder_loss_fn(model_instance):
 class TrackedPUMAP(parametric_umap.ParametricUMAP):
     """
     Subclass of ParametricUMAP that tracks training history and allows for saving/loading.
+
+    Attributes:
+        n_training_epochs (int, optional): number of training epochs. Defaults to 1.
+        repulsion_strength (float, optional): repulsion strength. Defaults to 1.0.
+        loss_report_frequency (int, optional): loss report frequency. Defaults to 1000.
+        kwargs: additional arguments for ParametricUMAP.
+    
     """
     
     def __init__(self, 
@@ -97,14 +103,6 @@ class TrackedPUMAP(parametric_umap.ParametricUMAP):
                  repulsion_strength=1.0,
                  loss_report_frequency=1000,
                  **kwargs):
-        """Initialize the TrackedPUMAP model.
-
-        Args:
-            n_training_epochs (int, optional): number of training epochs. Defaults to 1.
-            repulsion_strength (float, optional): repulsion strength. Defaults to 1.0.
-            loss_report_frequency (int, optional): loss report frequency. Defaults to 1000.
-        """
-        
         super().__init__(**kwargs)
         self.seed_generator = keras.random.SeedGenerator()
         self.loss_report_frequency = loss_report_frequency
@@ -308,6 +306,15 @@ class TrackedPUMAP(parametric_umap.ParametricUMAP):
 class TrackedUMAPModel(parametric_umap.UMAPModel):
     """
     A UMAP model that tracks the training history and allows for saving/loading.
+
+    Attributes:
+        umap_loss_a (float): UMAP parameter a for the definition of similarity in the latent space
+        umap_loss_b (float): UMAP parameter b for the definition of similarity in the latent space
+        negative_sample_rate (int): the number of negative samples to use per positive sample. If not specified, defaults to 5.
+        encoder (keras.src.models.sequential.Sequential): encoder model
+        decoder (keras.src.models.sequential.Sequential): decoder model
+        repulsion_strength (float, optional): repulsion strength for the calculation of the umap loss. Defaults to 1.0.
+        kwargs: additional arguments for UMAPModel.
     """
     
     def __init__(self,
@@ -318,16 +325,6 @@ class TrackedUMAPModel(parametric_umap.UMAPModel):
                  decoder,
                  repulsion_strength=1.0,
                  **kwargs):
-        """Initialize the TrackedUMAPModel.
-
-        Args:
-            umap_loss_a (float): UMAP parameter a for the definition of similarity in the latent space
-            umap_loss_b (float): UMAP parameter b for the definition of similarity in the latent space
-            negative_sample_rate (int): the number of negative samples to use per positive sample. If not specified, defaults to 5.
-            encoder (keras.src.models.sequential.Sequential): encoder model
-            decoder (keras.src.models.sequential.Sequential): decoder model
-            repulsion_strength (float, optional): repulsion strength for the calculation of the umap loss. Defaults to 1.0.
-        """
         super().__init__(umap_loss_a,
                  umap_loss_b,
                  negative_sample_rate,

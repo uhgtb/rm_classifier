@@ -63,6 +63,7 @@
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="../tutorial.html">Tutorials</a></li>
 </ul>
 
         </div>
@@ -109,20 +110,43 @@ and computing validation loss during training.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.tracked_parametric_umap.</span></span><span class="sig-name descname"><span class="pre">AutoencoderLossCallback</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'autoencoder_loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#AutoencoderLossCallback"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">Callback</span></code></p>
 <p>Callback to compute and log autoencoder loss on any dataset (train/val) during training.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'autoencoder_loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#AutoencoderLossCallback.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the callback.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.validation_data">
+<span class="sig-name descname"><span class="pre">validation_data</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.validation_data" title="Link to this definition"></a></dt>
+<dd><p>Validation data.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>validation_data</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)"><em>list</em></a><em>, </em><em>np.ndarray</em>) – Validation data.</p></li>
-<li><p><strong>loss_fn</strong> (<em>Callable</em>) – Validation loss function.</p></li>
-<li><p><strong>metric_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – name of the callbacks metric. Defaults to ‘val_autoencoder_loss’.</p></li>
-</ul>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.13)">list</a>, np.ndarray</p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.loss_fn">
+<span class="sig-name descname"><span class="pre">loss_fn</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.loss_fn" title="Link to this definition"></a></dt>
+<dd><p>Validation loss function.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Callable</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.metric_name">
+<span class="sig-name descname"><span class="pre">metric_name</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.metric_name" title="Link to this definition"></a></dt>
+<dd><p>name of the callbacks metric. Defaults to ‘val_autoencoder_loss’.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_fn</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'autoencoder_loss'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#AutoencoderLossCallback.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.on_epoch_end">
@@ -151,19 +175,83 @@ the <cite>Model</cite>’s metrics are returned. Example:
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.tracked_parametric_umap.</span></span><span class="sig-name descname"><span class="pre">TrackedPUMAP</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_training_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_report_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#TrackedPUMAP"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">ParametricUMAP</span></code></p>
 <p>Subclass of ParametricUMAP that tracks training history and allows for saving/loading.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.n_training_epochs">
+<span class="sig-name descname"><span class="pre">n_training_epochs</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.n_training_epochs" title="Link to this definition"></a></dt>
+<dd><p>number of training epochs. Defaults to 1.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.repulsion_strength">
+<span class="sig-name descname"><span class="pre">repulsion_strength</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.repulsion_strength" title="Link to this definition"></a></dt>
+<dd><p>repulsion strength. Defaults to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.loss_report_frequency">
+<span class="sig-name descname"><span class="pre">loss_report_frequency</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.loss_report_frequency" title="Link to this definition"></a></dt>
+<dd><p>loss report frequency. Defaults to 1000.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.kwargs" title="Link to this definition"></a></dt>
+<dd><p>additional arguments for ParametricUMAP.</p>
+</dd></dl>
+
 <dl class="py method">
 <dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.__init__">
 <span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">n_training_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_report_frequency</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#TrackedPUMAP.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedPUMAP.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the TrackedPUMAP model.</p>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>n_training_epochs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – number of training epochs. Defaults to 1.</p></li>
-<li><p><strong>repulsion_strength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – repulsion strength. Defaults to 1.0.</p></li>
-<li><p><strong>loss_report_frequency</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – loss report frequency. Defaults to 1000.</p></li>
-</ul>
+<dd><p>Parametric UMAP subclassing UMAP-learn, based on keras/tensorflow.
+There is also a non-parametric implementation contained within to compare
+with the base non-parametric implementation.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Link to this heading"></a></h2>
+<dl class="simple">
+<dt>batch_size<span class="classifier">int, optional</span></dt><dd><p>size of batch used for batch training, by default None</p>
+</dd>
+<dt>dims<span class="classifier">tuple, optional</span></dt><dd><p>dimensionality of data, if not flat (e.g. (32x32x3 images for ConvNet), by default None</p>
+</dd>
+<dt>encoder<span class="classifier">keras.Sequential, optional</span></dt><dd><p>The encoder Keras network</p>
+</dd>
+<dt>decoder<span class="classifier">keras.Sequential, optional</span></dt><dd><p>the decoder Keras network</p>
+</dd>
+<dt>parametric_reconstruction<span class="classifier">bool, optional</span></dt><dd><p>Whether the decoder is parametric or non-parametric, by default False</p>
+</dd>
+<dt>parametric_reconstruction_loss_fcn<span class="classifier">bool, optional</span></dt><dd><p>What loss function to use for parametric reconstruction,
+by default keras.losses.BinaryCrossentropy</p>
+</dd>
+<dt>parametric_reconstruction_loss_weight<span class="classifier">float, optional</span></dt><dd><p>How to weight the parametric reconstruction loss relative to umap loss, by default 1.0</p>
+</dd>
+<dt>autoencoder_loss<span class="classifier">bool, optional</span></dt><dd><p>[description], by default False</p>
+</dd>
+<dt>reconstruction_validation<span class="classifier">array, optional</span></dt><dd><p>validation X data for reconstruction loss, by default None</p>
+</dd>
+<dt>global_correlation_loss_weight<span class="classifier">float, optional</span></dt><dd><p>Whether to additionally train on correlation of global pairwise relationships (&gt;0), by default 0</p>
+</dd>
+<dt>landmark_loss_fn<span class="classifier">callable, optional</span></dt><dd><p>The function to use for landmark loss, by default the euclidean distance</p>
+</dd>
+<dt>landmark_loss_weight<span class="classifier">float, optional</span></dt><dd><p>How to weight the landmark loss relative to umap loss, by default 1.0</p>
+</dd>
+<dt>keras_fit_kwargs<span class="classifier">dict, optional</span></dt><dd><p>additional arguments for model.fit (like callbacks), by default {}</p>
 </dd>
 </dl>
+</section>
 </dd></dl>
 
 <dl class="py method">
@@ -279,23 +367,82 @@ parameters and not others.</p>
 <em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">rm_classifier.helpers.tracked_parametric_umap.</span></span><span class="sig-name descname"><span class="pre">TrackedUMAPModel</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#TrackedUMAPModel"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel" title="Link to this definition"></a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UMAPModel</span></code></p>
 <p>A UMAP model that tracks the training history and allows for saving/loading.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">umap_loss_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_sample_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#TrackedUMAPModel.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the TrackedUMAPModel.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.umap_loss_a">
+<span class="sig-name descname"><span class="pre">umap_loss_a</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.umap_loss_a" title="Link to this definition"></a></dt>
+<dd><p>UMAP parameter a for the definition of similarity in the latent space</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>umap_loss_a</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – UMAP parameter a for the definition of similarity in the latent space</p></li>
-<li><p><strong>umap_loss_b</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – UMAP parameter b for the definition of similarity in the latent space</p></li>
-<li><p><strong>negative_sample_rate</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – the number of negative samples to use per positive sample. If not specified, defaults to 5.</p></li>
-<li><p><strong>encoder</strong> (<em>keras.src.models.sequential.Sequential</em>) – encoder model</p></li>
-<li><p><strong>decoder</strong> (<em>keras.src.models.sequential.Sequential</em>) – decoder model</p></li>
-<li><p><strong>repulsion_strength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – repulsion strength for the calculation of the umap loss. Defaults to 1.0.</p></li>
-</ul>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.umap_loss_b">
+<span class="sig-name descname"><span class="pre">umap_loss_b</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.umap_loss_b" title="Link to this definition"></a></dt>
+<dd><p>UMAP parameter b for the definition of similarity in the latent space</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.negative_sample_rate">
+<span class="sig-name descname"><span class="pre">negative_sample_rate</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.negative_sample_rate" title="Link to this definition"></a></dt>
+<dd><p>the number of negative samples to use per positive sample. If not specified, defaults to 5.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.encoder">
+<span class="sig-name descname"><span class="pre">encoder</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.encoder" title="Link to this definition"></a></dt>
+<dd><p>encoder model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.src.models.sequential.Sequential</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.decoder">
+<span class="sig-name descname"><span class="pre">decoder</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.decoder" title="Link to this definition"></a></dt>
+<dd><p>decoder model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>keras.src.models.sequential.Sequential</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.repulsion_strength">
+<span class="sig-name descname"><span class="pre">repulsion_strength</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.repulsion_strength" title="Link to this definition"></a></dt>
+<dd><p>repulsion strength for the calculation of the umap loss. Defaults to 1.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.kwargs" title="Link to this definition"></a></dt>
+<dd><p>additional arguments for UMAPModel.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">umap_loss_a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">umap_loss_b</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">negative_sample_rate</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">encoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">decoder</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/helpers/tracked_parametric_umap.html#TrackedUMAPModel.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.helpers.tracked_parametric_umap.TrackedUMAPModel.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 </dd></dl>
 

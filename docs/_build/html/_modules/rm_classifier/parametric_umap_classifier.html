@@ -93,23 +93,21 @@
 <a class="viewcode-back" href="../../api/rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">ParametricUMAPClassifier</span><span class="p">(</span><span class="n">umap_classifier</span><span class="o">.</span><span class="n">UMAPClassifier</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Subclass of UMAPClassifier that uses Parametric UMAP for embedding and DBSCAN for clustering.</span>
-<span class="sd">    Furthermore, an autoencoder allows for reconstruction of the input data, which can be used for outlier detection.&quot;&quot;&quot;</span>
+<span class="sd">    Furthermore, an autoencoder allows for reconstruction of the input data, which can be used for outlier detection.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        repulsion_strength (float): The strength of the repulsion term in UMAP. Defaults to 1.0.</span>
+<span class="sd">        n_training_epochs (int): Number of training epochs for the Parametric UMAP model. Defaults to 100.</span>
+<span class="sd">        loss_report_frequeny (int): Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.</span>
+<span class="sd">        kwargs: Additional keyword arguments for the UMAPClassifier base class.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
 <div class="viewcode-block" id="ParametricUMAPClassifier.__init__">
 <a class="viewcode-back" href="../../api/rm_classifier.parametric_umap_classifier.html#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">repulsion_strength</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">n_training_epochs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                  <span class="n">loss_report_frequeny</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> 
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the Parametric UMAP Classifier with the given parameters.</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            repulsion_strength (float): The strength of the repulsion term in UMAP. Defaults to 1.0.</span>
-<span class="sd">            n_training_epochs (int): Number of training epochs for the Parametric UMAP model. Defaults to 100.</span>
-<span class="sd">            loss_report_frequeny (int): Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.</span>
-<span class="sd">            **kwargs: Additional keyword arguments for the UMAPClassifier base class.</span>
-
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">parametric_model</span> <span class="o">=</span> <span class="kc">None</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">repulsion_strength</span> <span class="o">=</span> <span class="n">repulsion_strength</span>

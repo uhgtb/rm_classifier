@@ -157,6 +157,16 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">YShapedUMAPClassifier</span><span class="p">(</span><span class="n">tracked_parametric_umap</span><span class="o">.</span><span class="n">TrackedPUMAP</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Y-shaped network that combines UMAP loss with classification loss</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
+<span class="sd">        umap_loss_a(float): UMAP loss parameter a. Defaults to 1.929.</span>
+<span class="sd">        umap_loss_b(float): UMAP loss parameter b. Defaults to 0.7915.</span>
+<span class="sd">        negative_sample_rate(int): Number of negative samples per positive sample. Defaults to 5.</span>
+<span class="sd">        n_classes(int): Number of classes for classification. Defaults to 100.</span>
+<span class="sd">        classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
+<span class="sd">        keras_fit_kwargs(dict): Additional keyword arguments for the keras fit method. Defaults to {}.</span>
+<span class="sd">        kwargs: Additional arguments for the TrackedPUMAP class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <div class="viewcode-block" id="YShapedUMAPClassifier.__init__">
@@ -170,18 +180,6 @@
                  <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">keras_fit_kwargs</span><span class="o">=</span><span class="p">{},</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the Y-shaped UMAP classifier.</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
-<span class="sd">            umap_loss_a(float): UMAP loss parameter a. Defaults to 1.929.</span>
-<span class="sd">            umap_loss_b(float): UMAP loss parameter b. Defaults to 0.7915.</span>
-<span class="sd">            negative_sample_rate(int): Number of negative samples per positive sample. Defaults to 5.</span>
-<span class="sd">            n_classes(int): Number of classes for classification. Defaults to 100.</span>
-<span class="sd">            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
-<span class="sd">            keras_fit_kwargs(dict): Additional keyword arguments for the keras fit method. Defaults to {}.</span>
-<span class="sd">            **kwargs: Additional arguments for the TrackedPUMAP class.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">negative_sample_rate</span> <span class="o">=</span> <span class="n">negative_sample_rate</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_a</span> <span class="o">=</span> <span class="n">umap_loss_a</span>
@@ -602,6 +600,16 @@
 <a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">yUMAPModel</span><span class="p">(</span><span class="n">parametric_umap</span><span class="o">.</span><span class="n">UMAPModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; Y-shaped UMAP model with classification head</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        umap_loss_a(float): UMAP loss parameter a.</span>
+<span class="sd">        umap_loss_b(float): UMAP loss parameter b.</span>
+<span class="sd">        negative_sample_rate(int): Number of negative samples per positive sample.</span>
+<span class="sd">        encoder(keras.Model): The encoder model.</span>
+<span class="sd">        decoder(keras.Model): The decoder model.</span>
+<span class="sd">        classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
+<span class="sd">        classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
+<span class="sd">        kwargs: Additional arguments for the ParametricUMAP class.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="yUMAPModel.__init__">
 <a class="viewcode-back" href="../../../api/rm_classifier.helpers.yumap.html#rm_classifier.helpers.yumap.yUMAPModel.__init__">[docs]</a>
@@ -614,18 +622,6 @@
                  <span class="n">classifier_head</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
                  <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot; Initialize the Y-shaped UMAP model.</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            umap_loss_a(float): UMAP loss parameter a.</span>
-<span class="sd">            umap_loss_b(float): UMAP loss parameter b.</span>
-<span class="sd">            negative_sample_rate(int): Number of negative samples per positive sample.</span>
-<span class="sd">            encoder(keras.Model): The encoder model.</span>
-<span class="sd">            decoder(keras.Model): The decoder model.</span>
-<span class="sd">            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.</span>
-<span class="sd">            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.</span>
-<span class="sd">            **kwargs: Additional arguments for the ParametricUMAP class.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">umap_loss_a</span><span class="p">,</span> <span class="n">umap_loss_b</span><span class="p">,</span> <span class="n">negative_sample_rate</span><span class="p">,</span> <span class="n">encoder</span><span class="p">,</span> <span class="n">decoder</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="n">classifier_head</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classification_loss_weight</span> <span class="o">=</span> <span class="n">classification_loss_weight</span></div>

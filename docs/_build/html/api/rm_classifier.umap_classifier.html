@@ -106,24 +106,100 @@ This class provides methods for data preparation, UMAP embedding, clustering wit
 and various prediction methods based on cluster statistics.</p>
 <dl class="field-list simple">
 </dl>
-<dl class="py method">
-<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'braycurtis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_preparation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the UMAP classifier with parameters.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.yaml_path">
+<span class="sig-name descname"><span class="pre">yaml_path</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.yaml_path" title="Link to this definition"></a></dt>
+<dd><p>Path to the YAML configuration file. Defaults to None, which means no YAML file is loaded.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>yaml_path</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Path to the YAML configuration file. Defaults to None, which means no YAML file is loaded.</p></li>
-<li><p><strong>model_name</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Name of the model. Defaults to “umap_classifier”.</p></li>
-<li><p><strong>dir</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Directory to save the model. Defaults to “umap_classifier”.</p></li>
-<li><p><strong>n_neighbors</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of neighbors for UMAP. Defaults to 35.</p></li>
-<li><p><strong>min_dist</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – Minimum distance between points in UMAP. Defaults to 0.0.</p></li>
-<li><p><strong>n_components</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – Number of dimensions in the latent space. Defaults to 2.</p></li>
-<li><p><strong>metric</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Distance metric for UMAP. Defaults to “braycurtis”.</p></li>
-<li><p><strong>input_data_type</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)"><em>str</em></a><em>, </em><em>optional</em>) – Type of input data (e.g., “fft”, “time”, “fft_time”, “fft_phase”). Defaults to “time”.</p></li>
-<li><p><strong>data_preparation</strong> (<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)"><em>dict</em></a><em>, </em><em>optional</em>) – <p>Dictionary containing data preparation parameters.
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.model_name">
+<span class="sig-name descname"><span class="pre">model_name</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.model_name" title="Link to this definition"></a></dt>
+<dd><p>Name of the model. Defaults to “umap_classifier”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.dir">
+<span class="sig-name descname"><span class="pre">dir</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.dir" title="Link to this definition"></a></dt>
+<dd><p>Directory to save the model. Defaults to “umap_classifier”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.n_neighbors">
+<span class="sig-name descname"><span class="pre">n_neighbors</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.n_neighbors" title="Link to this definition"></a></dt>
+<dd><p>Number of neighbors for UMAP. Defaults to 35.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.min_dist">
+<span class="sig-name descname"><span class="pre">min_dist</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.min_dist" title="Link to this definition"></a></dt>
+<dd><p>Minimum distance between points in UMAP. Defaults to 0.0.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.n_components">
+<span class="sig-name descname"><span class="pre">n_components</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.n_components" title="Link to this definition"></a></dt>
+<dd><p>Number of dimensions in the latent space. Defaults to 2.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.metric">
+<span class="sig-name descname"><span class="pre">metric</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.metric" title="Link to this definition"></a></dt>
+<dd><p>Distance metric for UMAP. Defaults to “braycurtis”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.input_data_type">
+<span class="sig-name descname"><span class="pre">input_data_type</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.input_data_type" title="Link to this definition"></a></dt>
+<dd><p>Type of input data (e.g., “fft”, “time”, “fft_time”, “fft_phase”). Defaults to “time”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.13)">str</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.data_preparation">
+<span class="sig-name descname"><span class="pre">data_preparation</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.data_preparation" title="Link to this definition"></a></dt>
+<dd><p>Dictionary containing data preparation parameters.
 These override the default parameters. The following keys are supported:</p>
-<ul>
+<ul class="simple">
 <li><p><strong>spectrum_filter</strong> (str, optional): Type of filter to apply to the spectrum.</p></li>
 <li><p><strong>denoiser_n</strong> (int): Number of denoiser iterations.</p></li>
 <li><p><strong>denoiser_npeak</strong> (int): Number of peaks for the denoiser.</p></li>
@@ -138,11 +214,39 @@ These override the default parameters. The following keys are supported:</p>
 <li><p><strong>beacon_width</strong> (float): Width of the beacons.</p></li>
 </ul>
 <p>Defaults to an empty dictionary.</p>
-</p></li>
-<li><p><strong>db_eps</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a><em>, </em><em>optional</em>) – The maximum distance between two samples for one to be considered as in the neighborhood of the other in DBSCAN. Defaults to 0.45.</p></li>
-<li><p><strong>db_min_samples</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a><em>, </em><em>optional</em>) – The number of samples in a neighborhood for a point to be considered as a core point in DBSCAN. Defaults to 50.</p></li>
-</ul>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#dict" title="(in Python v3.13)">dict</a>, optional</p>
 </dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.db_eps">
+<span class="sig-name descname"><span class="pre">db_eps</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.db_eps" title="Link to this definition"></a></dt>
+<dd><p>The maximum distance between two samples for one to be considered as in the neighborhood of the other in DBSCAN. Defaults to 0.45.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.db_min_samples">
+<span class="sig-name descname"><span class="pre">db_min_samples</span></span><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.db_min_samples" title="Link to this definition"></a></dt>
+<dd><p>The number of samples in a neighborhood for a point to be considered as a core point in DBSCAN. Defaults to 50.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a>, optional</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.umap_classifier.UMAPClassifier.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">yaml_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">model_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'umap_classifier'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_neighbors</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">35</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_dist</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_components</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'braycurtis'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">input_data_type</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'time'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">data_preparation</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">{}</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_eps</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.45</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db_min_samples</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/umap_classifier.html#UMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.umap_classifier.UMAPClassifier.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
 </dl>
 </dd></dl>
 

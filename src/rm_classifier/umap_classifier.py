@@ -26,6 +26,35 @@ class UMAPClassifier:
     A class to handle UMAP classification tasks especially for radio monitoring data.
     This class provides methods for data preparation, UMAP embedding, clustering with DBSCAN,
     and various prediction methods based on cluster statistics.
+
+    Attributes:
+        yaml_path (str, optional): Path to the YAML configuration file. Defaults to None, which means no YAML file is loaded.
+        model_name (str, optional): Name of the model. Defaults to "umap_classifier".
+        dir (str, optional): Directory to save the model. Defaults to "umap_classifier".
+        n_neighbors (int, optional): Number of neighbors for UMAP. Defaults to 35.
+        min_dist (float, optional): Minimum distance between points in UMAP. Defaults to 0.0.
+        n_components (int, optional): Number of dimensions in the latent space. Defaults to 2.
+        metric (str, optional): Distance metric for UMAP. Defaults to "braycurtis".
+        input_data_type (str, optional): Type of input data (e.g., "fft", "time", "fft_time", "fft_phase"). Defaults to "time".
+        data_preparation (dict, optional): Dictionary containing data preparation parameters.
+            These override the default parameters. The following keys are supported:
+
+            - **spectrum_filter** (str, optional): Type of filter to apply to the spectrum.
+            - **denoiser_n** (int): Number of denoiser iterations.
+            - **denoiser_npeak** (int): Number of peaks for the denoiser.
+            - **welch_nperseg** (int): Length of each segment for Welch's method.
+            - **welch_noverlap** (int): Number of points to overlap between segments.
+            - **welch_window** (str): Type of window to use in Welch's method.
+            - **welch_average** (str): Averaging method for Welch's method (e.g., "mean" or "median").
+            - **windowing** (str): Type of windowing function to apply.
+            - **log_filter** (bool): Whether to apply a logarithmic filter.
+            - **cut_beacon_frequencies** (bool): Whether to cut beacon frequencies.
+            - **beacon_frequencies** (list): Frequencies of the beacons.
+            - **beacon_width** (float): Width of the beacons.
+
+            Defaults to an empty dictionary.
+        db_eps (float, optional): The maximum distance between two samples for one to be considered as in the neighborhood of the other in DBSCAN. Defaults to 0.45.
+        db_min_samples (int, optional): The number of samples in a neighborhood for a point to be considered as a core point in DBSCAN. Defaults to 50.
     """
     
     def __init__(self, 
@@ -41,38 +70,6 @@ class UMAPClassifier:
                  db_eps: float = 0.45,
                  db_min_samples: int = 50,
                  ):
-        """
-        Initialize the UMAP classifier with parameters.
-
-        Args:
-            yaml_path (str, optional): Path to the YAML configuration file. Defaults to None, which means no YAML file is loaded.
-            model_name (str, optional): Name of the model. Defaults to "umap_classifier".
-            dir (str, optional): Directory to save the model. Defaults to "umap_classifier".
-            n_neighbors (int, optional): Number of neighbors for UMAP. Defaults to 35.
-            min_dist (float, optional): Minimum distance between points in UMAP. Defaults to 0.0.
-            n_components (int, optional): Number of dimensions in the latent space. Defaults to 2.
-            metric (str, optional): Distance metric for UMAP. Defaults to "braycurtis".
-            input_data_type (str, optional): Type of input data (e.g., "fft", "time", "fft_time", "fft_phase"). Defaults to "time".
-            data_preparation (dict, optional): Dictionary containing data preparation parameters.
-                These override the default parameters. The following keys are supported:
-
-                - **spectrum_filter** (str, optional): Type of filter to apply to the spectrum.
-                - **denoiser_n** (int): Number of denoiser iterations.
-                - **denoiser_npeak** (int): Number of peaks for the denoiser.
-                - **welch_nperseg** (int): Length of each segment for Welch's method.
-                - **welch_noverlap** (int): Number of points to overlap between segments.
-                - **welch_window** (str): Type of window to use in Welch's method.
-                - **welch_average** (str): Averaging method for Welch's method (e.g., "mean" or "median").
-                - **windowing** (str): Type of windowing function to apply.
-                - **log_filter** (bool): Whether to apply a logarithmic filter.
-                - **cut_beacon_frequencies** (bool): Whether to cut beacon frequencies.
-                - **beacon_frequencies** (list): Frequencies of the beacons.
-                - **beacon_width** (float): Width of the beacons.
-
-                Defaults to an empty dictionary.
-            db_eps (float, optional): The maximum distance between two samples for one to be considered as in the neighborhood of the other in DBSCAN. Defaults to 0.45.
-            db_min_samples (int, optional): The number of samples in a neighborhood for a point to be considered as a core point in DBSCAN. Defaults to 50.
-        """
         self.yaml_path = yaml_path
         self.model_name = model_name
         self.dir = dir

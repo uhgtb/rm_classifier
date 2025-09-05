@@ -18,21 +18,19 @@ import copy
 
 class ParametricUMAPClassifier(umap_classifier.UMAPClassifier):
     """ Subclass of UMAPClassifier that uses Parametric UMAP for embedding and DBSCAN for clustering.
-    Furthermore, an autoencoder allows for reconstruction of the input data, which can be used for outlier detection."""
+    Furthermore, an autoencoder allows for reconstruction of the input data, which can be used for outlier detection.
+    
+    Attributes:
+        repulsion_strength (float): The strength of the repulsion term in UMAP. Defaults to 1.0.
+        n_training_epochs (int): Number of training epochs for the Parametric UMAP model. Defaults to 100.
+        loss_report_frequeny (int): Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.
+        kwargs: Additional keyword arguments for the UMAPClassifier base class.
+    """
+    
     def __init__(self, repulsion_strength = 1.0,
                  n_training_epochs=100,
                  loss_report_frequeny=1000, 
                  **kwargs):
-        """
-        Initialize the Parametric UMAP Classifier with the given parameters.
-        
-        Args:
-            repulsion_strength (float): The strength of the repulsion term in UMAP. Defaults to 1.0.
-            n_training_epochs (int): Number of training epochs for the Parametric UMAP model. Defaults to 100.
-            loss_report_frequeny (int): Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.
-            **kwargs: Additional keyword arguments for the UMAPClassifier base class.
-
-        """
         super().__init__(**kwargs)
         self.parametric_model = None
         self.repulsion_strength = repulsion_strength

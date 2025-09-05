@@ -95,6 +95,15 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">yUMAPClassifier</span><span class="p">(</span><span class="n">parametric_umap_classifier</span><span class="o">.</span><span class="n">ParametricUMAPClassifier</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot; y-shaped Parametric UMAP Classifier with integrated clustering and outlier detection.</span>
 <span class="sd">    This class extends the ParametricUMAPClassifier to include a classification head for semi-supervised learning.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        classifier_head (keras.Model): The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.</span>
+<span class="sd">        umap_loss_a (float): The &#39;a&#39; parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.</span>
+<span class="sd">        umap_loss_b (float): The &#39;b&#39; parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.</span>
+<span class="sd">        negative_sample_rate (int): The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.</span>
+<span class="sd">        n_classes (int): The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).</span>
+<span class="sd">        classification_loss_weight (float): The weight of the classification loss in the total loss function. Defaults to 1.0.</span>
+<span class="sd">        kwargs: Additional keyword arguments to be passed to the ParametricUMAPClassifier.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="yUMAPClassifier.__init__">
 <a class="viewcode-back" href="../../api/rm_classifier.yumap_classifier.html#rm_classifier.yumap_classifier.yUMAPClassifier.__init__">[docs]</a>
@@ -105,21 +114,6 @@
                  <span class="n">n_classes</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
                  <span class="n">classification_loss_weight</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">        Initialize the Parametric UMAP Classifier with the given parameters.</span>
-<span class="sd">        </span>
-<span class="sd">        Args:</span>
-<span class="sd">            classifier_head (keras.Model): The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.</span>
-<span class="sd">            umap_loss_a (float): The &#39;a&#39; parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.</span>
-<span class="sd">            umap_loss_b (float): The &#39;b&#39; parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.</span>
-<span class="sd">            negative_sample_rate (int): The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.</span>
-<span class="sd">            n_classes (int): The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).</span>
-<span class="sd">            classification_loss_weight (float): The weight of the classification loss in the total loss function. Defaults to 1.0.</span>
-<span class="sd">            **kwargs: Additional keyword arguments to be passed to the ParametricUMAPClassifier.</span>
-<span class="sd">        </span>
-<span class="sd">        Returns:</span>
-<span class="sd">            None</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">classifier_head</span> <span class="o">=</span> <span class="n">classifier_head</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">umap_loss_a</span> <span class="o">=</span> <span class="n">umap_loss_a</span>

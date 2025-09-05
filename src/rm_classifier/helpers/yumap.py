@@ -70,6 +70,16 @@ filterwarnings('ignore')
 class YShapedUMAPClassifier(tracked_parametric_umap.TrackedPUMAP):
     """
     Y-shaped network that combines UMAP loss with classification loss
+
+    Attributes:
+        classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.
+        umap_loss_a(float): UMAP loss parameter a. Defaults to 1.929.
+        umap_loss_b(float): UMAP loss parameter b. Defaults to 0.7915.
+        negative_sample_rate(int): Number of negative samples per positive sample. Defaults to 5.
+        n_classes(int): Number of classes for classification. Defaults to 100.
+        classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.
+        keras_fit_kwargs(dict): Additional keyword arguments for the keras fit method. Defaults to {}.
+        kwargs: Additional arguments for the TrackedPUMAP class.
     """
     
     def __init__(self, 
@@ -81,18 +91,6 @@ class YShapedUMAPClassifier(tracked_parametric_umap.TrackedPUMAP):
                  classification_loss_weight=1.0,
                  keras_fit_kwargs={},
                  **kwargs):
-        """ Initialize the Y-shaped UMAP classifier.
-        
-        Args:
-            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.
-            umap_loss_a(float): UMAP loss parameter a. Defaults to 1.929.
-            umap_loss_b(float): UMAP loss parameter b. Defaults to 0.7915.
-            negative_sample_rate(int): Number of negative samples per positive sample. Defaults to 5.
-            n_classes(int): Number of classes for classification. Defaults to 100.
-            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.
-            keras_fit_kwargs(dict): Additional keyword arguments for the keras fit method. Defaults to {}.
-            **kwargs: Additional arguments for the TrackedPUMAP class.
-        """
         super().__init__(**kwargs)
         self.negative_sample_rate = negative_sample_rate
         self.umap_loss_a = umap_loss_a
@@ -500,6 +498,16 @@ class YShapedUMAPClassifier(tracked_parametric_umap.TrackedPUMAP):
 
 class yUMAPModel(parametric_umap.UMAPModel):
     """ Y-shaped UMAP model with classification head
+
+    Attributes:
+        umap_loss_a(float): UMAP loss parameter a.
+        umap_loss_b(float): UMAP loss parameter b.
+        negative_sample_rate(int): Number of negative samples per positive sample.
+        encoder(keras.Model): The encoder model.
+        decoder(keras.Model): The decoder model.
+        classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.
+        classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.
+        kwargs: Additional arguments for the ParametricUMAP class.
     """
     def __init__(self,         
                  umap_loss_a,
@@ -510,18 +518,6 @@ class yUMAPModel(parametric_umap.UMAPModel):
                  classifier_head=None,
                  classification_loss_weight=1.0,
                  **kwargs):
-        """ Initialize the Y-shaped UMAP model.
-        
-        Args:
-            umap_loss_a(float): UMAP loss parameter a.
-            umap_loss_b(float): UMAP loss parameter b.
-            negative_sample_rate(int): Number of negative samples per positive sample.
-            encoder(keras.Model): The encoder model.
-            decoder(keras.Model): The decoder model.
-            classifier_head(keras.Model): A keras model that takes the low-dimensional embedding as input and outputs class probabilities. Defaults to None, which builds a default classifier head.
-            classification_loss_weight(float): Weight of the classification loss. Defaults to 1.0.
-            **kwargs: Additional arguments for the ParametricUMAP class.
-        """
         super().__init__(umap_loss_a, umap_loss_b, negative_sample_rate, encoder, decoder, **kwargs)
         self.classifier_head = classifier_head
         self.classification_loss_weight = classification_loss_weight

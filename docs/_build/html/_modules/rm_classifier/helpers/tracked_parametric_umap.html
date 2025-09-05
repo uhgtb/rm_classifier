@@ -39,8 +39,13 @@
   </form>
 </div>
         </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
-              <!-- Local TOC -->
-              <div class="local-toc"></div>
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.html">rm_classifier package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/rm_classifier.helpers.html">rm_classifier.helpers package</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../tutorial.html">Tutorials</a></li>
+</ul>
+
         </div>
       </div>
     </nav>
@@ -96,17 +101,16 @@
 <div class="viewcode-block" id="AutoencoderLossCallback">
 <a class="viewcode-back" href="../../../api/rm_classifier.helpers.tracked_parametric_umap.html#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback">[docs]</a>
 <span class="k">class</span><span class="w"> </span><span class="nc">AutoencoderLossCallback</span><span class="p">(</span><span class="n">keras</span><span class="o">.</span><span class="n">callbacks</span><span class="o">.</span><span class="n">Callback</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback to compute and log autoencoder loss on any dataset (train/val) during training.&quot;&quot;&quot;</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback to compute and log autoencoder loss on any dataset (train/val) during training.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        validation_data (list, np.ndarray): Validation data.</span>
+<span class="sd">        loss_fn (Callable): Validation loss function.</span>
+<span class="sd">        metric_name (str, optional): name of the callbacks metric. Defaults to &#39;val_autoencoder_loss&#39;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
 <div class="viewcode-block" id="AutoencoderLossCallback.__init__">
 <a class="viewcode-back" href="../../../api/rm_classifier.helpers.tracked_parametric_umap.html#rm_classifier.helpers.tracked_parametric_umap.AutoencoderLossCallback.__init__">[docs]</a>
     <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">loss_fn</span><span class="p">,</span> <span class="n">metric_name</span><span class="o">=</span><span class="s1">&#39;autoencoder_loss&#39;</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the callback.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            validation_data (list, np.ndarray): Validation data.</span>
-<span class="sd">            loss_fn (Callable): Validation loss function.</span>
-<span class="sd">            metric_name (str, optional): name of the callbacks metric. Defaults to &#39;val_autoencoder_loss&#39;.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_fn</span> <span class="o">=</span> <span class="n">loss_fn</span>
@@ -169,6 +173,13 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TrackedPUMAP</span><span class="p">(</span><span class="n">parametric_umap</span><span class="o">.</span><span class="n">ParametricUMAP</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Subclass of ParametricUMAP that tracks training history and allows for saving/loading.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        n_training_epochs (int, optional): number of training epochs. Defaults to 1.</span>
+<span class="sd">        repulsion_strength (float, optional): repulsion strength. Defaults to 1.0.</span>
+<span class="sd">        loss_report_frequency (int, optional): loss report frequency. Defaults to 1000.</span>
+<span class="sd">        kwargs: additional arguments for ParametricUMAP.</span>
+<span class="sd">    </span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <div class="viewcode-block" id="TrackedPUMAP.__init__">
@@ -178,14 +189,6 @@
                  <span class="n">repulsion_strength</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="n">loss_report_frequency</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the TrackedPUMAP model.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            n_training_epochs (int, optional): number of training epochs. Defaults to 1.</span>
-<span class="sd">            repulsion_strength (float, optional): repulsion strength. Defaults to 1.0.</span>
-<span class="sd">            loss_report_frequency (int, optional): loss report frequency. Defaults to 1000.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
-        
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">seed_generator</span> <span class="o">=</span> <span class="n">keras</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">SeedGenerator</span><span class="p">()</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">loss_report_frequency</span> <span class="o">=</span> <span class="n">loss_report_frequency</span>
@@ -399,6 +402,15 @@
 <span class="k">class</span><span class="w"> </span><span class="nc">TrackedUMAPModel</span><span class="p">(</span><span class="n">parametric_umap</span><span class="o">.</span><span class="n">UMAPModel</span><span class="p">):</span>
 <span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    A UMAP model that tracks the training history and allows for saving/loading.</span>
+
+<span class="sd">    Attributes:</span>
+<span class="sd">        umap_loss_a (float): UMAP parameter a for the definition of similarity in the latent space</span>
+<span class="sd">        umap_loss_b (float): UMAP parameter b for the definition of similarity in the latent space</span>
+<span class="sd">        negative_sample_rate (int): the number of negative samples to use per positive sample. If not specified, defaults to 5.</span>
+<span class="sd">        encoder (keras.src.models.sequential.Sequential): encoder model</span>
+<span class="sd">        decoder (keras.src.models.sequential.Sequential): decoder model</span>
+<span class="sd">        repulsion_strength (float, optional): repulsion strength for the calculation of the umap loss. Defaults to 1.0.</span>
+<span class="sd">        kwargs: additional arguments for UMAPModel.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
     
 <div class="viewcode-block" id="TrackedUMAPModel.__init__">
@@ -411,16 +423,6 @@
                  <span class="n">decoder</span><span class="p">,</span>
                  <span class="n">repulsion_strength</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span>
                  <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the TrackedUMAPModel.</span>
-
-<span class="sd">        Args:</span>
-<span class="sd">            umap_loss_a (float): UMAP parameter a for the definition of similarity in the latent space</span>
-<span class="sd">            umap_loss_b (float): UMAP parameter b for the definition of similarity in the latent space</span>
-<span class="sd">            negative_sample_rate (int): the number of negative samples to use per positive sample. If not specified, defaults to 5.</span>
-<span class="sd">            encoder (keras.src.models.sequential.Sequential): encoder model</span>
-<span class="sd">            decoder (keras.src.models.sequential.Sequential): decoder model</span>
-<span class="sd">            repulsion_strength (float, optional): repulsion strength for the calculation of the umap loss. Defaults to 1.0.</span>
-<span class="sd">        &quot;&quot;&quot;</span>
         <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">umap_loss_a</span><span class="p">,</span>
                  <span class="n">umap_loss_b</span><span class="p">,</span>
                  <span class="n">negative_sample_rate</span><span class="p">,</span>

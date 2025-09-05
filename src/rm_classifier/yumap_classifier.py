@@ -20,6 +20,15 @@ import copy
 class yUMAPClassifier(parametric_umap_classifier.ParametricUMAPClassifier):
     """ y-shaped Parametric UMAP Classifier with integrated clustering and outlier detection.
     This class extends the ParametricUMAPClassifier to include a classification head for semi-supervised learning.
+    
+    Attributes:
+        classifier_head (keras.Model): The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.
+        umap_loss_a (float): The 'a' parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.
+        umap_loss_b (float): The 'b' parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.
+        negative_sample_rate (int): The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.
+        n_classes (int): The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).
+        classification_loss_weight (float): The weight of the classification loss in the total loss function. Defaults to 1.0.
+        kwargs: Additional keyword arguments to be passed to the ParametricUMAPClassifier.
     """
     def __init__(self, classifier_head=None,
                  umap_loss_a=1.929, # common parameters for min_dist=0
@@ -28,21 +37,6 @@ class yUMAPClassifier(parametric_umap_classifier.ParametricUMAPClassifier):
                  n_classes=100,
                  classification_loss_weight=1.0,
                  **kwargs):
-        """
-        Initialize the Parametric UMAP Classifier with the given parameters.
-        
-        Args:
-            classifier_head (keras.Model): The classification head to be used for semi-supervised learning. Default to None, which uses a three-layer MLP.
-            umap_loss_a (float): The 'a' parameter for the UMAP loss function. Default is 1.929, which is common for UMAP with min_dist=0.
-            umap_loss_b (float): The 'b' parameter for the UMAP loss function. Default is 0.7915, which is common for UMAP with min_dist=0.
-            negative_sample_rate (int): The number of negative samples to use for each positive sample in the UMAP loss. Defaults to 5.
-            n_classes (int): The number of classes for the classification head. Default is 100 (classes can be added or removed as needed).
-            classification_loss_weight (float): The weight of the classification loss in the total loss function. Defaults to 1.0.
-            **kwargs: Additional keyword arguments to be passed to the ParametricUMAPClassifier.
-        
-        Returns:
-            None
-        """
         super().__init__(**kwargs)
         self.classifier_head = classifier_head
         self.umap_loss_a = umap_loss_a

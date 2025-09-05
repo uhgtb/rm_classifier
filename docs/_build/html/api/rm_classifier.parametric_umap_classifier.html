@@ -103,21 +103,49 @@ License: MIT</p>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">UMAPClassifier</span></code></p>
 <p>Subclass of UMAPClassifier that uses Parametric UMAP for embedding and DBSCAN for clustering.
 Furthermore, an autoencoder allows for reconstruction of the input data, which can be used for outlier detection.</p>
-<dl class="py method">
-<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__">
-<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_training_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_report_frequeny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/parametric_umap_classifier.html#ParametricUMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__" title="Link to this definition"></a></dt>
-<dd><p>Initialize the Parametric UMAP Classifier with the given parameters.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.repulsion_strength">
+<span class="sig-name descname"><span class="pre">repulsion_strength</span></span><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.repulsion_strength" title="Link to this definition"></a></dt>
+<dd><p>The strength of the repulsion term in UMAP. Defaults to 1.0.</p>
 <dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><ul class="simple">
-<li><p><strong>repulsion_strength</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)"><em>float</em></a>) – The strength of the repulsion term in UMAP. Defaults to 1.0.</p></li>
-<li><p><strong>n_training_epochs</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Number of training epochs for the Parametric UMAP model. Defaults to 100.</p></li>
-<li><p><strong>loss_report_frequeny</strong> (<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)"><em>int</em></a>) – Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.</p></li>
-<li><p><strong>**kwargs</strong> – Additional keyword arguments for the UMAPClassifier base class.</p></li>
-</ul>
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.13)">float</a></p>
 </dd>
 </dl>
 </dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.n_training_epochs">
+<span class="sig-name descname"><span class="pre">n_training_epochs</span></span><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.n_training_epochs" title="Link to this definition"></a></dt>
+<dd><p>Number of training epochs for the Parametric UMAP model. Defaults to 100.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.loss_report_frequeny">
+<span class="sig-name descname"><span class="pre">loss_report_frequeny</span></span><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.loss_report_frequeny" title="Link to this definition"></a></dt>
+<dd><p>Frequency of loss reporting during a training epoch. Defaults to 1000. Since the number of learnable relations is the square of the datapoints, this should be set to a high value, if large datasets are processed.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.13)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.kwargs">
+<span class="sig-name descname"><span class="pre">kwargs</span></span><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.kwargs" title="Link to this definition"></a></dt>
+<dd><p>Additional keyword arguments for the UMAPClassifier base class.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">repulsion_strength</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n_training_epochs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">100</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">loss_report_frequeny</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1000</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/rm_classifier/parametric_umap_classifier.html#ParametricUMAPClassifier.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.__init__" title="Link to this definition"></a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="rm_classifier.parametric_umap_classifier.ParametricUMAPClassifier.train_embed">
