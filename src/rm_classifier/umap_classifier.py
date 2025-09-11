@@ -264,7 +264,7 @@ class UMAPClassifier:
         self._set_cluster_indices(hdb_model.labels_)
         return hdb_model.labels_
     
-    def db_classify(self, data, keep_model=True, save_model = None, auto_eps = False, verbose=True, **kwargs):
+    def db_classify(self, data, keep_model=True, save_model = None, auto_eps = False, verbose=True, cut_quantile = 0.8, **kwargs):
         """
         Classify data using DBSCAN clustering.
 
@@ -272,8 +272,9 @@ class UMAPClassifier:
             data (np.ndarray): Input data to be classified.
             keep_model (bool, optional): Whether to save the trained DBSCAN model as the class variable self.db_model. Defaults to True.
             save_model (str, optional): Path to save the trained DBSCAN model using joblib. Defaults to None, which means the model is not saved to disk.
-            auto_eps (bool, optional): Whether to automatically determine optimal DBSCAN parameters. Defaults to False.
+            auto_eps (bool, optional): Whether to automatically determine optimal DBSCAN parameters by the Kneedle algorithm. Defaults to False.
             verbose (bool, optional): Whether to print classification details. Defaults to True.
+            cut_quantile (float, optional): Quantile above which the knee point in the k-distance plot is determined when auto_eps is True. Also influences the normalization and thereby the exact choice of eps. Defaults to 0.8.
             **kwargs: Additional keyword arguments to override class attributes.
             
         Returns:
@@ -284,14 +285,25 @@ class UMAPClassifier:
                 print(f"Overriding {key} with value {value} from kwargs.")
             self.__setattr__(key, value)
         if auto_eps:
+            
             k=int(self.db_min_samples)
             nbrs = NearestNeighbors(n_neighbors=k)
             nbrs.fit(data)
             distances, indices = nbrs.kneighbors(data)
             sorted_data = np.sort(distances[:, k-1])
-            self.db_eps = np.quantile(sorted_data, 0.98)
+            sorted_data = sorted_data[sorted_data > np.quantile(sorted_data, cut_quantile)] # Focus on the upper quantile
+            cdf = np.arange(1, len(sorted_data) + 1) / len(sorted_data)
+            x_norm = (sorted_data - sorted_data.min()) / (sorted_data.max() - sorted_data.min())
+            y_norm = cdf 
+
+            # Modified Difference Curve
+            y_diff = 2*y_norm - x_norm
+    
+            # Find maximum difference point
+            knee_idx = np.argmax(y_diff)
+            self.db_eps = sorted_data[knee_idx]
             if verbose:
-                print(f"Automatically determined db_eps: {self.db_eps} using the .98th percentile of the {k}-distance.")
+                print(f"Automatically determined db_eps: {self.db_eps} which is the {cut_quantile+(1-cut_quantile)*cdf[knee_idx]} percentile of the {k}-distance.")
         return self._dbscan(data, keep_model=keep_model, save_model=save_model, verbose=verbose, **kwargs)
         
     def k_distance_plot(self, data, k=50):
