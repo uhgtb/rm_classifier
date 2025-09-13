@@ -411,6 +411,10 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                 batch_selected_mask = high_entropy_subset.high_entropy_subset_mask(db_clusters, min(n_selected_per_batch, len(db_clusters)))
                 
                 if memmap_flag:
+                    original_sep = os.sep
+                    original_pathsep = os.pathsep
+                    os.sep = '/'
+                    os.pathsep = ':'
                     os.makedirs(os.path.join(umap_classifier.dir, "umap_loaded_data"), exist_ok=True)
                     umap_classifier.umap_data_dir = os.path.join(umap_classifier.dir, "umap_loaded_data")
                     current_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_data.dat"), dtype=np.float32, mode='w+', shape=(summary_batch_size,prepared_data.shape[1]))
@@ -422,6 +426,8 @@ def load_umap_data_batchwise_from_dir(umap_classifier, dir_path, data_batch_load
                         current_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_raw_data.dat"), dtype=np.float32, mode='w+', shape=(summary_batch_size,data_batch.shape[1]))
                         selected_raw_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "selected_raw_data.dat"), dtype=np.float32, mode='w+', shape=(max_umap_events,data_batch.shape[1]))
                     memmap_flag = False
+                    os.sep = original_sep
+                    os.pathsep = original_pathsep
 
                 current_data[current_length:current_length + sum(batch_selected_mask)] = prepared_data[batch_selected_mask]
                 if properties_batch is not None:
