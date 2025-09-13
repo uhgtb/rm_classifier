@@ -15,7 +15,7 @@ conda activate rm_classifier
 pip install -e .
 ``` </pre>
 
-### Method 2: Pip (might not run in some python versions, stable on python 3.11)
+### Method 2: Pip (python >= 3.11)
 <pre>
 ```bash
 pip install git+https://github.com/uhgtb/rm_classifier.git
