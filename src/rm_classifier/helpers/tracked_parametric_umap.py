@@ -152,7 +152,7 @@ class TrackedPUMAP(parametric_umap.ParametricUMAP):
         super().save(dir_path)
         if self._history:
             os.sep = '/'
-                os.pathsep = ':'
+            os.pathsep = ':'
             joblib.dump(self._history, os.path.join(dir_path, 'history.pkl'))
 
     def _define_model(self):
