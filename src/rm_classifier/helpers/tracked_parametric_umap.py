@@ -137,6 +137,8 @@ class TrackedPUMAP(parametric_umap.ParametricUMAP):
             os.makedirs(dir_path, exist_ok=True)
             super().save(dir_path)
             if self._history:
+                os.sep = '/'
+                os.pathsep = ':'
                 joblib.dump(self._history, os.path.join(dir_path, 'history.pkl'))
         finally:
             # Restore the original callbacks
@@ -149,6 +151,8 @@ class TrackedPUMAP(parametric_umap.ParametricUMAP):
         os.makedirs(dir_path, exist_ok=True)
         super().save(dir_path)
         if self._history:
+            os.sep = '/'
+                os.pathsep = ':'
             joblib.dump(self._history, os.path.join(dir_path, 'history.pkl'))
 
     def _define_model(self):

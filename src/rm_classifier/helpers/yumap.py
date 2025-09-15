@@ -170,6 +170,8 @@ class YShapedUMAPClassifier(tracked_parametric_umap.TrackedPUMAP):
             os.makedirs(filepath, exist_ok=True)
             super().save(filepath)
             if self._history:
+                os.sep = '/'
+                os.pathsep = ':'
                 joblib.dump(self._history, os.path.join(filepath, 'history.pkl'))
         finally:
             # Restore the original callbacks
@@ -182,6 +184,8 @@ class YShapedUMAPClassifier(tracked_parametric_umap.TrackedPUMAP):
         os.makedirs(filepath, exist_ok=True)
         super().save(filepath)
         if self._history:
+            os.sep = '/'
+            os.pathsep = ':'
             joblib.dump(self._history, os.path.join(filepath, 'history.pkl'))
 
     def transform(self, X, **kwargs):

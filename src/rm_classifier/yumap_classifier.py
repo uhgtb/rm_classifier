@@ -102,6 +102,8 @@ class yUMAPClassifier(parametric_umap_classifier.ParametricUMAPClassifier):
             if verbose:
                 print(f"Saving UMAP model to {save_model}")
             if self.dir:
+                os.sep = '/'
+                os.pathsep = ':'
                 save_model = os.path.join(self.dir, save_model)
             yumap_model.save(save_model)
         if keep_model:

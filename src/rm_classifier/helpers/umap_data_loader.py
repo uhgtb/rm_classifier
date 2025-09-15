@@ -125,6 +125,8 @@ def load_umap_data_from_dir(umap_classifier, dir_path, data_loader = None, data_
                 batch_selected_mask = high_entropy_subset.high_entropy_subset_mask(db_clusters, min(n_selected_per_batch, i_max-i_min))
                 
                 if memmap_flag:
+                    os.sep = '/'
+                    os.pathsep = ':'
                     os.makedirs(os.path.join(umap_classifier.dir, "umap_loaded_data"), exist_ok=True)
                     umap_classifier.umap_data_dir = os.path.join(umap_classifier.dir, "umap_loaded_data")
                     current_data = np.memmap(os.path.join(umap_classifier.umap_data_dir, "current_data.dat"), dtype=np.float32, mode='w+', shape=(summary_batch_size,prepared_data.shape[1]))
